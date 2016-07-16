@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'erb'
 require 'date'
+require 'htmlentities'
 require 'thread'
 
 module VpsFree::Irc::Bot
@@ -8,6 +9,11 @@ module VpsFree::Irc::Bot
     class Renderer
       def initialize(tpl)
         @erb = ERB.new(File.new(tpl).read, 0, '-')
+        @coder = HTMLEntities.new
+      end
+
+      def encode(v)
+        @coder.encode(v, :basic)
       end
 
       def render(opts)
