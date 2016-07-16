@@ -36,11 +36,13 @@ a img {
 }
 
 #header .month {
-	background: url('arrow_up.png') left top no-repeat;
+	background: url('arrow_up.svg') left top no-repeat;
+	background-size: 17px 18px;
 }
 
 #header .root {
-	background: url('home.png') left top no-repeat;
+	background: url('home.svg') left top no-repeat;
+	background-size: 19px 19px;
 }
 
 #menu {
@@ -78,13 +80,15 @@ a img {
 
 #menu .prev {
 	float: left;
-	background: url('arrow_left.png') left top no-repeat;
+	background: url('arrow_left.svg') left top no-repeat;
+	background-size: 12px 23px;
 	padding-left: 20px;
 }
 
 #menu .next {
 	float: right;
-	background: url('arrow_right.png') right top no-repeat;
+	background: url('arrow_right.svg') right top no-repeat;
+	background-size: 12px 23px;
 	padding-right: 20px;
 }
 
