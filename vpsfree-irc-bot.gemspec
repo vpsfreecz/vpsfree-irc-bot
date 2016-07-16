@@ -5,7 +5,7 @@ require 'vpsfree-irc-bot/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'vpsfree-irc-bot'
-  spec.version       = HaveAPI::Client::VERSION
+  spec.version       = VpsFree::Irc::Bot::VERSION
   spec.authors       = ['Jakub Skokan']
   spec.email         = ['jakub.skokan@vpsfree.cz']
   spec.summary       =
