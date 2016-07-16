@@ -88,7 +88,7 @@ module VpsFree::Irc::Bot
 
     def write(str)
       @mutex.synchronize do
-        if ! (@opened_at.to_date === Time.now.to_date) || @counter == 10
+        if ! (@opened_at.to_date === Time.now.to_date)
           close
           open
         end
