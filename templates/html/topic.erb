@@ -1,4 +1,4 @@
 <p id="l<%= @counter %>">
 <a href="#l<%= @counter %>" class="time">[<%= @time.strftime('%H:%M:%S') %>]</a>
-<span class="event topic"><%= encode(@m.user.nick) %> changed the topic to '<%= encode(@m.message) %>'</a>
+<span class="event topic"><%= encode(@m.user.nick) %> changed the topic to '<%= auto_link(@m.message) %>'</a>
 </p>

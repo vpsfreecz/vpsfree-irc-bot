@@ -2,6 +2,6 @@
 <a href="#l<%= @counter %>" class="time">[<%= @time.strftime('%H:%M:%S') %>]</a>
 <span class="event">
 <%= encode(@user.nick) %> was kicked by <%= encodE(@op.nick) %>
-<%= "[#{encode(@reason)}]" if @reason %>
+<%= "[#{auto_link(@reason)}]" if @reason %>
 </span>
 </p>

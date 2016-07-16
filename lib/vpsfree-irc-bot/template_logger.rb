@@ -2,6 +2,7 @@ require 'fileutils'
 require 'erb'
 require 'date'
 require 'htmlentities'
+require 'rinku'
 require 'thread'
 
 module VpsFree::Irc::Bot
@@ -14,6 +15,10 @@ module VpsFree::Irc::Bot
 
       def encode(v)
         @coder.encode(v, :basic)
+      end
+
+      def auto_link(v)
+        Rinku.auto_link(encode(v), :urls, 'target="_blank" rel="nofollow"')
       end
 
       def render(opts)
