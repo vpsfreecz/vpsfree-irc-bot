@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title><%= @time.strftime('%Y-%m-%d') %> | vpsFree.cz IRC</title>
+    </head>
+    <body>
+        <h1>vpsFree.cz IRC archive</h1>
+        <h2><%= @time.strftime('%A, %B %-d %Y') %></h2>
+        <p>
+            <a href="<%= @previous %>">previous</a> /
+            <a href="<%= @root %>">root</a> /
+            <a href="<%= @year %>">year</a> /
+            <a href="<%= @next %>">next</a>
+        </p>

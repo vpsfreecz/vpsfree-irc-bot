@@ -1,0 +1,5 @@
+<p>
+[<%= @time.strftime('%H:%M:%S') %>]
+<%= @user.nick %> was kicked by <%= @op.nick %>
+<%= "[#{@reason}]" if @reason %>
+</p>

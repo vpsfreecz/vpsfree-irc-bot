@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require_relative '../lib/vpsfree-irc-bot'
+
+VpsFree::Irc::Bot.start

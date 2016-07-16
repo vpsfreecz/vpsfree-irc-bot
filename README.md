@@ -1,0 +1,2 @@
+vpsFree.cz IRC Bot
+==================
