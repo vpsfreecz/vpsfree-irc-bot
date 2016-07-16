@@ -26,6 +26,7 @@ module VpsFree::Irc::Bot
       @renderers = {}
 
       open
+      copy_assets
     end
 
     def log(type, m, *args)
@@ -49,8 +50,13 @@ module VpsFree::Irc::Bot
           opts[:op] = m.user
           opts[:user] = args.first
           opts[:reason] = m.params[2].empty? ? nil : m.params[2]
+
+        else
+          opts[:event] = 'has left'
         end
       end
+
+      opts[:type] = type
 
       tr = {
           join: :action,
@@ -82,7 +88,7 @@ module VpsFree::Irc::Bot
 
     def write(str)
       @mutex.synchronize do
-        if ! (@opened_at.to_date === Time.now.to_date)
+        if ! (@opened_at.to_date === Time.now.to_date) || @counter == 10
           close
           open
         end
@@ -112,7 +118,6 @@ module VpsFree::Irc::Bot
               @opened_at.to_date.next_day.strftime(@path),
           ),
           root: File.join(*to_root),
-          year: File.join(*to_root[0..-2]),
       )
     end
 
@@ -124,14 +129,28 @@ module VpsFree::Irc::Bot
       @renderers[name].render(opts)
     end
 
-    def template(name)
+    def template_dir
       File.join(
           File.dirname(File.realpath(__FILE__)),
           '..', '..',
           'templates',
           @tpl,
+      ) 
+    end
+
+    def template(name)
+      File.join(
+          template_dir,
           "#{name}.erb",
       )
+    end
+
+    def copy_assets
+      assets = File.join(template_dir, 'assets')
+      return unless Dir.exists?(assets)
+
+      FileUtils.mkdir_p(File.join(@dst, 'assets'))
+      FileUtils::cp_r(assets, @dst)
     end
   end
 end

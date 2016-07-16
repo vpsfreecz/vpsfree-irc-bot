@@ -1,1 +1,4 @@
-<p>[<%= @time.strftime('%H:%M:%S') %>] <%= @m.user.nick %> changed topic to '<%= @m.message %>'</p>
+<p id="l<%= @counter %>">
+<a href="#l<%= @counter %>" class="time">[<%= @time.strftime('%H:%M:%S') %>]</a>
+<span class="event topic"><%= @m.user.nick %> changed the topic to '<%= @m.message %>'</a>
+</p>

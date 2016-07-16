@@ -1,0 +1,137 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic&subset=latin,latin-ext");
+
+html, body {
+	padding: 0;
+	margin: 0;
+	font-family: 'Lato', Arial, sanf-serif;
+	background-color: #fff;
+	font-size: 18px;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+a img {
+	border: none;
+}
+
+#header {
+	height: 100px;
+	padding: 0 35px 0 35px;
+}
+
+#header h1 {
+	float: left;
+}
+
+#header p {
+	float: right;
+}
+
+#header p a {
+	color: #17283e;
+	padding-left: 25px;
+	margin: 0 0 0 25px;
+}
+
+#header .month {
+	background: url('arrow_up.png') left top no-repeat;
+}
+
+#header .root {
+	background: url('home.png') left top no-repeat;
+}
+
+#menu {
+	height: 60px;
+	background-color: #16273F;
+	position: relative;
+	padding: 0 35px 0 35px;
+	margin: 0;
+}
+
+#menu h2 {
+	color: #f49153;
+	font-weight: bold;
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	text-align: center;
+	margin: 0;
+	padding: 12px 0 0 0;
+	z-index: 0;
+}
+
+#menu p {
+	height: 30px;
+	margin: 18px 0 0 0;
+	padding: 0;
+	position: relative;
+	z-index: 1;
+}
+
+#menu a {
+	color: #fff;
+}
+
+#menu .prev {
+	float: left;
+	background: url('arrow_left.png') left top no-repeat;
+	padding-left: 20px;
+}
+
+#menu .next {
+	float: right;
+	background: url('arrow_right.png') right top no-repeat;
+	padding-right: 20px;
+}
+
+#log {
+	padding: 20px 35px 20px 35px;
+}
+
+#log p {
+	margin: 1px 0 1px 0;
+	padding: 0;
+}
+
+a.time {
+	text-decoration: none;
+	padding-right: 4px;
+}
+
+.time, .event.leave {
+	color: #b5b5b5;
+}
+
+.event.join {
+	color: #2fa388;
+}
+
+.event.topic {
+	color: #ff0000;
+}
+
+.event {
+	font-style: italic;
+}
+
+.nick, .status {
+	color: #f49153;
+}
+
+#footer {
+	margin: 5px 0 0 0;
+	border-top: 1px solid #e2e2e2;
+	padding: 0 35px 0 35px;
+}
+
+#footer p {
+	text-align: right;
+}
+
+.cleaner {
+	clear: both;
+}

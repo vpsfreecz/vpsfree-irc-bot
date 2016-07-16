@@ -2,14 +2,24 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title><%= @time.strftime('%Y-%m-%d') %> | vpsFree.cz IRC</title>
+        <title><%= @time.strftime('%Y-%m-%d') %> | vpsFree.cz IRC archive</title>
+        <link rel="stylesheet" href="<%= @root %>/assets/style.css">
     </head>
     <body>
-        <h1>vpsFree.cz IRC archive</h1>
-        <h2><%= @time.strftime('%A, %B %-d %Y') %></h2>
-        <p>
-            <a href="<%= @previous %>">previous</a> /
-            <a href="<%= @root %>">root</a> /
-            <a href="<%= @year %>">year</a> /
-            <a href="<%= @next %>">next</a>
-        </p>
+        <div id="header">
+            <h1>
+                <a href="https://vpsfree.cz">
+                    <img src="<%= @root %>/assets/logo.png" alt="vpsFree.cz IRC archive">
+                </a>
+            </h1>
+            <p>
+                <a class="month" href="."><%= @time.strftime('%B') %></a>
+                <a class="root" href="<%= @root %>">Root</a>
+            </p>
+        </div>
+        <div id="menu" class="cleaner">
+            <p class="prev"><a href="<%= @previous %>">Previous</a></p>
+            <h2><%= @time.strftime('%A, %B %-d %Y') %></h2>
+            <p class="next"><a href="<%= @next %>">Next</a></p>
+        </div>
+        <div id="log">

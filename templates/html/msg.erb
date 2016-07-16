@@ -1,1 +1,5 @@
-<p>[<%= @time.strftime('%H:%M:%S') %>] <%= @m.user.nick %>: <%= @m.message %></p>
+<p id="l<%= @counter %>">
+<a href="#l<%= @counter %>" class="time">[<%= @time.strftime('%H:%M:%S') %>]</a>
+<span class="nick"><%= @m.user.nick %>:</span>
+<span class="msg"><%= @m.message %></span>
+</p>
