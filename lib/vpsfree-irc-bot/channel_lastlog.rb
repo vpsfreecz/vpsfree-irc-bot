@@ -3,17 +3,33 @@ require 'thread'
 module VpsFree::Irc::Bot
   class ChannelLastLog
     include Cinch::Plugin
+    include Command
 
     SIZE = 100
     
+    listen_to :connect, method: :connect
+    listen_to :join, method: :join
     listen_to :action, method: :action
     listen_to :channel, method: :msg
-    match /lastlog[\s+\d+]?/, react_on: :private, use_prefix: false, method: :lastlog
+
+    command :lastlog do
+      desc 'print N last messages, defaults to 20'
+      arg :n, required: false
+    end
 
     def initialize(*args)
       super
-      @buffer = []
       @mutex = Mutex.new
+    end
+
+    def connect(m)
+      @buffers = {}
+    end
+
+    def join(m)
+      return if bot.nick != m.user.nick
+      
+      @buffers[m.channel.to_s] = []
     end
 
     def msg(m)
@@ -29,19 +45,19 @@ module VpsFree::Irc::Bot
       log(m, status: true, message: m.message['ACTION'.size + 2..-2])
     end
 
-    def lastlog(m)
-      params = m.params[1].split
-      n = params[1] ? params[1].to_i : 20
+    def cmd_lastlog(m, channel, raw_n = nil)
+      n = raw_n ? raw_n.to_i : 20
 
       @mutex.synchronize do
-        from = @buffer.size >= n ? @buffer.size - n : 0
-        slice = @buffer[from .. @buffer.size]
+        buf = @buffers[channel.to_s]
+        from = buf.size >= n ? buf.size - n : 0
+        slice = buf[from .. buf.size]
 
         if slice.any?
-          m.reply("Last #{slice.size} messages:")
+          m.user.send("Last #{slice.size} messages from '#{channel}':")
 
         else
-          m.reply("There are no messages in the log.")
+          m.user.send("There are no messages from '#{channel}' in the log.")
         end
 
         slice.each do |msg|
@@ -54,7 +70,7 @@ module VpsFree::Irc::Bot
             s += "< #{msg[:nick]}> #{msg[:message]}"
           end
 
-          m.reply(s)
+          m.user.send(s)
         end
       end 
     end
@@ -69,8 +85,10 @@ module VpsFree::Irc::Bot
         }
         hash.update(opts)
 
-        @buffer << hash
-        @buffer.delete_at(0) if @buffer.size > SIZE
+        buf = @buffers[m.channel.to_s]
+
+        buf << hash
+        buf.delete_at(0) if buf.size > SIZE
       end
     end
   end
