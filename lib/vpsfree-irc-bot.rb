@@ -9,6 +9,7 @@ end
 require_relative 'vpsfree-irc-bot/channel_log'
 require_relative 'vpsfree-irc-bot/channel_lastlog'
 require_relative 'vpsfree-irc-bot/template_logger'
+require_relative 'vpsfree-irc-bot/html_logger'
 require_relative 'vpsfree-irc-bot/version'
 
 module VpsFree::Irc::Bot

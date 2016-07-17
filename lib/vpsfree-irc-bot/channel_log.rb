@@ -13,7 +13,7 @@ module VpsFree::Irc::Bot
       super
 
       @loggers = [
-          TemplateLogger.new('html', 'html/', '%Y/%m/%d.html'),
+          HtmlLogger.new('html', 'html/', '%Y/%m/%d.html'),
           #Loggers::Template.new('yml', 'yml/', '%Y/%m/%d.yml'),
       ]
     end

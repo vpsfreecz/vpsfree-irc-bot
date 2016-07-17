@@ -1,8 +1,6 @@
 require 'fileutils'
 require 'erb'
 require 'date'
-require 'htmlentities'
-require 'rinku'
 require 'thread'
 
 module VpsFree::Irc::Bot
@@ -11,14 +9,6 @@ module VpsFree::Irc::Bot
       def initialize(tpl)
         @erb = ERB.new(File.new(tpl).read, 0, '-')
         @coder = HTMLEntities.new
-      end
-
-      def encode(v)
-        @coder.encode(v, :basic)
-      end
-
-      def auto_link(v)
-        Rinku.auto_link(encode(v), :urls, 'target="_blank" rel="nofollow"')
       end
 
       def render(opts)
@@ -37,7 +27,6 @@ module VpsFree::Irc::Bot
       @renderers = {}
 
       open
-      copy_assets
     end
 
     def log(type, m, *args)
@@ -154,14 +143,6 @@ module VpsFree::Irc::Bot
           template_dir,
           "#{name}.erb",
       )
-    end
-
-    def copy_assets
-      assets = File.join(template_dir, 'assets')
-      return unless Dir.exists?(assets)
-
-      FileUtils.mkdir_p(File.join(@dst, 'assets'))
-      FileUtils::cp_r(assets, @dst)
     end
   end
 end
