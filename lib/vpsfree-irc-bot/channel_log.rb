@@ -1,3 +1,5 @@
+require 'uri'
+
 module VpsFree::Irc::Bot
   class ChannelLog
     include Cinch::Plugin
@@ -69,23 +71,26 @@ module VpsFree::Irc::Bot
 
       case which
       when nil
-        m.reply(File.join(
+        uri = File.join(
             bot.config.archive_url,
             bot.config.server,
             channel.to_s,
-        ))
+        )
       when 'today'
-        m.reply(File.join(
+        uri = File.join(
             bot.config.archive_url,
             Time.now.strftime(HTML_PATH) % {
                 server: bot.config.server,
                 channel: channel.to_s,
             }
-        ))
+        )
       
       else
         m.reply("'which' must be empty or 'today'")
+        return
       end
+
+      m.reply(URI.encode(uri))
     end
 
     protected
