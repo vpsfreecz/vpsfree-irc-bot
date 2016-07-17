@@ -68,6 +68,12 @@ module VpsFree::Irc::Bot
       end
 
       case which
+      when nil
+        m.reply(File.join(
+            bot.config.archive_url,
+            bot.config.server,
+            channel.to_s,
+        ))
       when 'today'
         m.reply(File.join(
             bot.config.archive_url,
@@ -78,11 +84,7 @@ module VpsFree::Irc::Bot
         ))
       
       else
-        m.reply(File.join(
-            bot.config.archive_url,
-            bot.config.server,
-            channel.to_s,
-        ))
+        m.reply("'which' must be empty or 'today'")
       end
     end
 
