@@ -77,6 +77,7 @@ module VpsFree::Irc::Bot
       FileUtils.mkpath(@dir)
 
       if File.exists?(@file) && File.size(@file) > 0
+        @counter = last_counter
         @handle = File.open(@file, 'a')
 
       else
@@ -127,6 +128,10 @@ module VpsFree::Irc::Bot
       end
 
       @renderers[name].render(opts)
+    end
+
+    def last_counter
+      0
     end
 
     def template_dir

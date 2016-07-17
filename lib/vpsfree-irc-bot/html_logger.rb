@@ -28,5 +28,16 @@ module VpsFree::Irc::Bot
       FileUtils.mkdir_p(File.join(@dst, 'assets'))
       FileUtils::cp_r(assets, @dst)
     end
+
+    def last_counter
+      rx = /<[^>]*id="l(\d+)"/
+
+      File.readlines(@file).reverse_each do |line|
+        match = rx.match(line)
+        return match[1].to_i if match
+      end
+
+      0
+    end
   end
 end
