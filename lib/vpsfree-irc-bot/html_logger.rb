@@ -39,7 +39,7 @@ module VpsFree::Irc::Bot
 
       File.readlines(@file).reverse_each do |line|
         match = rx.match(line)
-        return match[1].to_i if match
+        return match[1].to_i + 1 if match
       end
 
       0
