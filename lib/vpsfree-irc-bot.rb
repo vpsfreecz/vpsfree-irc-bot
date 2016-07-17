@@ -34,7 +34,6 @@ module VpsFree::Irc::Bot
             ChannelLog,
             ChannelLastLog,
         ]
-        c.messages_per_second = 10
         c.archive_url = opts[:archive_url]
         c.archive_dst = opts[:archive_dst]
       end
