@@ -28,7 +28,7 @@ END
       help += "!\n! Private commands:\n"
       
       Command.commands.each do |cmd|
-        help += "! " + " "*4 + cmd.help(:private) + "\n"
+        help += "! " + " "*4 + cmd.help(bot.channel_list.count == 1 ? :channel : :private) + "\n"
       end
 
       m.user.send(help)

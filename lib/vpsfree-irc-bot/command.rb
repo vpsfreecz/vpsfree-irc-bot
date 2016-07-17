@@ -36,6 +36,9 @@ module VpsFree::Irc::Bot
         if m.channel || !@channel
           args << m.channel
 
+        elsif m.bot.channel_list.count == 1
+          args << m.bot.channel_list.first
+
         else
           unless parts[0]
             m.reply('missing channel name')
