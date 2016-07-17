@@ -19,7 +19,8 @@ module VpsFree::Irc::Bot
       end
     end
 
-    def initialize(tpl, dir, path)
+    def initialize(channel, tpl, dir, path)
+      @channel = channel
       @tpl = tpl
       @path = path
       @dst = dir
@@ -71,7 +72,10 @@ module VpsFree::Irc::Bot
     def open
       @opened_at = Time.now
       @counter = 0
-      @file = File.join(@dst, @opened_at.strftime(@path))
+      @file = File.join(@dst, @opened_at.strftime(@path) % {
+          server: @channel.bot.config.server,
+          channel: @channel.to_s,
+      })
       @dir = File.dirname(@file)
 
       FileUtils.mkpath(@dir)
@@ -121,6 +125,7 @@ module VpsFree::Irc::Bot
 
       render(
           :header,
+          channel: @channel,
           time: @opened_at,
           previous: File.join(
               *to_root,

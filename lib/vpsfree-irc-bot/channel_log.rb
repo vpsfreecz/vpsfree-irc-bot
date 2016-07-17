@@ -2,6 +2,7 @@ module VpsFree::Irc::Bot
   class ChannelLog
     include Cinch::Plugin
 
+    listen_to :connect, method: :connect
     listen_to :topic, method: :topic
     listen_to :channel, method: :msg
     listen_to :action, method: :action
@@ -10,13 +11,8 @@ module VpsFree::Irc::Bot
     listen_to :nick, method: :nick
     match :archive, method: :archive
 
-    def initialize(*args)
-      super
-
-      @loggers = [
-          HtmlLogger.new('html', 'html/', '%Y/%m/%d.html'),
-          #Loggers::Template.new('yml', 'yml/', '%Y/%m/%d.yml'),
-      ]
+    def connect(m)
+      @loggers = {}
     end
 
     def topic(m)
@@ -36,6 +32,12 @@ module VpsFree::Irc::Bot
     end
 
     def join(m)
+      if bot.nick == m.user.nick
+        @loggers[m.channel.to_s] = [
+            HtmlLogger.new(m.channel, 'html', 'html/', '%{server}/%{channel}/%Y/%m/%d.html'),
+        ]
+      end
+
       log(:join, m)
     end
 
@@ -52,8 +54,8 @@ module VpsFree::Irc::Bot
     end
 
     protected
-    def log(type, *args)
-      @loggers.each { |l| l.log(type, *args) }
+    def log(type, m, *args)
+      @loggers[m.channel.to_s].each { |l| l.log(type, m, *args) }
     end
   end
 end

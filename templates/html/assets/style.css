@@ -23,6 +23,21 @@ a img {
 
 #header h1 {
 	float: left;
+	margin: 25px 0 0 0;
+	padding: 0;
+}
+
+#header a {
+	text-decoration: none;
+	display: block;
+	float: left;
+}
+
+#header span {
+	font-size: 24px;
+	display: block;
+	float: left;
+	padding: 10px 0 0 20px;
 }
 
 #header p {
