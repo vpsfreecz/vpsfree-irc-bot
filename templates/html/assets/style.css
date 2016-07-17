@@ -137,6 +137,10 @@ a.time {
 	text-align: right;
 }
 
+#footer a {
+	color: #b5b5b5;
+}
+
 .cleaner {
 	clear: both;
 }
