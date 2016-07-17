@@ -124,6 +124,7 @@ a.time {
 
 .nick, .status {
 	color: #f49153;
+	font-weight: bold;
 }
 
 #footer {
