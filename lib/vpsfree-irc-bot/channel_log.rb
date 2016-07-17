@@ -7,6 +7,7 @@ module VpsFree::Irc::Bot
     listen_to :action, method: :action
     listen_to :join, method: :join
     listen_to :leaving, method: :leave
+    listen_to :nick, method: :nick
     match :archive, method: :archive
 
     def initialize(*args)
@@ -40,6 +41,10 @@ module VpsFree::Irc::Bot
 
     def leave(m, user)
       log(:leave, m, user)
+    end
+
+    def nick(m)
+      log(:nick, m)
     end
 
     def archive(m)
