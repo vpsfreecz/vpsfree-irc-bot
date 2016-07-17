@@ -1,6 +1,9 @@
 module VpsFree::Irc::Bot
   class ChannelLog
     include Cinch::Plugin
+    include Command
+
+    HTML_PATH = '%{server}/%{channel}/%Y/%m/%d.html'
 
     listen_to :connect, method: :connect
     listen_to :topic, method: :topic
@@ -9,7 +12,11 @@ module VpsFree::Irc::Bot
     listen_to :join, method: :join
     listen_to :leaving, method: :leave
     listen_to :nick, method: :nick
-    match :archive, react_on: :private, use_prefix: false, method: :archive
+
+    command :archive do
+      desc 'get URL to the web archive'
+      arg :which, required: false
+    end
 
     def connect(m)
       @loggers = {}
@@ -38,7 +45,7 @@ module VpsFree::Irc::Bot
                 m.channel,
                 'html',
                 File.join(bot.config.archive_dst, 'html/'),
-                '%{server}/%{channel}/%Y/%m/%d.html',
+                HTML_PATH, 
             ),
         ]
       end
@@ -54,12 +61,28 @@ module VpsFree::Irc::Bot
       log(:nick, m)
     end
 
-    def archive(m)
-      if bot.config.archive_url
-        m.reply(bot.config.archive_url)
-
-      else
+    def cmd_archive(m, channel, which = nil)
+      unless bot.config.archive_url
         m.reply('Web archive URL has not been set.')
+        return
+      end
+
+      case which
+      when 'today'
+        m.reply(File.join(
+            bot.config.archive_url,
+            Time.now.strftime(HTML_PATH) % {
+                server: bot.config.server,
+                channel: channel.to_s,
+            }
+        ))
+      
+      else
+        m.reply(File.join(
+            bot.config.archive_url,
+            bot.config.server,
+            channel.to_s,
+        ))
       end
     end
 
