@@ -21,7 +21,7 @@ module VpsFree::Irc::Bot
         # ignore /me
         return
       end
-
+      
       log(m)
     end
 

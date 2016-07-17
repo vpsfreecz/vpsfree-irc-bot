@@ -15,16 +15,24 @@ require_relative 'vpsfree-irc-bot/version'
 module VpsFree::Irc::Bot
   NAME = 'vpsfbot'
 
-  def self.new
+  # @param server [String]
+  # @param channels [Array<String>]
+  # @param opts [Hash]
+  # @option opts [String] nick
+  # @option opts [String] archive_url
+  # @option opts [String] archive_dst
+  def self.new(server, channels, opts = {})
     Cinch::Bot.new do
       configure do |c|
-        c.server = 'chat.freenode.net'
-        c.channels = ['#vpsfree']
-        c.nick = NAME
+        c.server = server
+        c.channels = channels
+        c.nick = opts[:nick] || NAME
         c.plugins.plugins = [
             ChannelLog,
             ChannelLastLog,
         ]
+        c.archive_url = opts[:archive_url]
+        c.archive_dst = opts[:archive_dst]
       end
 
       on :private, :help do |m|
@@ -49,7 +57,7 @@ END
     end
   end
 
-  def self.start
-    new.start
+  def self.start(*args)
+    new(*args).start
   end
 end

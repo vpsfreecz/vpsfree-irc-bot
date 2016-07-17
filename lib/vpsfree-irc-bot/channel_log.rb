@@ -9,7 +9,7 @@ module VpsFree::Irc::Bot
     listen_to :join, method: :join
     listen_to :leaving, method: :leave
     listen_to :nick, method: :nick
-    match :archive, method: :archive
+    match :archive, react_on: :private, use_prefix: false, method: :archive
 
     def connect(m)
       @loggers = {}
@@ -34,7 +34,12 @@ module VpsFree::Irc::Bot
     def join(m)
       if bot.nick == m.user.nick
         @loggers[m.channel.to_s] = [
-            HtmlLogger.new(m.channel, 'html', 'html/', '%{server}/%{channel}/%Y/%m/%d.html'),
+            HtmlLogger.new(
+                m.channel,
+                'html',
+                File.join(bot.config.archive_dst, 'html/'),
+                '%{server}/%{channel}/%Y/%m/%d.html',
+            ),
         ]
       end
 
@@ -50,7 +55,12 @@ module VpsFree::Irc::Bot
     end
 
     def archive(m)
-      m.reply('http://im.vpsfree.cz/whatnot')
+      if bot.config.archive_url
+        m.reply(bot.config.archive_url)
+
+      else
+        m.reply('Web archive URL has not been set.')
+      end
     end
 
     protected
