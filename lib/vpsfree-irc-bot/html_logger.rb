@@ -23,7 +23,7 @@ module VpsFree::Irc::Bot
     protected
     def open_new
       super
-      @handle.write(tz(@opened_at))
+      write_tz(@opened_at)
     end
 
     def copy_assets
@@ -45,12 +45,14 @@ module VpsFree::Irc::Bot
       0
     end
 
-    def tz(t)
-      render(:tz, counter: @counter, time: t)
+    def write_tz(t)
+      @handle.write(render(:tz, counter: @counter, time: t))
+      @handle.flush
+      @counter += 1
     end
 
     def tz_changed(t)
-      @handle.write(tz(t))
+      write_tz(t)
     end
   end
 end
