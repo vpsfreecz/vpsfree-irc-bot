@@ -77,22 +77,34 @@ module VpsFree::Irc::Bot
       FileUtils.mkpath(@dir)
 
       if File.exists?(@file) && File.size(@file) > 0
-        @counter = last_counter
-        @handle = File.open(@file, 'a')
+        open_existing
 
       else
-        @handle = File.open(@file, 'w')
-        @handle.write(header)
-        @handle.flush
+        open_new
       end
     end
 
+    def open_new
+      @handle = File.open(@file, 'w')
+      @handle.write(header)
+      @handle.flush
+    end
+
+    def open_existing
+      @counter = last_counter
+      @handle = File.open(@file, 'a')
+    end
+
     def write(str)
+      t = Time.now
+
       @mutex.synchronize do
-        if ! (@opened_at.to_date === Time.now.to_date)
+        if ! (@opened_at.to_date === t.to_date)
           close
           open
         end
+
+        tz_changed(t) if t.gmt_offset != @opened_at.gmt_offset
 
         @handle.write(str)
         @handle.flush
@@ -120,6 +132,10 @@ module VpsFree::Irc::Bot
           ),
           root: File.join(*to_root),
       )
+    end
+
+    def tz_changed
+
     end
 
     def render(name, opts = {})

@@ -21,6 +21,11 @@ module VpsFree::Irc::Bot
     end
 
     protected
+    def open_new
+      super
+      @handle.write(tz(@opened_at))
+    end
+
     def copy_assets
       assets = File.join(template_dir, 'assets')
       return unless Dir.exists?(assets)
@@ -38,6 +43,14 @@ module VpsFree::Irc::Bot
       end
 
       0
+    end
+
+    def tz(t)
+      render(:tz, counter: @counter, time: t)
+    end
+
+    def tz_changed(t)
+      @handle.write(tz(t))
     end
   end
 end
