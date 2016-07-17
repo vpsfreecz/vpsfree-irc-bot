@@ -4,6 +4,7 @@ module VpsFree::Irc::Bot
   class ChannelLastLog
     include Cinch::Plugin
     
+    listen_to :action, method: :action
     listen_to :channel, method: :msg
     match /lastlog[\s+\d+]?/, react_on: :private, use_prefix: false, method: :lastlog
 
@@ -14,15 +15,16 @@ module VpsFree::Irc::Bot
     end
 
     def msg(m)
-      @mutex.synchronize do
-        @buffer << {
-          time: m.time,
-          nick: m.user.nick,
-          message: m.message,
-        }
-
-        @buffer.delete_at(0) if @buffer.size > 100
+      if m.command == 'PRIVMSG' && m.params[1] && m.params[1].include?("\u0001ACTION")
+        # ignore /me
+        return
       end
+
+      log(m)
+    end
+
+    def action(m)
+      log(m, status: true, message: m.message['ACTION'.size + 2..-2])
     end
 
     def lastlog(m)
@@ -41,12 +43,33 @@ module VpsFree::Irc::Bot
         end
 
         slice.each do |msg|
-          m.reply(
-              "[#{msg[:time].strftime('%Y-%m-%d %H:%M:%S')}] " +
-              "< #{msg[:nick]}> #{msg[:message]}"
-          )
+          s = "[#{msg[:time].strftime('%Y-%m-%d %H:%M:%S')}] "
+
+          if msg[:status]
+            s += " * #{msg[:nick]} #{msg[:message]}"
+
+          else
+            s += "< #{msg[:nick]}> #{msg[:message]}"
+          end
+
+          m.reply(s)
         end
       end 
+    end
+
+    protected
+    def log(m, opts = {})
+      @mutex.synchronize do
+        hash = {
+            time: m.time,
+            nick: m.user.nick,
+            message: m.message,
+        }
+        hash.update(opts)
+
+        @buffer << hash
+        @buffer.delete_at(0) if @buffer.size > 100
+      end
     end
   end
 end
