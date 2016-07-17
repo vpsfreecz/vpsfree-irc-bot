@@ -22,13 +22,13 @@ module VpsFree::Irc::Bot
 END
 
       Command.commands.each do |cmd|
-        help += "! " + " "*4 + cmd.help(:channel) + "\n"
+        help += "! " + " "*4 + cmd.help(:channel, false) + "\n"
       end
       
       help += "!\n! Private commands:\n"
       
       Command.commands.each do |cmd|
-        help += "! " + " "*4 + cmd.help(bot.channel_list.count == 1 ? :channel : :private) + "\n"
+        help += "! " + " "*4 + cmd.help(:private, bot.channel_list.count > 1) + "\n"
       end
 
       m.user.send(help)

@@ -71,9 +71,9 @@ module VpsFree::Irc::Bot
         args
       end
 
-      def help(mode)
+      def help(mode, require_channel)
         sig = [(mode == :channel ? '!' : '') + @name.to_s]
-        sig << '<channel>' if mode == :private && @channel
+        sig << '<channel>' if require_channel && mode == :private && @channel
 
         @args.each do |arg|
           if arg.required
