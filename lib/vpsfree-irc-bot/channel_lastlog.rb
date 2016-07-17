@@ -3,6 +3,8 @@ require 'thread'
 module VpsFree::Irc::Bot
   class ChannelLastLog
     include Cinch::Plugin
+
+    SIZE = 100
     
     listen_to :action, method: :action
     listen_to :channel, method: :msg
@@ -68,7 +70,7 @@ module VpsFree::Irc::Bot
         hash.update(opts)
 
         @buffer << hash
-        @buffer.delete_at(0) if @buffer.size > 100
+        @buffer.delete_at(0) if @buffer.size > SIZE
       end
     end
   end
