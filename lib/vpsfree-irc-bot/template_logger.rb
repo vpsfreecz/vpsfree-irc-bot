@@ -39,7 +39,7 @@ module VpsFree::Irc::Bot
 
       case type
       when :me
-        opts[:status] = m.message['ACTION'.size + 2..-1]
+        opts[:status] = m.message['ACTION'.size + 2..-2]
 
       when :join
         opts[:event] = 'has joined'
