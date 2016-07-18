@@ -47,6 +47,7 @@ module VpsFree::Irc::Bot
 
     def cmd_lastlog(m, channel, raw_n = nil)
       n = raw_n ? raw_n.to_i : 20
+      n = 20 if n <= 0
 
       @mutex.synchronize do
         buf = @buffers[channel.to_s]
