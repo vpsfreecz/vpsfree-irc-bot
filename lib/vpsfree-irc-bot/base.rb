@@ -24,13 +24,15 @@ module VpsFree::Irc::Bot
 ! Channel commands:
 END
 
-      Command.commands.each do |cmd|
+      cmds = Command.commands.sort { |a, b| a.name <=> b.name }
+
+      cmds.each do |cmd|
         help += "! " + " "*4 + cmd.help(:channel, false) + "\n"
       end
       
       help += "!\n! Private commands:\n"
       
-      Command.commands.each do |cmd|
+      cmds.each do |cmd|
         help += "! " + " "*4 + cmd.help(:private, bot.channel_list.count > 1) + "\n"
       end
 
