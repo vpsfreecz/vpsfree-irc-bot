@@ -13,6 +13,7 @@ require_relative 'vpsfree-irc-bot/channel_lastlog'
 require_relative 'vpsfree-irc-bot/template_logger'
 require_relative 'vpsfree-irc-bot/html_logger'
 require_relative 'vpsfree-irc-bot/yml_logger'
+require_relative 'vpsfree-irc-bot/cluster'
 require_relative 'vpsfree-irc-bot/version'
 
 module VpsFree::Irc::Bot
@@ -24,6 +25,7 @@ module VpsFree::Irc::Bot
   # @option opts [String] nick
   # @option opts [String] archive_url
   # @option opts [String] archive_dst
+  # @option opts [String] api_url
   def self.new(server, channels, opts = {})
     Cinch::Bot.new do
       configure do |c|
@@ -34,9 +36,11 @@ module VpsFree::Irc::Bot
             Base,
             ChannelLog,
             ChannelLastLog,
+            Cluster,
         ]
         c.archive_url = opts[:archive_url]
         c.archive_dst = opts[:archive_dst]
+        c.api_url = opts[:api_url]
       end
     end
   end

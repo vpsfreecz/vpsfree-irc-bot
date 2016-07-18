@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'cinch', '~> 2.3.2'
   spec.add_runtime_dependency 'htmlentities'
   spec.add_runtime_dependency 'rinku'
+  spec.add_runtime_dependency 'haveapi-client', '~> 0.5.4'
 end

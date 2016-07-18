@@ -9,6 +9,7 @@ module VpsFree::Irc::Bot
     def initialize
       @opts = {
           archive_dst: '.',
+          api_url: 'https://api.vpsfree.cz',
       }
     end
     
@@ -21,6 +22,10 @@ END
 
       opt_parser = OptionParser.new do |opts|
         opts.banner = usage
+
+        opts.on('-a', '--api URL', 'URL to the vpsAdmin API server') do |u|
+          @opts[:api_url] = u
+        end
 
         opts.on('-u', '--archive-url URL', 'URL on which the web archive is available') do |u|
           @opts[:archive_url] = u
