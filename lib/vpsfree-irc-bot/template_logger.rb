@@ -64,8 +64,7 @@ module VpsFree::Irc::Bot
           leave: :action,
       }
 
-      write(render(tr.has_key?(type) ? tr[type] : type, opts))
-      @counter += 1
+      write(tr.has_key?(type) ? tr[type] : type, opts)
     end
 
     protected
@@ -96,7 +95,7 @@ module VpsFree::Irc::Bot
       @handle = File.open(@file, 'a')
     end
 
-    def write(str)
+    def write(*args)
       t = Time.now
 
       @mutex.synchronize do
@@ -107,8 +106,9 @@ module VpsFree::Irc::Bot
 
         tz_changed(t) if t.gmt_offset != @opened_at.gmt_offset
 
-        @handle.write(str)
+        @handle.write(render(*args))
         @handle.flush
+        @counter += 1
       end
     end
 
