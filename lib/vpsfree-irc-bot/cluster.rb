@@ -31,28 +31,29 @@ module VpsFree::Irc::Bot
       client do |api|
         nodes = api.node.public_status
 
-        if nodes.detect { |n| !n.status || n.maintenance_lock != 'no' }
-          # At least one node down or in maintenance
-          down = nodes.count { |n| !n.status && n.maintenance_lock == 'no' }
-          maintenance = nodes.count { |n| n.maintenance_lock != 'no' }
-          online = nodes.size - down - maintenance
+        # Have to access status via attributes, because status is also a subresource
+        down = nodes.count { |n| !n.attributes[:status] && n.maintenance_lock == 'no' }
+        maintenance = nodes.count { |n| n.maintenance_lock != 'no' }
+        online = nodes.size - down - maintenance
 
-          m.reply("#{online} nodes online, #{maintenance} under maintenance, #{down} down")
+        m.reply("#{online} nodes online, #{maintenance} under maintenance, #{down} down")
 
-          nodes.each do |n|
-            if n.status && n.maintenance_lock == 'no'
-              next
-
-            elsif n.maintenance_lock != 'no'
-              m.reply("#{n.name} is under maintenance: #{n.maintenance_lock_reason}")
-
-            else
-              m.reply("#{n.name} is down")
-            end
-          end
-          
-        else  # all up
-          m.reply('All nodes are online')
+        if maintenance > 0
+          m.reply(
+              "Under maintenance: "+
+              nodes.select { |n|
+                n.maintenance_lock != 'no'
+              }.map { |n| n.name }.join(', ')
+          )
+        end
+        
+        if down > 0
+          m.reply(
+              "Down: "+
+              nodes.select { |n|
+                !n.attributes[:status] && n.maintenance_lock == 'no'
+              }.map { |n| n.name }.join(', ')
+          )
         end
       end
     end
