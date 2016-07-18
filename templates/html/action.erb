@@ -1,4 +1,7 @@
 <p id="l<%= @counter %>">
 <a href="#l<%= @counter %>" class="time">[<%= @time.strftime('%H:%M:%S') %>]</a>
-<span class="event <%= @type %>"><%= encode(@m.user.nick) %> <%= encode(@event) %></span>
+<span class="event <%= @type %>">
+    <span class="nick"><%= encode(@m.user.nick) %></span>
+    <%= encode(@event) %>
+</span>
 </p>

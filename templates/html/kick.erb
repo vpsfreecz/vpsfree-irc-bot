@@ -1,7 +1,9 @@
 <p id="l<%= @counter %>">
 <a href="#l<%= @counter %>" class="time">[<%= @time.strftime('%H:%M:%S') %>]</a>
-<span class="event">
-<%= encode(@user.nick) %> was kicked by <%= encodE(@op.nick) %>
-<%= "[#{auto_link(@reason)}]" if @reason %>
+<span class="event kick">
+    <span class="nick"><%= encode(@user.nick) %></span>
+    was kicked by
+    <span class="nick"><%= encode(@op.nick) %></span>
+    <%= "[#{auto_link(@reason)}]" if @reason %>
 </span>
 </p>

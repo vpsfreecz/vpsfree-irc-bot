@@ -1,4 +1,8 @@
 <p id="l<%= @counter %>">
 <a href="#l<%= @counter %>" class="time">[<%= @time.strftime('%H:%M:%S') %>]</a>
-<span class="event nick"><%= encode(@m.user.last_nick) %> is now known as <%= encode(@m.message) %></span>
+<span class="event nick">
+    <span class="nick"><%= encode(@m.user.last_nick) %></span>
+    is now known as
+    <span class="nick"><%= encode(@m.message) %></span>
+</span>
 </p>
