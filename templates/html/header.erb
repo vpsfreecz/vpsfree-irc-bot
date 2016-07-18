@@ -26,8 +26,8 @@
             </p>
         </div>
         <div id="menu" class="cleaner">
-            <p class="prev"><a href="<%= @previous %>">Previous</a></p>
+            <p class="prev"><a href="<%= encode(@previous, true) %>">Previous</a></p>
             <h2><%= @time.strftime('%A, %B %-d %Y') %></h2>
-            <p class="next"><a href="<%= @next %>">Next</a></p>
+            <p class="next"><a href="<%= encode(@next, true) %>">Next</a></p>
         </div>
         <div id="log">

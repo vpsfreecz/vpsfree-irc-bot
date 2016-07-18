@@ -4,8 +4,10 @@ require 'rinku'
 module VpsFree::Irc::Bot
   class TemplateLogger
     class Renderer
-      def encode(v)
-        @coder.encode(v, :basic)
+      def encode(v, hashtag = false)
+        ret = @coder.encode(v, :basic)
+        ret.gsub!(/#/, '%23') if hashtag
+        ret
       end
 
       def auto_link(v)
