@@ -3,6 +3,7 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Command
 
+    listen_to :channel, method: :channel
     listen_to :private, method: :not_found
 
     command :help do
@@ -38,6 +39,12 @@ END
 
     def cmd_ping(m, channel)
       m.reply('pong')
+    end
+
+    def channel(m)
+      if /^#{bot.nick}(:|,|\s|$)/ =~ m.message
+        m.reply("#{m.user.nick}: say !help to get a list of commands")
+      end
     end
 
     def not_found(m)
