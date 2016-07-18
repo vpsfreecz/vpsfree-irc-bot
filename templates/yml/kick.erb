@@ -1,5 +1,9 @@
 - type: kick
   timestamp: <%= @time.to_i %>
-  user: '<%= yml_escape(@user.nick) %>'
-  op: '<%= yml_escape(@op.nick) %>'
+  user:
+    nick: '<%= yml_escape(@user.nick) %>'
+    host: '<%= yml_escape(@user.host) %>'
+  op:
+    nick: '<%= yml_escape(@op.nick) %>'
+    host: '<%= yml_escape(@op.host) %>'
   reason: '<%= yml_escape(@reason || '') %>'

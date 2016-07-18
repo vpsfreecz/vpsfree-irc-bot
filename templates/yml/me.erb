@@ -1,4 +1,6 @@
 - type: status
   timestamp: <%= @time.to_i %>
-  user: '<%= yml_escape(@m.user.nick) %>'
+  user:
+    nick: '<%= yml_escape(@m.user.nick) %>'
+    host: '<%= yml_escape(@m.user.host) %>'
   status: '<%= yml_escape(@status) %>'

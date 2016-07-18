@@ -1,4 +1,6 @@
 - type: topic
   timestamp: <%= @time.to_i %>
-  user: '<%= yml_escape(@m.user.last_nick) %>'
+  user:
+    nick: '<%= yml_escape(@m.user.nick) %>'
+    host: '<%= yml_escape(@m.user.host) %>'
   topic: '<%= yml_escape(@m.message) %>'
