@@ -44,14 +44,15 @@ END
     end
 
     def channel_not_found(m)
+      return if /^(#{bot.nick}[:|,|\s])/ !~ m.message
+
+      cmd_str = m.message[$1.size .. -1].strip
+
       Command.commands.each do |cmd|
-        if /^#{bot.nick}(:|,|\s)\s*!?#{cmd.name}/ =~ m.message \
-           || /^!?#{cmd.name}/ =~ m.message
-           return
-        end
+        return if /!?#{cmd.name}/ =~ cmd_str || /^!?#{cmd.name}/ =~ cmd_str
       end
       
-      m.reply("Command '#{m.message}' not found. Say 'help' to get a list of commands.")
+      m.reply("Command '#{cmd_str}' not found. Say 'help' to get a list of commands.")
     end
 
     def not_found(m)
