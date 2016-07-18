@@ -72,10 +72,7 @@ module VpsFree::Irc::Bot
     def open
       @opened_at = Time.now
       @counter = 0
-      @file = File.join(@dst, @opened_at.strftime(@path) % {
-          server: @channel.bot.config.server,
-          channel: @channel.to_s,
-      })
+      @file = File.join(@dst, format_path(@opened_at))
       @dir = File.dirname(@file)
 
       FileUtils.mkpath(@dir)
@@ -129,11 +126,11 @@ module VpsFree::Irc::Bot
           time: @opened_at,
           previous: File.join(
               *to_root,
-              @opened_at.to_date.prev_day.strftime(@path),
+              format_path(@opened_at.to_date.prev_day),
           ),
           next: File.join(
               *to_root,
-              @opened_at.to_date.next_day.strftime(@path),
+              format_path(@opened_at.to_date.next_day),
           ),
           root: File.join(*to_root),
       )
@@ -169,6 +166,13 @@ module VpsFree::Irc::Bot
           template_dir,
           "#{name}.erb",
       )
+    end
+
+    def format_path(t)
+      t.strftime(@path) % {
+          server: @channel.bot.config.server,
+          channel: @channel.to_s,
+      }
     end
   end
 end
