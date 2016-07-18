@@ -1,0 +1,4 @@
+- type: msg
+  timestamp: <%= @time.to_i %>
+  user: '<%= yml_escape(@m.user.nick) %>'
+  message: '<%= yml_escape(@m.message) %>'

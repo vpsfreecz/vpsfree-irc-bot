@@ -6,6 +6,7 @@ module VpsFree::Irc::Bot
     include Command
 
     HTML_PATH = '%{server}/%{channel}/%Y/%m/%d.html'
+    YAML_PATH = '%{server}/%{channel}/%Y/%m/%d.yml'
 
     listen_to :connect, method: :connect
     listen_to :topic, method: :topic
@@ -48,6 +49,12 @@ module VpsFree::Irc::Bot
                 'html',
                 File.join(bot.config.archive_dst, 'html/'),
                 HTML_PATH, 
+            ),
+            TemplateLogger.new(
+                m.channel,
+                'yml',
+                File.join(bot.config.archive_dst, 'yml/'),
+                YAML_PATH,
             ),
         ]
       end

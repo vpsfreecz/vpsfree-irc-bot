@@ -1,0 +1,4 @@
+- type: action
+  timestamp: <%= @time.to_i %>
+  user: '<%= yml_escape(@m.user.nick) %>'
+  event: '<%= yml_escape(@type.to_s) %>'
