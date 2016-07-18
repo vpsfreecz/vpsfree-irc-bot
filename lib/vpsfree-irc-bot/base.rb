@@ -3,6 +3,8 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Command
 
+    listen_to :private, method: :not_found
+
     command :help do
       desc 'show this message'
       channel false
@@ -36,6 +38,14 @@ END
 
     def cmd_ping(m, channel)
       m.reply('pong')
+    end
+
+    def not_found(m)
+      Command.commands.each do |cmd|
+        return if /^!?#{cmd.name}/ =~ m.message
+      end
+
+      m.reply("Command '#{m.message}' not found. Say 'help' to get a list of commands.")
     end
   end
 end

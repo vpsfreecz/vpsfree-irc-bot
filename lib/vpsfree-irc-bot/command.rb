@@ -1,9 +1,9 @@
-#require 'struct'
-
 module VpsFree::Irc::Bot
   module Command
     class Cmd
       Arg = Struct.new(:name, :required)
+
+      attr_reader :name
 
       def initialize(name)
         @name = name
