@@ -18,11 +18,17 @@
                         alt="vpsFree.cz IRC archive"
                         width="164" height="48">
                 </a>
-                <span><%= @channel.bot.config.server %> <%= @channel %></span>
+                <span>
+                    <a href="../../.."><%= @channel.bot.config.server %></a>&nbsp;
+                    <a href="../.."><%= @channel %></a>
+               </span>
             </h1>
-            <p>
-                <a class="month" href="."><%= @time.strftime('%B') %></a>
-                <a class="root" href="<%= @root %>">Root</a>
+            <p class="root">
+                <a href="<%= @root %>">Root</a>
+            </p>
+            <p class="parent">
+                <a href="."><%= @time.strftime('%B') %></a> /
+                <a href=".."><%= @time.strftime('%Y') %></a>
             </p>
         </div>
         <div id="menu" class="cleaner">

@@ -28,10 +28,18 @@ a img {
 	color: #17283e;
 }
 
-#header a {
-	text-decoration: none;
+#header h1 > a {
 	display: block;
 	float: left;
+}
+
+#header h1 span a {
+	color: #17283e;
+	text-decoration: none;
+}
+
+#header h1 a:hover {
+	text-decoration: underline;
 }
 
 #header span {
@@ -43,15 +51,15 @@ a img {
 
 #header p {
 	float: right;
+	margin: 15px 0 0 25px;
+	padding-left: 25px;
 }
 
 #header p a {
 	color: #17283e;
-	padding-left: 25px;
-	margin: 0 0 0 25px;
 }
 
-#header .month {
+#header .parent {
 	background: url('arrow_up.svg') left top no-repeat;
 	background-size: 17px 18px;
 }
