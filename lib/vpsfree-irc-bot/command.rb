@@ -23,14 +23,14 @@ module VpsFree::Irc::Bot
         @args << Arg.new(name, required)
       end
 
-      def exec(plugin, m)
-        args = parse_args(m)
+      def exec(plugin, m, msg = nil)
+        args = parse_args(m, msg || m.message)
         plugin.send(:"cmd_#{@name}", *args) if args
       end
 
-      def parse_args(m)
+      def parse_args(m, msg)
         args = [m]
-        parts = m.params[1].split
+        parts = msg.split
         parts.delete_at(0)
 
         if m.channel || !@channel
@@ -94,11 +94,22 @@ module VpsFree::Irc::Bot
         cmd.instance_exec(&block)
 
         method = :"exec_#{cmd}"
-
+        channel_method = :"check_channel_#{name}"
+        
+        listen_to :channel, method: channel_method
         match /^!#{name}/, react_on: :channel, use_prefix: false, method: method
         match /^!?#{name}/, react_on: :private, use_prefix: false, method: method
 
-        define_method(method) { |m| cmd.exec(self, m) }
+        define_method(method) do |m|
+          cmd.exec(self, m)
+        end
+
+        define_method(channel_method) do |m|
+          if /^#{m.bot.nick}(:|,|\s)\s*(!?#{name}(\s|$)[^$]*)/ =~ m.message
+            cmd.exec(self, m, $2)
+          end
+        end
+
         Command.register(cmd)
       end
     end

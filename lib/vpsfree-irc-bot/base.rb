@@ -3,7 +3,7 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Command
 
-    listen_to :channel, method: :channel
+    listen_to :channel, method: :channel_not_found
     listen_to :private, method: :not_found
 
     command :help do
@@ -41,10 +41,15 @@ END
       m.reply('pong')
     end
 
-    def channel(m)
-      if /^#{bot.nick}(:|,|\s|$)/ =~ m.message
-        m.reply("#{m.user.nick}: say !help to get a list of commands")
+    def channel_not_found(m)
+      Command.commands.each do |cmd|
+        if /^#{bot.nick}(:|,|\s)\s*!?#{cmd.name}/ =~ m.message \
+           || /^!?#{cmd.name}/ =~ m.message
+           return
+        end
       end
+      
+      m.reply("Command '#{m.message}' not found. Say 'help' to get a list of commands.")
     end
 
     def not_found(m)
