@@ -5,7 +5,7 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Command
 
-    SIZE = 100
+    SIZE = 50
     
     listen_to :connect, method: :connect
     listen_to :join, method: :join
@@ -13,7 +13,7 @@ module VpsFree::Irc::Bot
     listen_to :channel, method: :msg
 
     command :lastlog do
-      desc 'print N last messages, defaults to 20'
+      desc 'print N last messages, defaults to 10'
       arg :n, required: false
     end
 
@@ -46,8 +46,8 @@ module VpsFree::Irc::Bot
     end
 
     def cmd_lastlog(m, channel, raw_n = nil)
-      n = raw_n ? raw_n.to_i : 20
-      n = 20 if n <= 0
+      n = raw_n ? raw_n.to_i : 10
+      n = 10 if n <= 0
 
       @mutex.synchronize do
         buf = @buffers[channel.to_s]
