@@ -30,8 +30,7 @@ module VpsFree::Irc::Bot
         m.reply("Uptime: #{format_duration(Time.now - @started_at)}")
         m.reply("Connected: #{format_duration(Time.now - @connected_at)}")
 
-        cmds = Command::Counter.count
-        m.reply("Processed #{@msgs - cmds} messages and #{cmds} commands")
+        m.reply("Processed #{@msgs} messages and #{Command::Counter.count} commands")
       end
     end
 
