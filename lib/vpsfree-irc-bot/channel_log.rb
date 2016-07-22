@@ -25,6 +25,19 @@ module VpsFree::Irc::Bot
     def initialize(*_)
       super
       @users_mutex = Mutex.new
+
+      DayChange.on do |yesterday|
+        next unless @loggers
+
+        @loggers.each do |chan_name, loggers|
+          loggers.each { |l| l.next_day }
+ 
+          if bot.config.archive_url \
+             && c = bot.channels.detect { |chan| chan.to_s == chan_name }
+            c.send("Yesterday's log can be found at #{html_day_log_uri(chan, yesterday)}")
+          end
+        end
+      end
     end
 
     def connect(m)
@@ -136,13 +149,7 @@ module VpsFree::Irc::Bot
             channel.to_s,
         )
       when 'today'
-        uri = File.join(
-            bot.config.archive_url,
-            Time.now.strftime(HTML_PATH) % {
-                server: bot.config.server,
-                channel: channel.to_s,
-            }
-        )
+        uri = html_day_log_uri(channel.to_s, Time.now)
       
       else
         m.reply("'which' must be empty or 'today'")
@@ -159,6 +166,18 @@ module VpsFree::Irc::Bot
 
     def channel_users
       @users_mutex.synchronize { yield(@users) }
+    end
+
+    # @param channel [String]
+    # @param t [Time]
+    def html_day_log_uri(channel, t)
+      File.join(
+          bot.config.archive_url,
+          t.strftime(HTML_PATH) % {
+              server: bot.config.server,
+              channel: channel,
+          }
+      )
     end
   end
 end

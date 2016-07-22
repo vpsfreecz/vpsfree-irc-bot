@@ -67,6 +67,17 @@ module VpsFree::Irc::Bot
       write(tr.has_key?(type) ? tr[type] : type, opts)
     end
 
+    def next_day
+      t = Time.now
+
+      @mutex.synchronize do
+        if next_day?(t)
+          close
+          open
+        end
+      end
+    end
+
     protected
     def open
       @opened_at = Time.now
@@ -99,7 +110,7 @@ module VpsFree::Irc::Bot
       t = Time.now
 
       @mutex.synchronize do
-        if ! (@opened_at.to_date === t.to_date)
+        if next_day?(t)
           close
           open
         end
@@ -173,6 +184,10 @@ module VpsFree::Irc::Bot
           server: @channel.bot.config.server,
           channel: @channel.to_s,
       }
+    end
+
+    def next_day?(t)
+      ! (@opened_at.to_date === t.to_date)
     end
   end
 end
