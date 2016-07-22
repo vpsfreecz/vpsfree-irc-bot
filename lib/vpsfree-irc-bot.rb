@@ -6,6 +6,7 @@ module VpsFree
   end
 end
 
+require_relative 'vpsfree-irc-bot/day_change'
 require_relative 'vpsfree-irc-bot/command'
 require_relative 'vpsfree-irc-bot/base'
 require_relative 'vpsfree-irc-bot/channel_log'
@@ -57,6 +58,7 @@ module VpsFree::Irc::Bot
     Signal.trap('TERM', &exit)
     Signal.trap('INT', &exit)
     
+    DayChange.start
     bot.start
   end
 end
