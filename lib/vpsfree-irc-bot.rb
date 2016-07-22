@@ -54,7 +54,7 @@ module VpsFree::Irc::Bot
     exit = Proc.new do
       # bot.quit must be executed in a new thread, as it cannot synchronize
       # mutexes in a trap context.
-      Thread.new { bot.quit('Goodbye') }
+      Thread.new { bot.quit('So long, and thanks for all the fish') }
     end
 
     Signal.trap('TERM', &exit)
