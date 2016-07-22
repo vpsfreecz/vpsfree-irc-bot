@@ -24,6 +24,7 @@ module VpsFree::Irc::Bot
       end
 
       def exec(plugin, m, msg = nil)
+        Command::Counter.increment
         args = parse_args(m, msg || m.message)
         plugin.send(:"cmd_#{@name}", *args) if args
       end
@@ -111,6 +112,17 @@ module VpsFree::Irc::Bot
         end
 
         Command.register(cmd)
+      end
+    end
+
+    module Counter
+      def self.increment
+        @counter ||= 0
+        @counter += 1
+      end
+
+      def self.count
+        @counter
       end
     end
 
