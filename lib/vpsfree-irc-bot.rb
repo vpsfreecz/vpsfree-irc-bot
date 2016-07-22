@@ -16,6 +16,7 @@ require_relative 'vpsfree-irc-bot/html_logger'
 require_relative 'vpsfree-irc-bot/yml_logger'
 require_relative 'vpsfree-irc-bot/cluster'
 require_relative 'vpsfree-irc-bot/uptime'
+require_relative 'vpsfree-irc-bot/rank'
 require_relative 'vpsfree-irc-bot/version'
 
 module VpsFree::Irc::Bot
@@ -40,6 +41,7 @@ module VpsFree::Irc::Bot
             ChannelLastLog,
             Cluster,
             Uptime,
+            Rank,
         ]
         c.archive_url = opts[:archive_url]
         c.archive_dst = opts[:archive_dst]
