@@ -34,7 +34,7 @@ module VpsFree::Irc::Bot
  
           if bot.config.archive_url \
              && c = bot.channels.detect { |chan| chan.to_s == chan_name }
-            c.send("Yesterday's log can be found at #{html_day_log_uri(chan, yesterday)}")
+            c.send("Yesterday's log can be found at #{html_day_log_uri(chan_name, yesterday)}")
           end
         end
       end
