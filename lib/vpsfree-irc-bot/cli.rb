@@ -1,4 +1,5 @@
 require 'optparse'
+require 'yaml'
 
 module VpsFree::Irc::Bot
   class Cli
@@ -15,7 +16,7 @@ module VpsFree::Irc::Bot
     
     def run
       usage = <<END
-Usage: #{$0} [options] <server> <channel...>
+Usage: #{$0} [options] [-c CONFIG] | [<server> <channel...>]
 
 Options:
 END
@@ -25,6 +26,10 @@ END
 
         opts.on('-a', '--api URL', 'URL to the vpsAdmin API server') do |u|
           @opts[:api_url] = u
+        end
+        
+        opts.on('-c', '--config FILE', 'Config file') do |f|
+          @opts[:config] = f
         end
 
         opts.on('-u', '--archive-url URL', 'URL on which the web archive is available') do |u|
@@ -52,12 +57,49 @@ END
 
       opt_parser.parse!
 
-      if ARGV.size < 2
+      if !@opts[:config] && ARGV.size < 2
         puts opt_parser
         exit(1)
       end
 
-      VpsFree::Irc::Bot.start(ARGV[0], ARGV[1..-1], @opts)
+      if @opts[:config]
+        begin
+          cfg = YAML.load(File.read(@opts[:config]))
+
+          unless cfg.is_a?(::Hash)
+            warn "Config must yield a hash"
+            exit(1)
+          end
+
+          @opts.update(cfg)
+
+        rescue Errno::ENOENT
+          warn "Config file '#{@opts[:config]}' does not exist"
+          exit(1)
+
+        rescue Psych::SyntaxError => e
+          warn "Invalid config file: #{e.message}"
+          exit(1)
+        end
+
+        if !@opts[:server]
+          warn "Configure server"
+          exit(1)
+
+        elsif !@opts[:channels]
+          warn "Configure channels"
+          exit(1)
+        end
+
+        server = @opts[:server]
+        channels = @opts[:channels]
+
+      else
+        server = ARGV[0]
+        channels = ARGV[1..-1]
+      end
+
+      VpsFree::Irc::Bot.start(server, channels, @opts)
     end
   end
 end
