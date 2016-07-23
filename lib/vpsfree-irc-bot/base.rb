@@ -66,6 +66,9 @@ END
       # Skip server init
       return if m.target.nil?
 
+      # Ignore messages from NickServ
+      return if m.user.nick == 'NickServ'
+
       Command.commands.each do |cmd|
         return if /^!?#{cmd.name}/ =~ m.message
       end
