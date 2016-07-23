@@ -143,10 +143,12 @@ module VpsFree::Irc::Bot
 
       case which
       when nil
-        uri = File.join(
-            bot.config.archive_url,
-            bot.config.server,
-            channel.to_s,
+        uri = URI.encode(
+                File.join(
+                bot.config.archive_url,
+                bot.config.server,
+                channel.to_s,
+            )
         )
       when 'today'
         uri = html_day_log_uri(channel.to_s, Time.now)
@@ -156,7 +158,7 @@ module VpsFree::Irc::Bot
         return
       end
 
-      m.reply(URI.encode(uri))
+      m.reply(uri)
     end
 
     protected
@@ -171,12 +173,14 @@ module VpsFree::Irc::Bot
     # @param channel [String]
     # @param t [Time]
     def html_day_log_uri(channel, t)
-      File.join(
-          bot.config.archive_url,
-          t.strftime(HTML_PATH) % {
-              server: bot.config.server,
-              channel: channel,
-          }
+      URI.encode(
+          File.join(
+              bot.config.archive_url,
+              t.strftime(HTML_PATH) % {
+                  server: bot.config.server,
+                  channel: channel,
+              }
+          )
       )
     end
   end
