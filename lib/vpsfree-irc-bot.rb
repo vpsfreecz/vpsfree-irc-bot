@@ -46,6 +46,7 @@ module VpsFree::Irc::Bot
         c.archive_url = opts[:archive_url]
         c.archive_dst = opts[:archive_dst]
         c.api_url = opts[:api_url]
+        c.nickserv = opts[:nickserv]
       end
     end
   end

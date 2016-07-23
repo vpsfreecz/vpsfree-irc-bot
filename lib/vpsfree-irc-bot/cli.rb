@@ -43,6 +43,10 @@ END
         opts.on('-n', '--nick NICK', "Set bot's nick (#{NAME})") do |n|
           @opts[:nick] = n
         end
+
+        opts.on('-s', '--nickserv PASSWORD', 'Identify with nickserv') do |p|
+          @opts[:nickserv] = p
+        end
         
         opts.on('-v', '--version', 'Print version and exit') do
           puts VERSION

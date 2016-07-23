@@ -3,6 +3,7 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Command
 
+    listen_to :connect, method: :connect
     listen_to :channel, method: :channel_not_found
     listen_to :private, method: :not_found
 
@@ -14,6 +15,12 @@ module VpsFree::Irc::Bot
     command :ping do
       desc 'play a game of ping pong'
       channel false
+    end
+
+    def connect(m)
+      return unless bot.config.nickserv
+
+      User('NickServ').send("identify #{bot.config.nickserv}")
     end
 
     def cmd_help(m, channel)
