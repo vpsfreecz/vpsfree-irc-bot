@@ -64,7 +64,7 @@ module VpsFree::Irc::Bot
 
         i = 1
 
-        sorted_users(channel.to_s)[0..n].each do |u, stats|
+        sorted_users(channel.to_s)[0..n-1].each do |u, stats|
           m.reply("#{i.to_s.rjust(2)}. #{u} (#{stats[:messages]} messages)")
           i += 1
         end
