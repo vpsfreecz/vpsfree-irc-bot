@@ -8,6 +8,7 @@ end
 
 require_relative 'vpsfree-irc-bot/day_change'
 require_relative 'vpsfree-irc-bot/command'
+require_relative 'vpsfree-irc-bot/user_storage'
 require_relative 'vpsfree-irc-bot/base'
 require_relative 'vpsfree-irc-bot/channel_log'
 require_relative 'vpsfree-irc-bot/channel_lastlog'
