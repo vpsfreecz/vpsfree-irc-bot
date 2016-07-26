@@ -34,17 +34,17 @@ module VpsFree::Irc::Bot
     # @param channel [Cinch::Channel]
     # @param user [Cinch::User]
     def get(channel, user)
-      @mutex.synchronize { yield(do_get(channel.to_s, user.nick)) }
+      do_sync { yield(do_get(channel.to_s, user.nick)) }
     end
 
     def get_channel(channel)
-      @mutex.synchronize { yield(do_get(channel.to_s, nil)) }
+      do_sync { yield(do_get(channel.to_s, nil)) }
     end
 
     # @param channel [Cinch::Channel]
     # @param user [Cinch::User]
     def set(channel, user)
-      @mutex.synchronize do
+      do_sync do
         data = do_get(channel.to_s, user.nick)
         ret = yield(data)
         do_set(channel.to_s, user.nick, data, ret === true)
@@ -53,7 +53,7 @@ module VpsFree::Irc::Bot
     end
 
     def set_all
-      @mutex.synchronize do
+      do_sync do
         ret = yield(@channels)
         
         if ret === true
@@ -64,6 +64,10 @@ module VpsFree::Irc::Bot
 
         @channels
       end
+    end
+
+    def synchronize
+      do_sync { yield(self) }
     end
 
     protected
@@ -101,6 +105,15 @@ module VpsFree::Irc::Bot
       data
     end
 
+    def do_sync(&block)
+      if @mutex.owned?
+        block.call
+
+      else
+        @mutex.synchronize { block.call }
+      end
+    end
+
     def load
       return unless Dir.exists?(save_dir)
 
@@ -125,13 +138,11 @@ module VpsFree::Irc::Bot
         loop do
           sleep(15)
 
-          @mutex.synchronize do
+          do_sync do
             @changed.delete_if do |chan, changed|
               save(chan) if changed
               true
             end
-
-            save
           end
         end
       end
