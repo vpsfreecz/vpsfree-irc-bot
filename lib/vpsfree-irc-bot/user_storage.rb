@@ -62,7 +62,9 @@ module VpsFree::Irc::Bot
         @channels[channel]
 
       else
-        @channels[channel][nick] ||= self.class.defaults
+        data = Marshal.load(Marshal.dump(self.class.defaults))
+        data.update(@channels[channel][nick]) if @channels[channel][nick]
+        data
       end
     end
 
