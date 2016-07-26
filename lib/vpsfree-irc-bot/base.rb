@@ -25,7 +25,7 @@ module VpsFree::Irc::Bot
 
     def cmd_help(m, channel)
       help = <<END
-! vpsFree.vz IRC Bot v#{VERSION}
+! vpsFree.cz IRC Bot v#{VERSION}
 ! ====================#{'=' * VERSION.size}
 !
 ! Channel commands:
