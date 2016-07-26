@@ -37,7 +37,7 @@ module VpsFree::Irc::Bot
       @mutex.synchronize { yield(do_get(channel.to_s, user.nick)) }
     end
 
-    def get_all(channel)
+    def get_channel(channel)
       @mutex.synchronize { yield(do_get(channel.to_s, nil)) }
     end
 
@@ -49,6 +49,20 @@ module VpsFree::Irc::Bot
         ret = yield(data)
         do_set(channel.to_s, user.nick, data, ret === true)
         data
+      end
+    end
+
+    def set_all
+      @mutex.synchronize do
+        ret = yield(@channels)
+        
+        if ret === true
+          @channels.each_key do |chan|
+            @changed[chan] = true
+          end
+        end
+
+        @channels
       end
     end
 
@@ -74,7 +88,13 @@ module VpsFree::Irc::Bot
     # @param changed [Boolean]
     def do_set(channel, nick, data, changed)
       @channels[channel] ||= {}
-      @channels[channel][nick] = data
+
+      if nick.nil?
+        @channels[channel] = data
+
+      else
+        @channels[channel][nick] = data
+      end
 
       @changed[channel] = true if changed
 
