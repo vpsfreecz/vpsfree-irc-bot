@@ -8,7 +8,7 @@ module VpsFree::Irc::Bot
     listen_to :channel, method: :channel
 
     def channel(m)
-      return if /^\s*(http(s?):\/\/[^\s]+)$/ !~ m.message
+      return if /^\s*(http(s?):\/\/[^\s]+)\s*$/ !~ m.message
     
       url = URI.parse($1)
       doc = Nokogiri::HTML(url.open)
