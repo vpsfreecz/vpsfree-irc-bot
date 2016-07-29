@@ -15,8 +15,8 @@ module VpsFree::Irc::Bot
       
       m.reply("Page title: #{doc.xpath('//title').text.strip[0..255]} (#{url})")
 
-    rescue
-      # skip on error
+    rescue => e
+      exception(e)
     end
   end
 end
