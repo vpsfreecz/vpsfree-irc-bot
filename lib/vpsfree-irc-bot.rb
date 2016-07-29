@@ -19,6 +19,7 @@ require_relative 'vpsfree-irc-bot/cluster'
 require_relative 'vpsfree-irc-bot/uptime'
 require_relative 'vpsfree-irc-bot/rank'
 require_relative 'vpsfree-irc-bot/url_marker'
+require_relative 'vpsfree-irc-bot/web_event_log'
 require_relative 'vpsfree-irc-bot/version'
 
 module VpsFree::Irc::Bot
@@ -48,10 +49,12 @@ module VpsFree::Irc::Bot
             Uptime,
             Rank,
             UrlMarker,
+            WebEventLog,
         ]
         c.archive_url = opts[:archive_url]
         c.archive_dst = opts[:archive_dst]
         c.api_url = opts[:api_url]
+        c.webui_url = opts[:webui_url]
         c.nickserv = opts[:nickserv]
       end
     end

@@ -11,6 +11,7 @@ module VpsFree::Irc::Bot
       @opts = {
           archive_dst: '.',
           api_url: 'https://api.vpsfree.cz',
+          webui_url: 'https://vpsadmin.vpsfree.cz',
       }
     end
     
@@ -51,6 +52,10 @@ END
         opts.on('-v', '--version', 'Print version and exit') do
           puts VERSION
           exit
+        end
+        
+        opts.on('-w', '--web-ui URL', 'URL to the vpsAdmin web UI') do |u|
+          @opts[:webui_url] = u
         end
 
         opts.on('-h', '--help', 'Show this help') do

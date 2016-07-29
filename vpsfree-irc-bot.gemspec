@@ -26,4 +26,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'rinku'
   spec.add_runtime_dependency 'nokogiri'
   spec.add_runtime_dependency 'haveapi-client', '~> 0.5.4'
+  spec.add_runtime_dependency 'json'
+  spec.add_runtime_dependency 'reverse_markdown'
 end
