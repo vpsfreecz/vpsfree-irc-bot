@@ -30,9 +30,11 @@ module VpsFree::Irc::Bot
 
       DayChange.on do
         UserStorage.instance.set_all do |channels|
-          channels.each do |user, data|
-            data[:karma] ||= {}
-            data[:karma][:today] = {given: 0, received: 0}
+          channels.each do |name, users|
+            users.each do |nick, data|
+              data[:karma] ||= {}
+              data[:karma][:today] = {given: 0, taken: 0, received: 0}
+            end
           end
 
           true
