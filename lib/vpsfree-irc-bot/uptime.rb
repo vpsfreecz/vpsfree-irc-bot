@@ -2,6 +2,7 @@ module VpsFree::Irc::Bot
   class Uptime
     include Cinch::Plugin
     include Command
+    include Helpers
     
     listen_to :connect, method: :connect
     listen_to :message, method: :message
@@ -27,10 +28,10 @@ module VpsFree::Irc::Bot
 
     def cmd_uptime(m, channel)
       synchronize(:uptime) do
-        m.reply("Uptime: #{format_duration(Time.now - @started_at)}")
-        m.reply("Connected: #{format_duration(Time.now - @connected_at)}")
+        reply(m, "Uptime: #{format_duration(Time.now - @started_at)}")
+        reply(m, "Connected: #{format_duration(Time.now - @connected_at)}")
 
-        m.reply("Processed #{@msgs} messages and #{Command::Counter.count} commands")
+        reply(m, "Processed #{@msgs} messages and #{Command::Counter.count} commands")
       end
     end
 

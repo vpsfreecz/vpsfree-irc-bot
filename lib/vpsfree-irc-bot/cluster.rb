@@ -5,6 +5,7 @@ module VpsFree::Irc::Bot
   class Cluster
     include Cinch::Plugin
     include Command
+    include Helpers
     
     listen_to :connect, method: :connect
 
@@ -36,10 +37,11 @@ module VpsFree::Irc::Bot
         maintenance = nodes.count { |n| n.maintenance_lock != 'no' }
         online = nodes.size - down - maintenance
 
-        m.reply("#{online} nodes online, #{maintenance} under maintenance, #{down} down")
+        reply(m, "#{online} nodes online, #{maintenance} under maintenance, #{down} down")
 
         if maintenance > 0
-          m.reply(
+          reply(
+              m,
               "Under maintenance: "+
               nodes.select { |n|
                 n.maintenance_lock != 'no'
@@ -48,7 +50,8 @@ module VpsFree::Irc::Bot
         end
         
         if down > 0
-          m.reply(
+          reply(
+              m,
               "Down: "+
               nodes.select { |n|
                 !n.attributes[:status] && n.maintenance_lock == 'no'

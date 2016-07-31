@@ -5,6 +5,7 @@ require 'thread'
 module VpsFree::Irc::Bot
   class OutageReport
     include Cinch::Plugin
+    include Helpers
 
     def initialize(*_)
       super
@@ -84,7 +85,7 @@ module VpsFree::Irc::Bot
     end
 
     def send_channels(msg)
-      bot.channels.each { |c| c.send(msg) }
+      bot.channels.each { |c| log_send(c, msg) }
     end
   end
 end

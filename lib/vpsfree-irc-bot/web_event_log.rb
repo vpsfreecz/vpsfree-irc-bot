@@ -6,6 +6,7 @@ require 'thread'
 module VpsFree::Irc::Bot
   class WebEventLog
     include Cinch::Plugin
+    include Helpers
 
     def initialize(*_)
       super
@@ -28,7 +29,8 @@ module VpsFree::Irc::Bot
 
       events.each do |e|
         bot.channels.each do |channel|
-          channel.send(
+          log_send(
+              channel,
               "News from vpsAdmin: "+
               "[#{Time.at(e[:timestamp]).strftime('%Y-%m-%d %H:%M')}] "+
               ReverseMarkdown.convert(e[:message]).strip

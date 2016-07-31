@@ -4,6 +4,7 @@ require 'nokogiri'
 module VpsFree::Irc::Bot
   class UrlMarker
     include Cinch::Plugin
+    include Helpers
     
     listen_to :channel, method: :channel
 
@@ -13,7 +14,7 @@ module VpsFree::Irc::Bot
       url = URI.parse($1)
       doc = Nokogiri::HTML(url.open)
       
-      m.reply("Page title: #{doc.xpath('//title').text.strip[0..255]} (#{url})")
+      reply(m, "Page title: #{doc.xpath('//title').text.strip[0..255]} (#{url})")
 
     rescue => e
       exception(e)

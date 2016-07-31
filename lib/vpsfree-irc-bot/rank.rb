@@ -4,6 +4,7 @@ module VpsFree::Irc::Bot
   class Rank
     include Cinch::Plugin
     include Command
+    include Helpers
 
     listen_to :channel, method: :channel_message
     listen_to :channel, method: :channel_karma
@@ -81,7 +82,8 @@ module VpsFree::Irc::Bot
         sorted = sort(users)
         rank = sorted.index { |name, _| name == m.user.nick }
         
-        m.reply(
+        reply(
+            m,
             "Your rank is #{rank+1} of #{users.size} users "+
             "with karma #{sorted[rank][1][:karma][:total][:received]} and "+
             "#{sorted[rank][1][:messages]} messages"
@@ -103,7 +105,8 @@ module VpsFree::Irc::Bot
         i = 1
 
         sort(users)[0..n-1].each do |u, stats|
-          m.reply(
+          reply(
+              m,
               "#{i.to_s.rjust(2)}. #{u} "+
               "(karma #{stats[:karma][:total][:received]}, #{stats[:messages]} messages)"
           )

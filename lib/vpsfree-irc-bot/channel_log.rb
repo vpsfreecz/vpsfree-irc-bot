@@ -5,6 +5,7 @@ module VpsFree::Irc::Bot
   class ChannelLog
     include Cinch::Plugin
     include Command
+    include Helpers
 
     HTML_PATH = '%{server}/%{channel}/%Y/%m/%d.html'
     YAML_PATH = '%{server}/%{channel}/%Y/%m/%d.yml'
@@ -34,7 +35,10 @@ module VpsFree::Irc::Bot
  
           if bot.config.archive_url \
              && c = bot.channels.detect { |chan| chan.to_s == chan_name }
-            c.send("Yesterday's log can be found at #{html_day_log_uri(chan_name, yesterday)}")
+            log_send(
+                c,
+                "Yesterday's log can be found at #{html_day_log_uri(chan_name, yesterday)}"
+            )
           end
         end
       end
@@ -137,7 +141,7 @@ module VpsFree::Irc::Bot
 
     def cmd_archive(m, channel, which = nil)
       unless bot.config.archive_url
-        m.reply('Web archive URL has not been set.')
+        reply(m, 'Web archive URL has not been set.')
         return
       end
 
@@ -154,11 +158,11 @@ module VpsFree::Irc::Bot
         uri = html_day_log_uri(channel.to_s, Time.now)
       
       else
-        m.reply("'which' must be empty or 'today'")
+        reply(m, "'which' must be empty or 'today'")
         return
       end
 
-      m.reply(uri)
+      reply(m, uri)
     end
 
     def log(type, m, *args)

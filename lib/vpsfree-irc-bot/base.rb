@@ -2,6 +2,7 @@ module VpsFree::Irc::Bot
   class Base
     include Cinch::Plugin
     include Command
+    include Helpers
 
     listen_to :connect, method: :connect
     listen_to :channel, method: :channel_not_found
@@ -47,7 +48,7 @@ END
     end
 
     def cmd_ping(m, channel)
-      m.reply('pong')
+      reply(m, 'pong')
     end
 
     def channel_not_found(m)
@@ -59,7 +60,7 @@ END
         return if /!?#{cmd.name}/ =~ cmd_str || /^!?#{cmd.name}/ =~ cmd_str
       end
       
-      m.reply("Command '#{cmd_str}' not found. Say 'help' to get a list of commands.")
+      reply(m, "Command '#{cmd_str}' not found. Say 'help' to get a list of commands.")
     end
 
     def not_found(m)
@@ -73,7 +74,7 @@ END
         return if /^!?#{cmd.name}/ =~ m.message
       end
 
-      m.reply("Command '#{m.message}' not found. Say 'help' to get a list of commands.")
+      reply(m, "Command '#{m.message}' not found. Say 'help' to get a list of commands.")
     end
   end
 end
