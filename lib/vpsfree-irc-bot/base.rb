@@ -25,7 +25,8 @@ module VpsFree::Irc::Bot
     end
 
     def cmd_help(m, channel)
-      help = <<END
+      help = MultiLine.new
+      help << <<END
 ! vpsFree.cz IRC Bot v#{VERSION}
 ! ====================#{'=' * VERSION.size}
 !
@@ -35,13 +36,13 @@ END
       cmds = Command.commands.sort { |a, b| a.name <=> b.name }
 
       cmds.each do |cmd|
-        help += "! " + " "*4 + cmd.help(:channel, false) + "\n"
+        help << "! " + " "*4 + cmd.help(:channel, false) + "\n"
       end
       
-      help += "!\n! Private commands:\n"
+      help << "!\n! Private commands:\n"
       
       cmds.each do |cmd|
-        help += "! " + " "*4 + cmd.help(:private, bot.channel_list.count > 1) + "\n"
+        help << "! " + " "*4 + cmd.help(:private, bot.channel_list.count > 1) + "\n"
       end
 
       m.user.send(help)

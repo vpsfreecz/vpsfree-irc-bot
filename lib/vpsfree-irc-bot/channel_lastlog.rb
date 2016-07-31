@@ -54,11 +54,13 @@ module VpsFree::Irc::Bot
         from = buf.size >= n ? buf.size - n : 0
         slice = buf[from .. buf.size]
 
+        str = MultiLine.new
+
         if slice.any?
-          m.user.send("Last #{slice.size} messages from '#{channel}':")
+          str << "Last #{slice.size} messages from '#{channel}':"
 
         else
-          m.user.send("There are no messages from '#{channel}' in the log.")
+          str << "There are no messages from '#{channel}' in the log."
         end
 
         slice.each do |msg|
@@ -71,8 +73,10 @@ module VpsFree::Irc::Bot
             s += "< #{msg[:nick]}> #{msg[:message]}"
           end
 
-          m.user.send(s)
+          str << s
         end
+
+        m.user.send(str)
       end 
     end
 
