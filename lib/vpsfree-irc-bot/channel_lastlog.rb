@@ -57,7 +57,7 @@ module VpsFree::Irc::Bot
         str = MultiLine.new
 
         if slice.any?
-          str << "Last #{slice.size} messages from '#{channel}':"
+          str << "Last #{slice.size} messages from '#{channel}':\n"
 
         else
           str << "There are no messages from '#{channel}' in the log."
@@ -73,7 +73,7 @@ module VpsFree::Irc::Bot
             s += "< #{msg[:nick]}> #{msg[:message]}"
           end
 
-          str << s
+          str << s << "\n"
         end
 
         m.user.send(str)
