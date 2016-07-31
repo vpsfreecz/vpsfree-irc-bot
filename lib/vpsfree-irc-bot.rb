@@ -6,6 +6,7 @@ module VpsFree
   end
 end
 
+require_relative 'vpsfree-irc-bot/helpers'
 require_relative 'vpsfree-irc-bot/day_change'
 require_relative 'vpsfree-irc-bot/command'
 require_relative 'vpsfree-irc-bot/user_storage'

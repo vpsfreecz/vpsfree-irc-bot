@@ -161,11 +161,11 @@ module VpsFree::Irc::Bot
       m.reply(uri)
     end
 
-    protected
     def log(type, m, *args)
       @loggers[m.channel.to_s].each { |l| l.log(type, m, *args) }
     end
 
+    protected
     def channel_users
       @users_mutex.synchronize { yield(@users) }
     end
