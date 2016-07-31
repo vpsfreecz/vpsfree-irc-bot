@@ -13,13 +13,17 @@ module VpsFree::Irc::Bot
       end
     end
 
+    def self.init(server)
+      @instance = new(server)
+    end
+
     def self.instance
-      return @instance if @instance
-      @instance = new
+      @instance
     end
 
     private
-    def initialize
+    def initialize(server)
+      @server = server
       @mutex = Mutex.new
       @channels = {}
       @changed = {}
@@ -149,7 +153,7 @@ module VpsFree::Irc::Bot
     end
 
     def save_dir
-      File.join(Dir.home, '.vpsfree-irc-bot', 'channels')
+      File.join(Dir.home, '.vpsfree-irc-bot', @server, 'channels')
     end
   end
 end

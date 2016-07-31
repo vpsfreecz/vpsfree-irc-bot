@@ -37,7 +37,7 @@ module VpsFree::Irc::Bot
   # @option opts [String] api_url
   def self.new(server, channels, opts = {})
     # Initialize storage to avoid later thread collisions
-    UserStorage.instance
+    UserStorage.init(server)
 
     Cinch::Bot.new do
       configure do |c|
