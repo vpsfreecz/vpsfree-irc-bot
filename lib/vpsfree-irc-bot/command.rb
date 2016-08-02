@@ -78,7 +78,7 @@ module VpsFree::Irc::Bot
 
         @args.each do |arg|
           if arg.required
-            sig << '<' + arg.name + '>'
+            sig << '<' + arg.name.to_s + '>'
 
           else
             sig << '[' + arg.name.to_s + ']'
