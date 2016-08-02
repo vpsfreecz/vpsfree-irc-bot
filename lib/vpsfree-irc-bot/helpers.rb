@@ -13,11 +13,15 @@ module VpsFree::Irc::Bot
       end
 
       channel.send(msg)
-      logger.log(
-          type,
-          MessageStub.new(Time.now, channel, bot, msg),
-          *args
-      )
+
+      t = Time.now
+      msg.split("\n").each do |line|
+        logger.log(
+            type,
+            MessageStub.new(t, channel, bot, line),
+            *args
+        )
+      end
     end
 
     # @param channel [Cinch::Message]
