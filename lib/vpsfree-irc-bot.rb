@@ -23,6 +23,7 @@ require_relative 'vpsfree-irc-bot/rank'
 require_relative 'vpsfree-irc-bot/url_marker'
 require_relative 'vpsfree-irc-bot/web_event_log'
 require_relative 'vpsfree-irc-bot/outage_report'
+require_relative 'vpsfree-irc-bot/greeter'
 require_relative 'vpsfree-irc-bot/version'
 
 module VpsFree::Irc::Bot
@@ -54,6 +55,7 @@ module VpsFree::Irc::Bot
             UrlMarker,
             WebEventLog,
             OutageReport,
+            Greeter,
         ]
         c.archive_url = opts[:archive_url]
         c.archive_dst = opts[:archive_dst]
