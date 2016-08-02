@@ -9,6 +9,7 @@ module VpsFree::Irc::Bot
     listen_to :private, method: :not_found
 
     command :help do
+      aliases :commands, :command_list
       desc 'show this message'
       channel false
     end
