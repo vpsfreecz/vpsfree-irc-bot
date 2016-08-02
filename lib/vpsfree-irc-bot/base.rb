@@ -10,8 +10,9 @@ module VpsFree::Irc::Bot
 
     command :help do
       aliases :commands, :command_list
-      desc 'show this message'
+      desc 'show help'
       channel false
+      arg :command, required: false
     end
 
     command :ping do
@@ -25,25 +26,32 @@ module VpsFree::Irc::Bot
       User('NickServ').send("identify #{bot.config.nickserv}")
     end
 
-    def cmd_help(m, channel)
-      help = MultiLine.new
-      help << <<END
-! vpsFree.cz IRC Bot v#{VERSION}
-! ====================#{'=' * VERSION.size}
-!
-! Channel commands:
+    def cmd_help(m, channel, cmd = nil)
+      help = Help.new(bot, Command.commands)
+
+      if cmd
+        help << "Command #{cmd}\n\n"
+
+        begin
+          help.command(cmd.to_sym)
+
+        rescue ArgumentError => e
+          m.user.send(e.message)
+        end
+
+      else
+        help << <<END
+vpsFree.cz IRC Bot v#{VERSION}
+====================#{'=' * VERSION.size}
+  
 END
+        help << "Channel commands:\n"
+        help.commands(:channel)
+        
+        help << "\nPrivate commands:\n"
+        help.commands(:private)
 
-      cmds = Command.commands.sort { |a, b| a.name <=> b.name }
-
-      cmds.each do |cmd|
-        help << "! " + " "*4 + cmd.help(:channel, false) + "\n"
-      end
-      
-      help << "!\n! Private commands:\n"
-      
-      cmds.each do |cmd|
-        help << "! " + " "*4 + cmd.help(:private, bot.channel_list.count > 1) + "\n"
+        help << "\nUse !help <command> to get help for a specific command."
       end
 
       m.user.send(help)

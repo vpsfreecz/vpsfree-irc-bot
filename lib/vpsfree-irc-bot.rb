@@ -24,6 +24,7 @@ require_relative 'vpsfree-irc-bot/url_marker'
 require_relative 'vpsfree-irc-bot/web_event_log'
 require_relative 'vpsfree-irc-bot/outage_report'
 require_relative 'vpsfree-irc-bot/greeter'
+require_relative 'vpsfree-irc-bot/help'
 require_relative 'vpsfree-irc-bot/version'
 
 module VpsFree::Irc::Bot

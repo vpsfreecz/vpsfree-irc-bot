@@ -3,7 +3,7 @@ module VpsFree::Irc::Bot
     class Cmd
       Arg = Struct.new(:name, :required)
 
-      attr_reader :name
+      attr_reader :name, :args
 
       def initialize(name)
         @name = name
@@ -17,11 +17,19 @@ module VpsFree::Irc::Bot
       end
 
       def desc(v = nil)
-        @desc = v
+        if v.nil?
+          @desc
+        else
+          @desc = v
+        end
       end
 
-      def channel(v)
-        @channel = v
+      def channel(v = nil)
+        if v.nil?
+          @channel
+        else
+          @channel = v
+        end
       end
 
       def arg(name, required: true)
@@ -29,7 +37,11 @@ module VpsFree::Irc::Bot
       end
 
       def aliases(*args)
-        @aliases.concat(args)
+        if args.empty?
+          @aliases
+        else
+          @aliases.concat(args)
+        end
       end
 
       def exec(plugin, m, msg = nil)
@@ -79,22 +91,6 @@ module VpsFree::Irc::Bot
         end
 
         args
-      end
-
-      def help(mode, require_channel)
-        sig = [(mode == :channel ? '!' : '') + @name.to_s]
-        sig << '<channel>' if require_channel && mode == :private && @channel
-
-        @args.each do |arg|
-          if arg.required
-            sig << '<' + arg.name.to_s + '>'
-
-          else
-            sig << '[' + arg.name.to_s + ']'
-          end
-        end
-        
-        "#{sig.join(' ').ljust(30)} #{@desc}"
       end
     end
 
