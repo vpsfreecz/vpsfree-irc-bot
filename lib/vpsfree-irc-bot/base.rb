@@ -58,7 +58,9 @@ END
       cmd_str = m.message[$1.size .. -1].strip
 
       Command.commands.each do |cmd|
-        return if /!?#{cmd.name}/ =~ cmd_str || /^!?#{cmd.name}/ =~ cmd_str
+        cmd.names.each do |n|
+          return if /!?#{n}/ =~ cmd_str || /^!?#{n}/ =~ cmd_str
+        end
       end
       
       reply(m, "Command '#{cmd_str}' not found. Say 'help' to get a list of commands.")
@@ -72,7 +74,9 @@ END
       return if m.user.nick == 'NickServ'
 
       Command.commands.each do |cmd|
-        return if /^!?#{cmd.name}/ =~ m.message
+        cmd.names.each do |n|
+          return if /^!?#{n}/ =~ m.message
+        end
       end
 
       reply(m, "Command '#{m.message}' not found. Say 'help' to get a list of commands.")

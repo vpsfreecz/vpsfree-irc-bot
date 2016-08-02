@@ -9,6 +9,11 @@ module VpsFree::Irc::Bot
         @name = name
         @channel = true
         @args = []
+        @aliases = []
+      end
+
+      def names
+        [@name] + @aliases
       end
 
       def desc(v = nil)
@@ -21,6 +26,10 @@ module VpsFree::Irc::Bot
 
       def arg(name, required: true)
         @args << Arg.new(name, required)
+      end
+
+      def aliases(*args)
+        @aliases.concat(args)
       end
 
       def exec(plugin, m, msg = nil)
@@ -98,16 +107,22 @@ module VpsFree::Irc::Bot
         channel_method = :"check_channel_#{name}"
         
         listen_to :channel, method: channel_method
-        match /^!#{name}/, react_on: :channel, use_prefix: false, method: method
-        match /^!?#{name}/, react_on: :private, use_prefix: false, method: method
+
+        cmd.names.each do |n|
+          match /^!#{n}/, react_on: :channel, use_prefix: false, method: method
+          match /^!?#{n}/, react_on: :private, use_prefix: false, method: method
+        end
 
         define_method(method) do |m|
           cmd.exec(self, m)
         end
 
         define_method(channel_method) do |m|
-          if /^#{m.bot.nick}(:|,|\s)\s*(!?#{name}(\s|$)[^$]*)/ =~ m.message
-            cmd.exec(self, m, $2)
+          cmd.names.each do |n|
+            if /^#{m.bot.nick}(:|,|\s)\s*(!?#{n}(\s|$)[^$]*)/ =~ m.message
+              cmd.exec(self, m, $2)
+              next
+            end
           end
         end
 
