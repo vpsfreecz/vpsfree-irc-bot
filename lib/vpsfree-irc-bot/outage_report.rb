@@ -7,6 +7,8 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Helpers
 
+    SUBJECT_PREFIX = '[vpsFree: outage-list]'
+
     def initialize(*_)
       super
       return if bot.config.outage_mail.nil?
@@ -35,8 +37,8 @@ module VpsFree::Irc::Bot
     def check
       Mail.find_and_delete.each do |m|
         notices = [
-            '[vpsFree: outage-list] Neplanovany vypadek / Unplanned outage',
-            '[vpsFree: outage-list] Planovany vypadek / Planned outage',
+            "#{SUBJECT_PREFIX} Neplanovany vypadek / Unplanned outage",
+            "#{SUBJECT_PREFIX} Planovany vypadek / Planned outage",
         ]
         
         if notices.detect { |s| m.subject.start_with?(s) }
@@ -72,15 +74,20 @@ module VpsFree::Irc::Bot
 
     # Custom outage message.
     def outage_message(m)
-      prefix = '[vpsFree: outage-list]'
+      rx = /^((Re:\s*)*#{Regexp.escape(SUBJECT_PREFIX)})/
       
-      unless m.subject.start_with?(prefix)
+      if rx !~ m.subject
         warn("Stray message: #{m.subject}")
         return
       end
 
+      prefix = $1
+      re = !$2.nil?
+
       send_channels(
-          "New message in outage list: #{m.subject[prefix.size+1..-1]} (#{m['List-Archive']})"
+          "New message in outage list: "+
+          (re ? 'Re: ' : '')+
+          "#{m.subject[prefix.size+1..-1]} (#{m['List-Archive']})"
       )
     end
 
