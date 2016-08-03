@@ -6,7 +6,7 @@ After=network-online.target
 [Service]
 User=vpsfbot
 Group=nobody
-ExecStart=/bin/sh -c 'vpsfree-irc-bot --config /etc/vpsfree-irc-bot/%i.yml'
+ExecStart=/opt/vpsfree-irc-bot/bin/vpsfree-irc-bot --config /etc/vpsfree-irc-bot/%i.yml
 
 [Install]
 WantedBy=default.target
