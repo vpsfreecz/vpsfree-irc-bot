@@ -98,15 +98,16 @@ module VpsFree::Irc::Bot
 
       UserStorage.instance.get_channel(channel.to_s) do |users|
         if users.size == 0
-          m.reply("No users to rank yet.")
+          reply(m, "No users to rank yet.")
           return
         end
 
         i = 1
 
+        m.user.send("Top #{n} users from #{channel}:")
+
         sort(users)[0..n-1].each do |u, stats|
-          reply(
-              m,
+          m.user.send(
               "#{i.to_s.rjust(2)}. #{u} "+
               "(karma #{stats[:karma][:total][:received]}, #{stats[:messages]} messages)"
           )
