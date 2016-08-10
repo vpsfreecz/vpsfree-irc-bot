@@ -103,16 +103,16 @@ module VpsFree::Irc::Bot
         end
 
         i = 1
-
-        m.user.send("Top #{n} users from #{channel}:")
+        msg = MultiLine.new
+        msg << "Top #{n} users from #{channel}:\n"
 
         sort(users)[0..n-1].each do |u, stats|
-          m.user.send(
-              "#{i.to_s.rjust(2)}. #{u} "+
-              "(karma #{stats[:karma][:total][:received]}, #{stats[:messages]} messages)"
-          )
+          msg << "#{i.to_s.rjust(2)}. #{u} "
+          msg << "(karma #{stats[:karma][:total][:received]}, #{stats[:messages]} messages)\n"
           i += 1
         end
+
+        m.user.send(msg)
       end
     end
 
