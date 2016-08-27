@@ -1,7 +1,6 @@
 require 'json'
 require 'open-uri'
 require 'reverse_markdown'
-require 'thread'
 
 module VpsFree::Irc::Bot
   class WebEventLog
@@ -9,22 +8,12 @@ module VpsFree::Irc::Bot
     include Helpers
 
     set required_options: %i(webui_url)
-
-    def initialize(*_)
-      super
-
-      @url = URI.join(config[:webui_url], 'event_log.php')
-      @since = Time.now.to_i
-
-      Thread.new do
-        loop do
-          sleep(60)
-          check
-        end
-      end
-    end
+    timer 60, method: :check, threaded: false
 
     def check
+      @url ||= URI.join(config[:webui_url], 'event_log.php')
+      @since ||= Time.now.to_i
+
       @url.query = "since=#{@since.to_i}"
 
       events = JSON.parse(@url.read, symbolize_names: true)
