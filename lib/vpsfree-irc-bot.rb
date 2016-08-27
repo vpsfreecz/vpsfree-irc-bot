@@ -25,6 +25,7 @@ require_relative 'vpsfree-irc-bot/web_event_log'
 require_relative 'vpsfree-irc-bot/mailman'
 require_relative 'vpsfree-irc-bot/mailing_lists'
 require_relative 'vpsfree-irc-bot/greeter'
+require_relative 'vpsfree-irc-bot/dokuwiki'
 require_relative 'vpsfree-irc-bot/help'
 require_relative 'vpsfree-irc-bot/version'
 
@@ -59,6 +60,7 @@ module VpsFree::Irc::Bot
             WebEventLog,
             MailingLists,
             Greeter,
+            DokuWiki,
         ]
 
         c.plugins.options[Cluster] = {
@@ -79,6 +81,7 @@ module VpsFree::Irc::Bot
         }
 
         c.plugins.options[MailingLists] = opts[:mailing_lists]
+        c.plugins.options[DokuWiki] = opts[:dokuwiki]
       end
     end
   end
