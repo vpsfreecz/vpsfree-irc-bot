@@ -60,11 +60,24 @@ module VpsFree::Irc::Bot
             MailingLists,
             Greeter,
         ]
-        c.archive_url = opts[:archive_url]
-        c.archive_dst = opts[:archive_dst]
-        c.api_url = opts[:api_url]
-        c.webui_url = opts[:webui_url]
-        c.nickserv = opts[:nickserv]
+
+        c.plugins.options[Cluster] = {
+            api_url: opts[:api_url],
+        }
+
+        c.plugins.options[WebEventLog] = {
+            webui_url: opts[:webui_url],
+        }
+
+        c.plugins.options[ChannelLog] = {
+            archive_url: opts[:archive_url],
+            archive_dst: opts[:archive_dst],
+        }
+
+        c.plugins.options[Base] = {
+            nickserv: opts[:nickserv],
+        }
+
         c.plugins.options[MailingLists] = opts[:mailing_lists]
       end
     end

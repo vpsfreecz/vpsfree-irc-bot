@@ -8,10 +8,12 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Helpers
 
+    set required_options: %i(webui_url)
+
     def initialize(*_)
       super
 
-      @url = URI.join(bot.config.webui_url, 'event_log.php')
+      @url = URI.join(config[:webui_url], 'event_log.php')
       @since = Time.now.to_i
 
       Thread.new do

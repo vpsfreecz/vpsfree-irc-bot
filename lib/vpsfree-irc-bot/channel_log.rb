@@ -10,6 +10,8 @@ module VpsFree::Irc::Bot
     HTML_PATH = '%{server}/%{channel}/%Y/%m/%d.html'
     YAML_PATH = '%{server}/%{channel}/%Y/%m/%d.yml'
 
+    set required_options: %i(archive_dst)
+
     listen_to :connect, method: :connect
     listen_to :topic, method: :topic
     listen_to :channel, method: :msg
@@ -33,7 +35,7 @@ module VpsFree::Irc::Bot
         @loggers.each do |chan_name, loggers|
           loggers.each { |l| l.next_day }
  
-          if bot.config.archive_url \
+          if config[:archive_url] \
              && c = bot.channels.detect { |chan| chan.to_s == chan_name }
             log_send(
                 c,
@@ -79,13 +81,13 @@ module VpsFree::Irc::Bot
             HtmlLogger.new(
                 m.channel,
                 'html',
-                File.join(bot.config.archive_dst, 'html/'),
+                File.join(config[:archive_dst], 'html/'),
                 HTML_PATH, 
             ),
             TemplateLogger.new(
                 m.channel,
                 'yml',
-                File.join(bot.config.archive_dst, 'yml/'),
+                File.join(config[:archive_dst], 'yml/'),
                 YAML_PATH,
             ),
         ]
@@ -140,7 +142,7 @@ module VpsFree::Irc::Bot
     end
 
     def cmd_archive(m, channel, which = nil)
-      unless bot.config.archive_url
+      unless config[:archive_url]
         reply(m, 'Web archive URL has not been set.')
         return
       end
@@ -149,7 +151,7 @@ module VpsFree::Irc::Bot
       when nil
         uri = URI.encode(
                 File.join(
-                bot.config.archive_url,
+                config[:archive_url],
                 bot.config.server,
                 channel.to_s,
             )
@@ -179,7 +181,7 @@ module VpsFree::Irc::Bot
     def html_day_log_uri(channel, t)
       URI.encode(
           File.join(
-              bot.config.archive_url,
+              config[:archive_url],
               t.strftime(HTML_PATH) % {
                   server: bot.config.server,
                   channel: channel,

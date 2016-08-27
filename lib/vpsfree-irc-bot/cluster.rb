@@ -7,6 +7,8 @@ module VpsFree::Irc::Bot
     include Command
     include Helpers
     
+    set required_options: %i(api_url)
+
     listen_to :connect, method: :connect
 
     command :status do
@@ -21,7 +23,7 @@ module VpsFree::Irc::Bot
     def connect(m)
       @mutex.synchronize do
         @api = ::HaveAPI::Client::Client.new(
-            m.bot.config.api_url,
+            config[:api_url],
             identity: "vpsfree-irc-bot v#{VERSION}"
         )
         @api.setup
