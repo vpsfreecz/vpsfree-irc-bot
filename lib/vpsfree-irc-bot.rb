@@ -47,6 +47,7 @@ module VpsFree::Irc::Bot
         c.server = server
         c.channels = channels
         c.nick = opts[:nick] || NAME
+        c.realname = 'vpsFree.cz IRC Bot'
         c.plugins.plugins = [
             Base,
             ChannelLog,
