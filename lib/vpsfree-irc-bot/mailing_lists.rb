@@ -52,11 +52,14 @@ module VpsFree::Irc::Bot
 
       prefix = $1
       re = !$2.nil?
+      sender = m[:from].display_names.first
 
       send_channels(
           "[#{list.name}] "+
           (re ? 'Re: ' : '')+
-          "#{m.subject[prefix.size+1..-1]} (#{url})"
+          "#{m.subject[prefix.size+1..-1]} "+
+          (sender ? " from #{sender}" : '')+
+          " (#{url})"
       )
     end
 
