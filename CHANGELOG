@@ -1,2 +1,5 @@
+- Plugin OutageReport replaced by plugin MailingLists which can check multiple
+  lists. Configuration section :outage_list is renamed to :mailing_lists.
+
 * Sat Aug 27 2016 - version 0.1.0
 - Initial release
