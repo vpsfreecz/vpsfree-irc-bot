@@ -63,25 +63,23 @@ module VpsFree::Irc::Bot
             DokuWiki,
         ]
 
-        c.plugins.options[Cluster] = {
-            api_url: opts[:api_url],
+        c.plugins.options = {
+            Cluster => {
+                api_url: opts[:api_url],
+            },
+            WebEventLog => {
+                webui_url: opts[:webui_url],
+            },
+            ChannelLog => {
+                archive_url: opts[:archive_url],
+                archive_dst: opts[:archive_dst],
+            },
+            Base => {
+                nickserv: opts[:nickserv],
+            },
+            MailingLists => opts[:mailing_lists],
+            DokuWiki => opts[:dokuwiki],
         }
-
-        c.plugins.options[WebEventLog] = {
-            webui_url: opts[:webui_url],
-        }
-
-        c.plugins.options[ChannelLog] = {
-            archive_url: opts[:archive_url],
-            archive_dst: opts[:archive_dst],
-        }
-
-        c.plugins.options[Base] = {
-            nickserv: opts[:nickserv],
-        }
-
-        c.plugins.options[MailingLists] = opts[:mailing_lists]
-        c.plugins.options[DokuWiki] = opts[:dokuwiki]
       end
     end
   end
