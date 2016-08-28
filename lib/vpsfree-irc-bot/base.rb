@@ -21,9 +21,9 @@ module VpsFree::Irc::Bot
     end
 
     def connect(m)
-      return unless bot.config.nickserv
+      return unless config[:nickserv]
 
-      User('NickServ').send("identify #{bot.config.nickserv}")
+      User('NickServ').send("identify #{config[:nickserv]}")
     end
 
     def cmd_help(m, channel, cmd = nil)

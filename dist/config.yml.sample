@@ -3,6 +3,9 @@
   - '#channel1'
   - '#channel2'
 
+# NickServ
+# :nickserv: password
+
 # URL to web archive
 :archive_url: http://irc.example.com
 
