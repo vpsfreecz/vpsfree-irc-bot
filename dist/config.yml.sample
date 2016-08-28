@@ -2,4 +2,25 @@
 :channels:
   - '#channel1'
   - '#channel2'
+
+# URL to web archive
 :archive_url: http://irc.example.com
+
+# URL to vpsAdmin-webui for WebEventLog
+# :webui_url: 'https://vpsadmin.vpsfree.cz'
+
+# Configuration of plugin MailingLists
+# :mailing_lists:
+#     :server: pop3.example.com
+#     :port: 995
+#     :username: 
+#     :password:
+#     :enable_ssl: true
+#     :archive_dir: /var/lib/mailman/archives/public
+
+# DokuWiki
+# :dokuwiki:
+#     :url: https://kb.vpsfree.cz
+#     :namespace_slash: true
+#     :rewrite: 1
+#     :prefix: '[KB]'
