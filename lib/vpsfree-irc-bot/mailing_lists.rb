@@ -20,9 +20,13 @@ module VpsFree::Irc::Bot
       }
       m.archive_dir = config[:archive_dir]
 
-      %i(outage news community).each do |list|
+      {
+          outage: '"vpsFree.cz outage list" <outage-list.lists.vpsfree.cz>',
+          news: '<news-list.lists.vpsfree.cz>',
+          community: '"vpsFree.cz Community list" <community-list.lists.vpsfree.cz>',
+      }.each do |list, id|
         m.list name: "#{list}-list",
-              id: "\"vpsFree.cz #{list} list\" <#{list}-list.lists.vpsfree.cz>",
+              id: id,
               prefix: "[vpsFree: #{list}-list]",
               method: list == :outage ? :"#{list}_list" : :report_message
       end
