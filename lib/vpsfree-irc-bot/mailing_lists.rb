@@ -21,13 +21,20 @@ module VpsFree::Irc::Bot
       m.archive_dir = config[:archive_dir]
 
       {
-          outage: '"vpsFree.cz outage list" <outage-list.lists.vpsfree.cz>',
-          news: '<news-list.lists.vpsfree.cz>',
-          community: '"vpsFree.cz Community list" <community-list.lists.vpsfree.cz>',
-      }.each do |list, id|
+          outage: {
+              id: '"vpsFree.cz outage list" <outage-list.lists.vpsfree.cz>',
+              prefix: '[vpsFree: outage-list]',
+          },
+          news: {
+              id: '<news-list.lists.vpsfree.cz>',
+          },
+          community: {
+              id: '"vpsFree.cz Community list" <community-list.lists.vpsfree.cz>',
+          },
+      }.each do |list, opts|
         m.list name: "#{list}-list",
-              id: id,
-              prefix: "[vpsFree: #{list}-list]",
+              id: opts[:id],
+              prefix: opts[:prefix] || "[vpsFree.cz: #{list}-list]",
               method: list == :outage ? :"#{list}_list" : :report_message
       end
     end
