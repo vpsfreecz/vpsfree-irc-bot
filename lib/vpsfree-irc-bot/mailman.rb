@@ -82,10 +82,7 @@ module VpsFree::Irc::Bot
         
         f = `grep -r -l -m 1 '#{search}' "#{dir}"/*.html`.strip
 
-        unless f.empty?
-          return File.join(url, f[@archive_dir.size..-1])
-        end
-
+        return File.join(url, *f.split('/')[-2..-1]) unless f.empty?
         return url
       end
     end
