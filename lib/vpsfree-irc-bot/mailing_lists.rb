@@ -2,7 +2,18 @@ require 'base64'
 
 module VpsFree::Irc::Bot
   class MailingLists
-    OUTAGE_PREFIX = '[vpsFree: outage-list]'
+    LISTS = {
+        outage: {
+            id: '"vpsFree.cz outage list" <outage-list.lists.vpsfree.cz>',
+            prefix: '[vpsFree: outage-list]',
+        },
+        news: {
+            id: '<news-list.lists.vpsfree.cz>',
+        },
+        community: {
+            id: '"vpsFree.cz Community list" <community-list.lists.vpsfree.cz>',
+        },
+    }
     
     include Cinch::Plugin
     include MailMan
@@ -20,18 +31,7 @@ module VpsFree::Irc::Bot
       }
       m.archive_dir = config[:archive_dir]
 
-      {
-          outage: {
-              id: '"vpsFree.cz outage list" <outage-list.lists.vpsfree.cz>',
-              prefix: '[vpsFree: outage-list]',
-          },
-          news: {
-              id: '<news-list.lists.vpsfree.cz>',
-          },
-          community: {
-              id: '"vpsFree.cz Community list" <community-list.lists.vpsfree.cz>',
-          },
-      }.each do |list, opts|
+      LISTS.each do |list, opts|
         m.list name: "#{list}-list",
               id: opts[:id],
               prefix: opts[:prefix] || "[vpsFree.cz: #{list}-list]",
