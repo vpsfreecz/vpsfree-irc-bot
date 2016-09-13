@@ -30,3 +30,8 @@
 
 # Blog feed
 # :blog_feed: https://blog.vpsfree.cz/feed/
+
+# URL marker
+# :url_marker:
+#     :max_redirects: 5
+#     :max_size: 10485760

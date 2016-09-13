@@ -79,6 +79,7 @@ module VpsFree::Irc::Bot
             Base => {
                 nickserv: opts[:nickserv],
             },
+            UrlMarker => opts[:url_marker],
             MailingLists => opts[:mailing_lists],
             DokuWiki => opts[:dokuwiki],
             BlogFeed => {

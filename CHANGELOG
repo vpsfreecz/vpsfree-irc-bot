@@ -2,6 +2,7 @@
   lists. Configuration section :outage_list is renamed to :mailing_lists.
 - Plugin DokuWiki to monitor recents changes in a wiki
 - Plugin BlogFeed to announce new blog posts
+- URl marker: support and limit redirects, max size and content type
 
 * Sat Aug 27 2016 - version 0.1.0
 - Initial release
