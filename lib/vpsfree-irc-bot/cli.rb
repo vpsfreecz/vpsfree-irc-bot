@@ -12,6 +12,7 @@ module VpsFree::Irc::Bot
           archive_dst: '.',
           api_url: 'https://api.vpsfree.cz',
           webui_url: 'https://vpsadmin.vpsfree.cz',
+          blog_feed: 'https://blog.vpsfree.cz/feed/',
       }
     end
     

@@ -26,6 +26,7 @@ require_relative 'vpsfree-irc-bot/mailman'
 require_relative 'vpsfree-irc-bot/mailing_lists'
 require_relative 'vpsfree-irc-bot/greeter'
 require_relative 'vpsfree-irc-bot/dokuwiki'
+require_relative 'vpsfree-irc-bot/blog_feed'
 require_relative 'vpsfree-irc-bot/help'
 require_relative 'vpsfree-irc-bot/version'
 
@@ -61,6 +62,7 @@ module VpsFree::Irc::Bot
             MailingLists,
             Greeter,
             DokuWiki,
+            BlogFeed,
         ]
 
         c.plugins.options = {
@@ -79,6 +81,9 @@ module VpsFree::Irc::Bot
             },
             MailingLists => opts[:mailing_lists],
             DokuWiki => opts[:dokuwiki],
+            BlogFeed => {
+                url: opts[:blog_feed],
+            },
         }
       end
     end

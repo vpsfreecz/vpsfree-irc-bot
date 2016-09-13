@@ -27,3 +27,6 @@
 #     :namespace_slash: true
 #     :rewrite: 1
 #     :prefix: '[KB]'
+
+# Blog feed
+# :blog_feed: https://blog.vpsfree.cz/feed/
