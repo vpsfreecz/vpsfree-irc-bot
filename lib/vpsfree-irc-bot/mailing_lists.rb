@@ -68,7 +68,7 @@ module VpsFree::Irc::Bot
       send_channels(
           "[#{list.name}] "+
           (re ? 'Re: ' : '')+
-          "#{m.subject[prefix.size+1..-1]} "+
+          "#{m.subject[prefix.size+1..-1]}"+
           (sender ? " from #{sender}" : '')+
           " (#{url})"
       )
