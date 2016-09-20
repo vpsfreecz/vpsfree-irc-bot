@@ -78,7 +78,7 @@ module VpsFree::Irc::Bot
             @name,
             Time.now.strftime('%Y-%B'),
         )
-        search = URI.escape(m['Message-ID'].to_s).gsub('@', '%40')
+        search = URI.escape(m['Message-ID'].to_s).gsub('@', '%40').gsub('+', '%2B')
         
         f = `grep -r -l -m 1 '#{search}' "#{dir}"/*.html`.strip
 
