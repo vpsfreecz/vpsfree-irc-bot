@@ -41,7 +41,7 @@ module VpsFree::Irc::Bot
 
       cur = revs[cur_i]
 
-      case cur['type']
+      case cur['type'].upcase
       when 'C'  # page created
         send_channels(
             "Page #{change['name']} created by #{change['author']} "+
