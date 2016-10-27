@@ -27,6 +27,7 @@ require_relative 'vpsfree-irc-bot/mailing_lists'
 require_relative 'vpsfree-irc-bot/greeter'
 require_relative 'vpsfree-irc-bot/dokuwiki'
 require_relative 'vpsfree-irc-bot/blog_feed'
+require_relative 'vpsfree-irc-bot/keep_nick'
 require_relative 'vpsfree-irc-bot/help'
 require_relative 'vpsfree-irc-bot/version'
 
@@ -63,6 +64,7 @@ module VpsFree::Irc::Bot
             Greeter,
             DokuWiki,
             BlogFeed,
+            KeepNick,
         ]
 
         c.plugins.options = {
@@ -84,6 +86,9 @@ module VpsFree::Irc::Bot
             DokuWiki => opts[:dokuwiki],
             BlogFeed => {
                 url: opts[:blog_feed],
+            },
+            KeepNick => {
+              nick: c.nick,
             },
         }
       end

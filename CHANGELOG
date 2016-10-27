@@ -3,6 +3,7 @@
 - Plugin DokuWiki to monitor recents changes in a wiki
 - Plugin BlogFeed to announce new blog posts
 - URl marker: support and limit redirects, max size and content type
+- Plugin KeepNick renames the bot if its name is changed
 
 * Sat Aug 27 2016 - version 0.1.0
 - Initial release
