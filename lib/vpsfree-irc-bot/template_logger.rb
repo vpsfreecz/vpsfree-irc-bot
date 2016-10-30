@@ -115,7 +115,10 @@ module VpsFree::Irc::Bot
           open
         end
 
-        tz_changed(t) if t.gmt_offset != @opened_at.gmt_offset
+        if t.gmt_offset != @opened_at.gmt_offset
+          tz_changed(t)
+          @opened_at = Time.now
+        end
 
         @handle.write(render(*args))
         @handle.flush
