@@ -5,6 +5,7 @@
 - URL: marker
   - support and limit redirects, max size and content type
   - remove line breaks
+  - show target URL only if it differs from the input (when it was redirected)
 - Plugin KeepNick renames the bot if its name is changed
 - TemplateLogger: fix time zone transition
 - DokuWiki: support for multiple wikis

@@ -19,8 +19,9 @@ module VpsFree::Irc::Bot
           max_size: config[:max_size] || 10*1024*1024,
       )
       doc = Nokogiri::HTML(response)
-      
-      reply(m, "Page title: #{title(doc)} (#{url})")
+    
+      reply(m, "Page title: #{title(doc)}")
+      reply(m, "Redirected to: #{url}") if url.strip != $1.strip
 
     rescue FetchError => e
       reply(m, e.message)
