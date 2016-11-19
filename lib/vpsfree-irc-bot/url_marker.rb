@@ -20,7 +20,7 @@ module VpsFree::Irc::Bot
       )
       doc = Nokogiri::HTML(response)
       
-      reply(m, "Page title: #{doc.xpath('//title').text.strip[0..255]} (#{url})")
+      reply(m, "Page title: #{title(doc)} (#{url})")
 
     rescue FetchError => e
       reply(m, e.message)
@@ -106,6 +106,10 @@ module VpsFree::Irc::Bot
       end
 
       "#{n} bytes"
+    end
+
+    def title(doc)
+      doc.xpath('//title').text.strip[0..255].gsub!(/\r\n|\n/, ' ')
     end
   end
 end

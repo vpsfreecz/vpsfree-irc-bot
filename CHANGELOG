@@ -2,7 +2,9 @@
   lists. Configuration section :outage_list is renamed to :mailing_lists.
 - Plugin DokuWiki to monitor recents changes in a wiki
 - Plugin BlogFeed to announce new blog posts
-- URl marker: support and limit redirects, max size and content type
+- URL: marker
+  - support and limit redirects, max size and content type
+  - remove line breaks
 - Plugin KeepNick renames the bot if its name is changed
 - TemplateLogger: fix time zone transition
 - DokuWiki: support for multiple wikis
