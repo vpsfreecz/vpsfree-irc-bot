@@ -83,7 +83,9 @@ module VpsFree::Irc::Bot
             },
             UrlMarker => opts[:url_marker],
             MailingLists => opts[:mailing_lists],
-            DokuWiki => opts[:dokuwiki],
+            DokuWiki => {
+                wikis: opts[:dokuwiki],
+            },
             BlogFeed => {
                 url: opts[:blog_feed],
             },

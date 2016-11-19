@@ -23,10 +23,14 @@
 
 # DokuWiki
 # :dokuwiki:
-#     :url: https://kb.vpsfree.cz
-#     :namespace_slash: true
-#     :rewrite: 1
-#     :prefix: '[KB]'
+#     - :url: https://kb.vpsfree.cz
+#       :namespace_slash: true
+#       :rewrite: 1
+#       :prefix: '[KB]'
+#     - :url: https://kb.vpsfree.org
+#       :namespace_slash: true
+#       :rewrite: 1
+#       :prefix: '[KB]'
 
 # Blog feed
 # :blog_feed: https://blog.vpsfree.cz/feed/

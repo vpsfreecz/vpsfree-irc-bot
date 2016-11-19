@@ -5,6 +5,7 @@
 - URl marker: support and limit redirects, max size and content type
 - Plugin KeepNick renames the bot if its name is changed
 - TemplateLogger: fix time zone transition
+- DokuWiki: support for multiple wikis
 
 * Sat Aug 27 2016 - version 0.1.0
 - Initial release
