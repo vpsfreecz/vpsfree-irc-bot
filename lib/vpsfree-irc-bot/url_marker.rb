@@ -110,7 +110,9 @@ module VpsFree::Irc::Bot
     end
 
     def title(doc)
-      doc.xpath('//title').text.strip[0..255].gsub!(/\r\n|\n/, ' ')
+      ret = doc.xpath('//title').text.strip[0..255]
+      ret.gsub!(/\r\n|\n/, ' ')
+      ret
     end
   end
 end
