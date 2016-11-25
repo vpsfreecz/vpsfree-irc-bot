@@ -9,6 +9,7 @@
 - Plugin KeepNick renames the bot if its name is changed
 - TemplateLogger: fix time zone transition
 - DokuWiki: support for multiple wikis
+- Use haveapi-client v0.7
 
 * Sat Aug 27 2016 - version 0.1.0
 - Initial release
