@@ -4,7 +4,6 @@ require 'uri'
 module VpsFree::Irc::Bot
   class DokuWiki
     include Cinch::Plugin
-    include Helpers
 
     INTERVAL = 120
 
@@ -29,6 +28,8 @@ module VpsFree::Irc::Bot
     end
 
     class Wiki
+      include Helpers
+
       attr_reader :bot, :config
 
       def initialize(bot, opts)
@@ -146,7 +147,6 @@ module VpsFree::Irc::Bot
           log_send(channel, (config[:prefix] || '[DokuWiki]')+' '+msg)
         end
       end
-
     end
   end
 end
