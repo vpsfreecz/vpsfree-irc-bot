@@ -105,8 +105,8 @@ module VpsFree::Irc::Bot
         listen_to :channel, method: channel_method
 
         cmd.names.each do |n|
-          match /^!#{n}/, react_on: :channel, use_prefix: false, method: method
-          match /^!?#{n}/, react_on: :private, use_prefix: false, method: method
+          match /^!#{Regexp.escape(n)}(\s|$)/, react_on: :channel, use_prefix: false, method: method
+          match /^!?#{Regexp.escape(n)}(\s|$)/, react_on: :private, use_prefix: false, method: method
         end
 
         define_method(method) do |m|
@@ -115,7 +115,7 @@ module VpsFree::Irc::Bot
 
         define_method(channel_method) do |m|
           cmd.names.each do |n|
-            if /^#{m.bot.nick}(:|,|\s)\s*(!?#{n}(\s|$)[^$]*)/ =~ m.message
+            if /^#{m.bot.nick}(:|,|\s)\s*(!?#{Regexp.escape(n)}(\s|$)[^$]*)/ =~ m.message
               cmd.exec(self, m, $2)
               next
             end
