@@ -1,3 +1,4 @@
+require 'nokogiri'
 require 'xmlrpc/client'
 require 'uri'
 
@@ -86,6 +87,8 @@ module VpsFree::Irc::Bot
             send_channels("Diff: #{diff_url(change['name'], prev, cur)}")
           end
 
+          notify_maintainers(change['name'])
+
         when 'D'  # deleted
           send_channels(
               "Page #{change['name']} deleted by #{change['author']} "+
@@ -140,6 +143,49 @@ module VpsFree::Irc::Bot
             << "&difftype=sidebyside"
         
         url
+      end
+
+      def notify_maintainers(page)
+        maintainers = fetch_maintainers(page).map { |m| m[:irc] }.select do |v|
+          !v.nil? && !v.empty?
+        end
+
+        return if maintainers.empty?
+
+        send_channels("Maintainers: #{maintainers.join(', ')}")
+      end
+
+      def fetch_maintainers(page)
+        html = @server.call('wiki.getPageHTML', page)
+        doc = Nokogiri::HTML(html)
+        ret = []
+        
+        doc.xpath("//ul[contains(@class,'maintainers')]/li/a").each do |link|
+          m = {nick: link.text.strip}
+          
+          if link['data-page-exists'] === '1'
+            m.update(fetch_maintainer(link['data-page-id']))
+          end
+
+          ret << m
+        end
+
+        ret
+      
+      rescue XMLRPC::FaultException => e
+        error("RPC failed: #{e.faultCode} - #{e.faultString}")
+      end
+
+      def fetch_maintainer(m_page)
+        html = @server.call('wiki.getPageHTML', m_page)
+        doc = Nokogiri::HTML(html)
+
+        {
+            irc: doc.xpath("//div[@class='maintainer']//tr[@class='irc']/td").text.strip,
+        }
+      
+      rescue XMLRPC::FaultException => e
+        error("RPC failed: #{e.faultCode} - #{e.faultString}")
       end
 
       def send_channels(msg)
