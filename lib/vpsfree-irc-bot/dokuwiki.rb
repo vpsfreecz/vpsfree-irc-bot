@@ -44,7 +44,7 @@ module VpsFree::Irc::Bot
         @server = XMLRPC::Client.new_from_uri(@url)
 
         ret = @server.call('wiki.getRecentChanges', @since)
-        ret.each { |change| handle_change(change) }
+        ret.each { |change| handle_change(change) } unless State.get.muted?
 
         @since = Time.now.to_i unless ret.empty?
 
