@@ -12,7 +12,12 @@ module VpsFree::Irc::Bot
         logger = bot.plugins.detect { |p| p.is_a?(ChannelLog) }
       end
 
-      channel.send(msg)
+      if type == :me
+        channel.action(msg)
+
+      else
+        channel.send(msg)
+      end
 
       t = Time.now
       msg.split("\n").each do |line|
@@ -24,7 +29,7 @@ module VpsFree::Irc::Bot
       end
     end
 
-    # @param channel [Cinch::Message]
+    # @param m [Cinch::Message]
     # @param msg [String]
     def reply(m, msg)
       if m.target.is_a?(Cinch::Channel)
@@ -32,6 +37,17 @@ module VpsFree::Irc::Bot
 
       else
         m.reply(msg)
+      end
+    end
+
+    # @param m [Cinch::Message]
+    # @param msg [String]
+    def reply_action(m, msg)
+      if m.target.is_a?(Cinch::Channel)
+        log_send(m.target, msg, :me)
+
+      else
+        m.target.action(msg)
       end
     end
   end

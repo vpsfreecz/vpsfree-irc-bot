@@ -40,7 +40,12 @@ module VpsFree::Irc::Bot
 
       case type
       when :me
-        opts[:status] = m.message['ACTION'.size + 2..-2]
+        if m.message.start_with?("\u0001")
+          opts[:status] = m.message['ACTION'.size + 2..-2]
+
+        else
+          opts[:status] = m.message
+        end
 
       when :join
         opts[:event] = 'has joined'
