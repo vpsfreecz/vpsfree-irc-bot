@@ -95,7 +95,7 @@ module VpsFree::Irc::Bot
     end
     
     def send_channels(msg)
-      bot.channels.each { |c| log_send(c, msg) }
+      bot.channels.each { |c| log_mutable_send(c, msg) }
     end
   end
 end

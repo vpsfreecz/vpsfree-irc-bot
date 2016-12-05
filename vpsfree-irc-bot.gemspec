@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'json'
   spec.add_runtime_dependency 'reverse_markdown'
   spec.add_runtime_dependency 'mail'
+  spec.add_runtime_dependency 'chronic_duration'
 end

@@ -20,7 +20,7 @@ module VpsFree::Irc::Bot
 
       events.each do |e|
         bot.channels.each do |channel|
-          log_send(
+          log_mutable_send(
               channel,
               "News from vpsAdmin: "+
               "[#{Time.at(e[:timestamp]).strftime('%Y-%m-%d %H:%M')}] "+

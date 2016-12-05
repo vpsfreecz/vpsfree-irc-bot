@@ -6,6 +6,7 @@ module VpsFree
   end
 end
 
+require_relative 'vpsfree-irc-bot/state'
 require_relative 'vpsfree-irc-bot/helpers'
 require_relative 'vpsfree-irc-bot/multi_line'
 require_relative 'vpsfree-irc-bot/day_change'
@@ -28,6 +29,7 @@ require_relative 'vpsfree-irc-bot/greeter'
 require_relative 'vpsfree-irc-bot/dokuwiki'
 require_relative 'vpsfree-irc-bot/blog_feed'
 require_relative 'vpsfree-irc-bot/keep_nick'
+require_relative 'vpsfree-irc-bot/mute'
 require_relative 'vpsfree-irc-bot/help'
 require_relative 'vpsfree-irc-bot/version'
 
@@ -65,6 +67,7 @@ module VpsFree::Irc::Bot
             DokuWiki,
             BlogFeed,
             KeepNick,
+            Mute,
         ]
 
         c.plugins.options = {

@@ -30,7 +30,7 @@ module VpsFree::Irc::Bot
 
       articles.reverse_each do |a|
         bot.channels.each do |channel|
-          log_send(
+          log_mutable_send(
               channel,
               "[blog] #{a[:title]} by #{a[:author]}\n"+
               "[blog] #{a[:link]}"

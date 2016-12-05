@@ -1,4 +1,5 @@
 - Support for commands with same prefixes
+- Add plugin for muting the bot, affects dokuwiki, mailing lists, web news and blog RSS
 
 * Fri Nov 25 2016 - version 0.2.0
 - Plugin OutageReport replaced by plugin MailingLists which can check multiple

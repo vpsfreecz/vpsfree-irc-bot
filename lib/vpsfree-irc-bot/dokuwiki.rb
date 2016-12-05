@@ -144,7 +144,7 @@ module VpsFree::Irc::Bot
 
       def send_channels(msg)
         bot.channels.each do |channel|
-          log_send(channel, (config[:prefix] || '[DokuWiki]')+' '+msg)
+          log_mutable_send(channel, (config[:prefix] || '[DokuWiki]')+' '+msg)
         end
       end
     end

@@ -29,6 +29,14 @@ module VpsFree::Irc::Bot
       end
     end
 
+    # Same arguments as for {#log_send}, except it does nothing if the bot
+    # is muted.
+    def log_mutable_send(*args)
+      return if State.get.muted?
+
+      log_send(*args)
+    end
+
     # @param m [Cinch::Message]
     # @param msg [String]
     def reply(m, msg)
