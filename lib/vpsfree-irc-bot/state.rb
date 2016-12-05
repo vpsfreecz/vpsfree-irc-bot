@@ -26,22 +26,27 @@ module VpsFree::Irc::Bot
     end
 
     def muted?
-      sync do
-        if @muted_until
-          @muted_until = nil if (@muted_until) < Time.now
-        end
-
-        @muted_until ? true : false
-      end
+      sync { get_muted_until ? true : false }
     end
 
     def muted_until
-      sync { @muted_until && @muted_until.clone }
+      sync do
+        muted = get_muted_until
+        muted && muted.clone
+      end
     end
 
     protected
     def sync
       @mutex.synchronize { yield }
+    end
+
+    def get_muted_until
+      if @muted_until
+        @muted_until = nil if (@muted_until) < Time.now
+      end
+
+      @muted_until
     end
   end
 end
