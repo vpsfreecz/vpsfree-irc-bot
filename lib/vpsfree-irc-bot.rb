@@ -8,6 +8,7 @@ end
 
 require_relative 'vpsfree-irc-bot/state'
 require_relative 'vpsfree-irc-bot/helpers'
+require_relative 'vpsfree-irc-bot/api'
 require_relative 'vpsfree-irc-bot/multi_line'
 require_relative 'vpsfree-irc-bot/day_change'
 require_relative 'vpsfree-irc-bot/command'

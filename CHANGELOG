@@ -1,3 +1,5 @@
+- API support has been moved to a standalone module
+
 * Wed Feb 01 2017 - version 0.3.0
 - Support for commands with same prefixes
 - Add plugin for muting the bot, affects dokuwiki, mailing lists, web news and blog RSS

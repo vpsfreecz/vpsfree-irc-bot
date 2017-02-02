@@ -1,33 +1,12 @@
-require 'thread'
-require 'haveapi/client'
-
 module VpsFree::Irc::Bot
   class Cluster
     include Cinch::Plugin
     include Command
     include Helpers
-    
-    set required_options: %i(api_url)
-
-    listen_to :connect, method: :connect
+    include Api
 
     command :status do
       desc 'show cluster status'
-    end
-
-    def initialize(*args)
-      super
-      @mutex = Mutex.new
-    end
-
-    def connect(m)
-      @mutex.synchronize do
-        @api = ::HaveAPI::Client::Client.new(
-            config[:api_url],
-            identity: "vpsfree-irc-bot v#{VERSION}"
-        )
-        @api.setup
-      end
     end
     
     def cmd_status(m, channel)
@@ -61,11 +40,6 @@ module VpsFree::Irc::Bot
           )
         end
       end
-    end
-
-    protected
-    def client
-      @mutex.synchronize { yield(@api) }
     end
   end
 end
