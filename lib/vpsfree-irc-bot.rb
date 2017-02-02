@@ -76,7 +76,7 @@ module VpsFree::Irc::Bot
                 api_url: opts[:api_url],
             },
             WebEventLog => {
-                webui_url: opts[:webui_url],
+                api_url: opts[:api_url],
             },
             ChannelLog => {
                 archive_url: opts[:archive_url],

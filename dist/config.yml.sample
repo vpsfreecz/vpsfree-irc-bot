@@ -9,9 +9,6 @@
 # URL to web archive
 :archive_url: http://irc.example.com
 
-# URL to vpsAdmin-webui for WebEventLog
-# :webui_url: 'https://vpsadmin.vpsfree.cz'
-
 # Configuration of plugin MailingLists
 # :mailing_lists:
 #     :server: pop3.example.com
