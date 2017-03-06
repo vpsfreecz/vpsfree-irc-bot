@@ -41,16 +41,13 @@ module VpsFree::Irc::Bot
 
     def outage_list(list, m, url)
       notices = [
-          "#{list.prefix} Neplanovany vypadek / Unplanned outage",
-          "#{list.prefix} Planovany vypadek / Planned outage",
+          "#{list.prefix} Neplánovaný výpadek / Unplanned outage",
+          "#{list.prefix} Plánovaný výpadek / Planned outage",
       ]
       
-      if notices.detect { |s| m.subject.start_with?(s) }
-        outage_notice(m, url)
-
-      else
-        report_message(list, m, url)
-      end
+      return if notices.detect { |s| m.subject.start_with?(s) }
+    
+      report_message(list, m, url)
     end
 
     def report_message(list, m, url)
@@ -75,25 +72,6 @@ module VpsFree::Irc::Bot
     end
 
     protected
-    # Notice is an automated message with defined format.
-    def outage_notice(m, url)
-      start = '-----BEGIN BASE64 ENCODED PARSEABLE JSON-----'
-      ending = '-----END BASE64 ENCODED PARSEABLE JSON-----'
-
-      body = m.body.decoded
-      msg = body[ body.index(start)+start.size .. body.index(ending)-1 ].strip
-      data = JSON.parse(Base64.decode64(msg), symbolize_names: true)
-
-      send_channels(
-          "New #{data[:type_en].downcase} outage reported at #{data[:date]}\n"+
-          "        Nodes: #{data[:servers].join(', ')}\n"+
-          "     Duration: #{data[:duration]} minutes\n"+
-          "       Reason: #{data[:reason_cs]}\n"+
-          " Performed by: #{data[:performed_by]}\n"+
-          "#{url}"
-      )
-    end
-    
     def send_channels(msg)
       bot.channels.each { |c| log_mutable_send(c, msg) }
     end

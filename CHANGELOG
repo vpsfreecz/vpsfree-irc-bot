@@ -1,3 +1,5 @@
+- Fetch outage reports from the API
+
 * Mon Mar 06 2017 - version 0.4.0
 - API support has been moved to a standalone module
 - WebEventLog: use the API to fetch news

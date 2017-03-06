@@ -30,6 +30,7 @@ require_relative 'vpsfree-irc-bot/greeter'
 require_relative 'vpsfree-irc-bot/dokuwiki'
 require_relative 'vpsfree-irc-bot/blog_feed'
 require_relative 'vpsfree-irc-bot/keep_nick'
+require_relative 'vpsfree-irc-bot/outage_reports'
 require_relative 'vpsfree-irc-bot/mute'
 require_relative 'vpsfree-irc-bot/help'
 require_relative 'vpsfree-irc-bot/version'
@@ -69,6 +70,7 @@ module VpsFree::Irc::Bot
             BlogFeed,
             KeepNick,
             Mute,
+            OutageReports,
         ]
 
         c.plugins.options = {
@@ -94,7 +96,10 @@ module VpsFree::Irc::Bot
                 url: opts[:blog_feed],
             },
             KeepNick => {
-              nick: c.nick,
+                nick: c.nick,
+            },
+            OutageReports => {
+                api_url: opts[:api_url],
             },
         }
       end
