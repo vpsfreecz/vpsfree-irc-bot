@@ -6,20 +6,31 @@ module VpsFree::Irc::Bot
     include Helpers
     include Api
 
+    REMINDERS = [
+        [1*60, 'a minute'],
+        [10*60, '10 minutes'],
+        [1*60*60, 'an hour'],
+        [6*60*60, 'six hours'],
+    ]
+
     timer 10, method: :check, threaded: false
+    timer 30, method: :remind, threaded: false
 
     def check
-      @outages ||= {}
+      @store ||= FileStorage.new(bot.config.server, :outages)
       @since ||= Time.now
 
       client do |api|
         @webui ||= api.system_config.show('webui', 'base_url').value
 
-        api.outage.list(active: true, since: @since).each do |outage|
+        api.outage.list(state: :announced, since: @since - 3600).each do |outage|
+          next if @store[outage.id]
+
+          @store[outage.id] = outage_to_hash(outage)
           report_outage(outage)
         end
 
-        api.outage_update.list(since: @since).each do |update|
+        api.outage_update.list(since: @since, meta: {includes: 'outage'}).each do |update|
           report_update(update)
         end
 
@@ -28,6 +39,23 @@ module VpsFree::Irc::Bot
         
     rescue => e
       exception(e)
+    end
+
+    def remind
+      now = Time.now.to_i
+
+      @store.each do |id, outage|
+        REMINDERS.each do |t, msg|
+          delta = outage[:begins_at] - now
+
+          next if delta > t
+          break if outage[:reminded] == t || (t - delta) > 60
+        
+          send_channels("Outage ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
+          outage[:reminded] = t
+          break
+        end
+      end
     end
 
     protected
@@ -74,6 +102,13 @@ New #{outage.planned ? 'planned' : 'unplanned'} outage ##{outage.id} reported at
           changes << "Outage type: #{v}"
         end
       end
+     
+      if update.outage.state == 'announced'
+        @store[update.outage_id] = outage_to_hash(update.outage)
+
+      else
+        @store.delete(update.outage_id)
+      end
 
       send_channels("Update of outage ##{update.outage_id} at #{fmt_date(update.created_at)}")
       changes.each { |v| send_channels(v) }
@@ -86,8 +121,12 @@ New #{outage.planned ? 'planned' : 'unplanned'} outage ##{outage.id} reported at
       send_channels(outage_url(update.outage_id))
     end
 
+    def get_date(v)
+      DateTime.iso8601(v).to_time.localtime
+    end
+
     def fmt_date(v)
-      DateTime.iso8601(v).to_time.localtime.strftime('%Y-%m-%d %H:%M %Z')
+      (v.is_a?(Integer) ? Time.at(v) : get_date(v)).strftime('%Y-%m-%d %H:%M %Z')
     end
 
     def outage_url(id)
@@ -96,6 +135,13 @@ New #{outage.planned ? 'planned' : 'unplanned'} outage ##{outage.id} reported at
     
     def send_channels(msg)
       bot.channels.each { |c| log_mutable_send(c, msg) }
+    end
+
+    def outage_to_hash(outage)
+      {
+          planned: outage.planned,
+          begins_at: get_date(outage.begins_at).to_i,
+      }
     end
   end
 end
