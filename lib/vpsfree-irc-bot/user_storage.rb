@@ -1,7 +1,7 @@
 require 'thread'
 
 module VpsFree::Irc::Bot
-  class UserStorage
+  class UserStorage < Persistence
     def self.defaults(hash = nil)
       @defaults ||= {}
 
@@ -23,15 +23,10 @@ module VpsFree::Irc::Bot
 
     private
     def initialize(server)
-      @server = server
-      @mutex = Mutex.new
       @channels = {}
       @changed = {}
-
+      super(server)
       FileUtils.mkpath(save_dir)
-
-      load
-      persistence
     end
 
     public
@@ -109,15 +104,6 @@ module VpsFree::Irc::Bot
       data
     end
 
-    def do_sync(&block)
-      if @mutex.owned?
-        block.call
-
-      else
-        @mutex.synchronize { block.call }
-      end
-    end
-
     def load
       return unless Dir.exists?(save_dir)
 
@@ -153,7 +139,7 @@ module VpsFree::Irc::Bot
     end
 
     def save_dir
-      File.join(Dir.home, '.vpsfree-irc-bot', @server, 'channels')
+      File.join(super, 'channels')
     end
   end
 end
