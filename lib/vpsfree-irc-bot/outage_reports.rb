@@ -15,7 +15,7 @@ module VpsFree::Irc::Bot
     ]
 
     timer 0, method: :setup, threaded: false, shots: 1
-    timer 10, method: :check, threaded: false
+    timer 60, method: :check, threaded: false
     timer 30, method: :remind, threaded: false
 
     command :outage do
@@ -32,7 +32,7 @@ module VpsFree::Irc::Bot
 
     def check
       client do |api|
-        api.outage.list(state: :announced, since: @since - 3600).each do |outage|
+        api.outage.list(state: :announced, since: @since).each do |outage|
           next if @store[outage.id]
 
           @store[outage.id] = outage_to_hash(outage)
