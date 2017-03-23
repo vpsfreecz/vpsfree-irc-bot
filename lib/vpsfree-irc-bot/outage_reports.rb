@@ -5,6 +5,7 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Helpers
     include Api
+    include Command
 
     REMINDERS = [
         [1*60, 'a minute'],
@@ -13,16 +14,24 @@ module VpsFree::Irc::Bot
         [6*60*60, 'six hours'],
     ]
 
+    timer 0, method: :setup, threaded: false, shots: 1
     timer 10, method: :check, threaded: false
     timer 30, method: :remind, threaded: false
 
+    command :outage do
+      desc 'show current/selected outage'
+      arg :id, required: false
+      aliases :outage?, :issue, :issue?
+    end
+
+    def setup
+      @webui = client { |api| api.system_config.show('webui', 'base_url').value }
+      @store = FileStorage.new(bot.config.server, :outages)
+      @since = Time.now
+    end
+
     def check
-      @store ||= FileStorage.new(bot.config.server, :outages)
-      @since ||= Time.now
-
       client do |api|
-        @webui ||= api.system_config.show('webui', 'base_url').value
-
         api.outage.list(state: :announced, since: @since - 3600).each do |outage|
           next if @store[outage.id]
 
@@ -55,6 +64,38 @@ module VpsFree::Irc::Bot
           outage[:reminded] = t
           break
         end
+      end
+    end
+
+    def cmd_outage(m, channel, raw_id = nil)
+      # Show selected outage
+      if raw_id
+        id = raw_id.to_i
+
+        client do |api|
+          begin
+            describe_outage(
+                id,
+                outage_to_hash(api.outage.show(id)),
+                m
+            )
+
+          rescue HaveAPI::Client::ActionFailed => e
+            reply(m, "Outage '#{id}' not found")
+          end
+        end
+
+        return
+      end
+
+      # Show current outages
+      return reply(m, 'No outage reported') if @store.empty?
+      
+      now = Time.now.to_i
+
+      @store.each do |id, outage|
+        next if outage[:begins_at] > Time.now.to_i
+        describe_outage(id, outage, m)
       end
     end
 
@@ -141,7 +182,25 @@ New #{outage.planned ? 'planned' : 'unplanned'} outage ##{outage.id} reported at
       {
           planned: outage.planned,
           begins_at: get_date(outage.begins_at).to_i,
+          duration: outage.duration,
+          type: outage.type,
+          summary: outage.en_summary,
+          entities: outage.entity.list.map { |v| v.label },
+          handlers: outage.handler.list.map { |v| v.full_name },
       }
+    end
+
+    def describe_outage(id, outage, m)
+      reply(m, <<-END
+#{outage[:planned] ? 'Planned' : 'Unplanned'} outage ##{id} reported at #{fmt_date(outage[:begins_at])}
+     Systems: #{outage[:entities].join(', ')}
+ Outage type: #{outage[:type]}
+    Duration: #{outage[:duration]} minutes
+      Reason: #{outage[:summary]}
+  Handled by: #{outage[:handlers].join(', ')}
+#{outage_url(id)}
+            END
+      )
     end
   end
 end
