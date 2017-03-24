@@ -32,18 +32,20 @@ module VpsFree::Irc::Bot
 
     def check
       client do |api|
-        api.outage.list(state: :announced, since: @since).each do |outage|
+        outages = api.outage.list(state: :announced, since: @since)
+        outages.each do |outage|
           next if @store[outage.id]
 
           @store[outage.id] = outage_to_hash(outage)
           report_outage(outage)
         end
 
-        api.outage_update.list(since: @since, meta: {includes: 'outage'}).each do |update|
+        updates = api.outage_update.list(since: @since, meta: {includes: 'outage'})
+        updates.each do |update|
           report_update(update)
         end
 
-        @since = Time.now
+        @since = Time.now if !outages.empty? || !updates.empty?
       end
         
     rescue => e
