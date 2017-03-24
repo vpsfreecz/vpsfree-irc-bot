@@ -8,6 +8,7 @@ module VpsFree::Irc::Bot
     include Command
 
     REMINDERS = [
+        [0, 'Ladies and gentlemen, we are going DOWN!'],
         [1*60, 'a minute'],
         [10*60, '10 minutes'],
         [30*60, '30 minutes'],
@@ -74,8 +75,14 @@ module VpsFree::Irc::Bot
 
           next if delta > t
           break if outage[:reminded] == t || (t - delta) > 60
-        
-          send_channels("Outage ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
+       
+          if t == 0
+            send_channels("Outage ##{id} has begun: #{msg}")
+
+          else
+            send_channels("Outage ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
+          end
+
           outage[:reminded] = t
           break
         end
