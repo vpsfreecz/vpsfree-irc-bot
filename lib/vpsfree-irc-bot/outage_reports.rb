@@ -28,6 +28,19 @@ module VpsFree::Irc::Bot
       @webui = client { |api| api.system_config.show('webui', 'base_url').value }
       @store = FileStorage.new(bot.config.server, :outages)
       @since = Time.now
+
+      client do |api|
+        # Refresh info about outages
+        outages = api.outage.list(state: :announced)
+        outages.each do |outage|
+          @store[outage.id] = outage_to_hash(outage)
+        end
+
+        # Remove closed/cancelled outages
+        @store.delete_if do |id, outage|
+          !outages.detect { |o| o.id == id }
+        end
+      end
     end
 
     def check

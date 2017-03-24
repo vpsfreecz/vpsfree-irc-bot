@@ -53,6 +53,13 @@ module VpsFree::Irc::Bot
       end
     end
 
+    def delete_if(&block)
+      do_sync do
+        @changed = true
+        @data.delete_if(&block)
+      end
+    end
+
     include Enumerable
     
     protected
