@@ -59,8 +59,12 @@ module VpsFree::Irc::Bot
         @data.delete_if(&block)
       end
     end
-
+    
     include Enumerable
+
+    def select(&block)
+      do_sync { @data.select(&block) }
+    end
     
     protected
     def load

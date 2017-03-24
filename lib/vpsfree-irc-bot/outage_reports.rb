@@ -108,8 +108,10 @@ module VpsFree::Irc::Bot
       
       now = Time.now.to_i
 
-      @store.each do |id, outage|
-        next if outage[:begins_at] > Time.now.to_i
+      relevant = @store.select { |id, outage| outage[:begins_at] <= Time.now.to_i }
+      return reply(m, 'No relevant outage reported currently') if relevant.empty?
+
+      relevant.each do |id, outage|
         describe_outage(id, outage, m)
       end
     end
