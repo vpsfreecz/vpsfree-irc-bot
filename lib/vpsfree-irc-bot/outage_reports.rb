@@ -15,7 +15,6 @@ module VpsFree::Irc::Bot
         [6*60*60, 'six hours'],
     ]
 
-    timer 0, method: :setup, threaded: false, shots: 1
     timer 60, method: :check, threaded: false
     timer 30, method: :remind, threaded: false
 
@@ -25,7 +24,7 @@ module VpsFree::Irc::Bot
       aliases :outage?, :issue, :issue?
     end
 
-    def setup
+    def post_api_setup
       @webui = client { |api| api.system_config.show('webui', 'base_url').value }
       @store = FileStorage.new(bot.config.server, :outages)
       @since = Time.now

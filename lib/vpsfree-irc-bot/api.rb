@@ -10,6 +10,7 @@ module VpsFree::Irc::Bot
           identity: "vpsfree-irc-bot v#{VERSION}"
       )
       @api.setup
+      post_api_setup if respond_to?(:post_api_setup)
     end
 
     def client
