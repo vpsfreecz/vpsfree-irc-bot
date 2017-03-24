@@ -54,7 +54,7 @@ module VpsFree::Irc::Bot
       m.channel.users.each_key do |user|
         safe_nick = Regexp.escape(user.nick)
 
-        if /^#{safe_nick}[\s|:|,]\s*(\+\d+|-\d+)/ =~ m.message
+        if /^#{safe_nick}[\s|:|,]\s*(\+\d+|-\d+)(\s*$|,\s|$)/ =~ m.message
           # karma +- n
           n = $1.to_i
 
