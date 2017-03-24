@@ -10,6 +10,7 @@ module VpsFree::Irc::Bot
     REMINDERS = [
         [1*60, 'a minute'],
         [10*60, '10 minutes'],
+        [30*60, '30 minutes'],
         [1*60*60, 'an hour'],
         [6*60*60, 'six hours'],
     ]
