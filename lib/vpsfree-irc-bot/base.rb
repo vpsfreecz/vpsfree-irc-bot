@@ -45,11 +45,15 @@ vpsFree.cz IRC Bot v#{VERSION}
 ====================#{'=' * VERSION.size}
   
 END
-        help << "Channel commands:\n"
-        help.commands(:channel)
+
+        if channel
+          help << "Channel commands:\n"
+          help.commands(:channel)
         
-        help << "\nPrivate commands:\n"
-        help.commands(:private)
+        else
+          help << "Private commands:\n"
+          help.commands(:private)
+        end
 
         help << "\nUse !help <command> to get help for a specific command."
       end

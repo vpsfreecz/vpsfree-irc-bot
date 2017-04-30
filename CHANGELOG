@@ -2,6 +2,7 @@
 - Outage report reminders
 - New command '!outage' to query info about current/selected outage
 - Improve karma regex, so that it has less false-positives
+- Help shows only one variant: either channel or private commands
 
 * Mon Mar 06 2017 - version 0.4.0
 - API support has been moved to a standalone module
