@@ -36,3 +36,7 @@
 # :url_marker:
 #     :max_redirects: 5
 #     :max_size: 10485760
+
+# Weather forecast (openweathermap.org)
+# :forecast:
+#     :api_key: your_key
