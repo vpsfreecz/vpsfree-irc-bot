@@ -10,6 +10,7 @@ module VpsFree::Irc::Bot
       require_channel = @bot.channel_list.count > 1
 
       @cmds.each do |cmd|
+        next if cmd.help === false
         self << " "*4 + cmd_line(cmd, mode, require_channel) + "\n"
       end
     end

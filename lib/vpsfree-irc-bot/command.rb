@@ -8,6 +8,7 @@ module VpsFree::Irc::Bot
       def initialize(name)
         @name = name
         @channel = true
+        @help = true
         @args = []
         @aliases = []
       end
@@ -31,6 +32,14 @@ module VpsFree::Irc::Bot
           @channel = v
         end
       end
+      
+      def help(v = nil)
+        if v.nil?
+          @help
+        else
+          @help = v
+        end
+      end
 
       def arg(name, required: true)
         @args << Arg.new(name, required)
@@ -47,7 +56,13 @@ module VpsFree::Irc::Bot
       def exec(plugin, m, msg = nil)
         Command::Counter.increment
         args = parse_args(m, msg || m.message)
-        plugin.send(:"cmd_#{@name}", *args) if args
+        return unless args
+
+        if VpsFree::Irc::Bot::EasterEggs.is_time? \
+           && VpsFree::Irc::Bot::EasterEggs.cmd_exec(@name, *args)
+        else
+          plugin.send(:"cmd_#{@name}", *args)
+        end
       end
 
       def parse_args(m, msg)
