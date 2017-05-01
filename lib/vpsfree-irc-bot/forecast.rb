@@ -11,6 +11,7 @@ module VpsFree::Irc::Bot
       arg :city, required: true
       desc 'weather forecast'
       channel false
+      help false
     end
 
     class << self
