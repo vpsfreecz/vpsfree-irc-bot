@@ -29,7 +29,7 @@ module VpsFree::Irc::Bot
         data = get(city)
 
         ret = "#{data[:name]} (#{data[:sys][:country]}): "
-        ret << "#{data[:weather].first[:description]}, "
+        ret << "#{data[:weather].map { |v| v[:description] }.join(', ')}; "
         ret << "#{(data[:main][:temp] - 273.15).round(1)} °C, "
         ret << "wind #{data[:wind][:speed]} m/s (#{wind_dir(data[:wind][:deg])}), "
         ret << "humidity #{data[:main][:humidity]} %, "
