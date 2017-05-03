@@ -35,6 +35,7 @@ require_relative 'vpsfree-irc-bot/keep_nick'
 require_relative 'vpsfree-irc-bot/outage_reports'
 require_relative 'vpsfree-irc-bot/mute'
 require_relative 'vpsfree-irc-bot/forecast'
+require_relative 'vpsfree-irc-bot/easter_eggs'
 require_relative 'vpsfree-irc-bot/help'
 require_relative 'vpsfree-irc-bot/version'
 
@@ -75,6 +76,7 @@ module VpsFree::Irc::Bot
             Mute,
             OutageReports,
             Forecast,
+            EasterEggs,
         ]
 
         c.plugins.options = {
@@ -106,6 +108,9 @@ module VpsFree::Irc::Bot
                 api_url: opts[:api_url],
             },
             Forecast => opts[:forecast],
+            EasterEggs => {
+                api_url: opts[:api_url],
+            },
         }
       end
     end
