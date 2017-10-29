@@ -155,7 +155,7 @@ module VpsFree::Irc::Bot
       )
     end
 
-    def tz_changed
+    def tz_changed(t)
 
     end
 
