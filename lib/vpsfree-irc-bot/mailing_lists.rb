@@ -19,7 +19,7 @@ module VpsFree::Irc::Bot
     include MailMan
     include Helpers
 
-    set required_options: %i(server port username password)
+    set required_options: %i(server port username password channels)
     
     mailman do |m|
       m.server = {
@@ -73,7 +73,10 @@ module VpsFree::Irc::Bot
 
     protected
     def send_channels(msg)
-      bot.channels.each { |c| log_mutable_send(c, msg) }
+      bot.channels.each do |channel|
+        next unless config[:channels].include?(channel.name)
+        log_mutable_send(channel, msg)
+      end
     end
   end
 end
