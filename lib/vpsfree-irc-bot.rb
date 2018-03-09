@@ -98,9 +98,7 @@ module VpsFree::Irc::Bot
             DokuWiki => {
                 wikis: opts[:dokuwiki],
             },
-            BlogFeed => {
-                url: opts[:blog_feed],
-            },
+            BlogFeed => opts[:blog],
             KeepNick => {
                 nick: c.nick,
             },

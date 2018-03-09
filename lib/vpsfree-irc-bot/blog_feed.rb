@@ -7,6 +7,7 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Helpers
 
+    set required_options: %i(url channels)
     timer 120, method: :check, threaded: false
 
     def check
@@ -30,6 +31,7 @@ module VpsFree::Irc::Bot
 
       articles.reverse_each do |a|
         bot.channels.each do |channel|
+          next unless config[:channels].include?(channel.name)
           log_mutable_send(
               channel,
               "[blog] #{a[:title]} by #{a[:author]}\n"+
