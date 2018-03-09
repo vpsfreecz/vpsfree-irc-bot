@@ -18,6 +18,10 @@
 #     :enable_ssl: true
 #     :archive_dir: /var/lib/mailman/archives/public
 
+# Outage reports
+# :outage_reports:
+#     :channels: '#channel1'
+
 # DokuWiki
 # :dokuwiki:
 #     - :url: https://kb.vpsfree.cz

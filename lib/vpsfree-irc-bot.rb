@@ -104,6 +104,7 @@ module VpsFree::Irc::Bot
             },
             OutageReports => {
                 api_url: opts[:api_url],
+                channels: opts[:outage_reports][:channels],
             },
             Forecast => opts[:forecast],
             EasterEggs => {

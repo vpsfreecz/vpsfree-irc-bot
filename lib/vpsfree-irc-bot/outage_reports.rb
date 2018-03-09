@@ -16,6 +16,8 @@ module VpsFree::Irc::Bot
         [6*60*60, 'six hours'],
     ]
 
+    set required_options: %i(api_url channels)
+
     timer 60, method: :check, threaded: false
     timer 30, method: :remind, threaded: false
 
@@ -199,7 +201,10 @@ New #{outage.planned ? 'planned' : 'unplanned'} outage ##{outage.id} reported at
     end
     
     def send_channels(msg)
-      bot.channels.each { |c| log_mutable_send(c, msg) }
+      bot.channels.each do |c|
+        next unless config[:channels].include?(c.name)
+        log_mutable_send(c, msg)
+      end
     end
 
     def outage_to_hash(outage)

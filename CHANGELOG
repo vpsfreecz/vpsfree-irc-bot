@@ -6,7 +6,7 @@
 - Weather forecasting
 - Easter eggs
 - Fix time zone changing
-- Configure channels for DokuWiki, ML reports and blog feeds
+- Configure channels for DokuWiki, ML reports, blog feeds and outage reports
 
 * Mon Mar 06 2017 - version 0.4.0
 - API support has been moved to a standalone module
