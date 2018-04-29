@@ -11,7 +11,6 @@ module VpsFree::Irc::Bot
       @opts = {
           archive_dst: '.',
           api_url: 'https://api.vpsfree.cz',
-          blog_feed: 'https://blog.vpsfree.cz/feed/',
       }
     end
     
