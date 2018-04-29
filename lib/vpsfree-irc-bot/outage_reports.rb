@@ -128,9 +128,9 @@ module VpsFree::Irc::Bot
     protected
     def report_outage(outage)
       send_channels(<<-END
-New #{outage.planned ? 'planned' : 'unplanned'} outage ##{outage.id} reported at #{fmt_date(outage.begins_at)}
+New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reported at #{fmt_date(outage.begins_at)}
      Systems: #{outage.entity.list.map { |v| v.label }.join(', ')}
- Outage type: #{outage.type}
+        Type: #{outage.type}
     Duration: #{outage.duration} minutes
       Reason: #{outage.en_summary}
   Handled by: #{outage.handler.list.map { |v| v.full_name }.join(', ')}
@@ -221,7 +221,7 @@ New #{outage.planned ? 'planned' : 'unplanned'} outage ##{outage.id} reported at
 
     def describe_outage(id, outage, m)
       reply(m, <<-END
-#{outage[:planned] ? 'Planned' : 'Unplanned'} outage ##{id} reported at #{fmt_date(outage[:begins_at])}
+#{outage[:planned] ? 'Scheduled maintenance' : 'Outage'} ##{id} reported at #{fmt_date(outage[:begins_at])}
      Systems: #{outage[:entities].join(', ')}
  Outage type: #{outage[:type]}
     Duration: #{outage[:duration]} minutes

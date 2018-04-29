@@ -41,8 +41,8 @@ module VpsFree::Irc::Bot
 
     def outage_list(list, m, url)
       notices = [
-          "#{list.prefix} Neplánovaný výpadek / Unplanned outage",
-          "#{list.prefix} Plánovaný výpadek / Planned outage",
+          "#{list.prefix} Výpadek / Outage",
+          "#{list.prefix} Odstávka / Maintenance",
       ]
       
       return if notices.detect { |s| m.subject.start_with?(s) }
