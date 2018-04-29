@@ -10,6 +10,7 @@ module VpsFree::Irc::Bot
     include Api
 
     timer 60, method: :check, threaded: false
+    set required_options: %i(channels)
 
     def check
       client do |api|
@@ -19,6 +20,7 @@ module VpsFree::Irc::Bot
 
         events.each do |e|
           bot.channels.each do |channel|
+            next unless config[:channels].include?(channel.name)
             log_mutable_send(
                 channel,
                 "News from vpsAdmin: "+

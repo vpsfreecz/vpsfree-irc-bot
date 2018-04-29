@@ -38,6 +38,10 @@
 #     :url: https://blog.vpsfree.cz/feed/
 #     :channels: '#channel1'
 
+# Web event log
+# :web_event_log:
+#     :channels: '#channel1'
+
 # URL marker
 # :url_marker:
 #     :max_redirects: 5

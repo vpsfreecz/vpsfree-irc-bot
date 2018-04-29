@@ -85,6 +85,7 @@ module VpsFree::Irc::Bot
             },
             WebEventLog => {
                 api_url: opts[:api_url],
+                channels: opts[:web_event_log][:channels],
             },
             ChannelLog => {
                 archive_url: opts[:archive_url],
