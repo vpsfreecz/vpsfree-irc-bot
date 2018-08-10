@@ -32,6 +32,7 @@ require_relative 'vpsfree-irc-bot/greeter'
 require_relative 'vpsfree-irc-bot/dokuwiki'
 require_relative 'vpsfree-irc-bot/blog_feed'
 require_relative 'vpsfree-irc-bot/keep_nick'
+require_relative 'vpsfree-irc-bot/keep_channels'
 require_relative 'vpsfree-irc-bot/outage_reports'
 require_relative 'vpsfree-irc-bot/mute'
 require_relative 'vpsfree-irc-bot/forecast'
@@ -73,6 +74,7 @@ module VpsFree::Irc::Bot
             DokuWiki,
             BlogFeed,
             KeepNick,
+            KeepChannels,
             Mute,
             OutageReports,
             Forecast,
@@ -102,6 +104,9 @@ module VpsFree::Irc::Bot
             BlogFeed => opts[:blog],
             KeepNick => {
                 nick: c.nick,
+            },
+            KeepChannels => {
+                channels: channels,
             },
             OutageReports => {
                 api_url: opts[:api_url],
