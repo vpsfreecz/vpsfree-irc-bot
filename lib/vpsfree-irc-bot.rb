@@ -36,6 +36,7 @@ require_relative 'vpsfree-irc-bot/keep_channels'
 require_relative 'vpsfree-irc-bot/outage_reports'
 require_relative 'vpsfree-irc-bot/mute'
 require_relative 'vpsfree-irc-bot/forecast'
+require_relative 'vpsfree-irc-bot/github_webhook'
 require_relative 'vpsfree-irc-bot/easter_eggs'
 require_relative 'vpsfree-irc-bot/help'
 require_relative 'vpsfree-irc-bot/version'
@@ -53,6 +54,8 @@ module VpsFree::Irc::Bot
   def self.new(server, channels, opts = {})
     # Initialize storage to avoid later thread collisions
     UserStorage.init(server)
+
+    GitHubWebHook::Server.start(opts[:github_webhook])
 
     Cinch::Bot.new do
       configure do |c|
@@ -79,6 +82,7 @@ module VpsFree::Irc::Bot
           OutageReports,
           Forecast,
           EasterEggs,
+          GitHubWebHook::Announcer,
         ]
 
         c.plugins.options = {
@@ -116,6 +120,9 @@ module VpsFree::Irc::Bot
           EasterEggs => {
             api_url: opts[:api_url],
           },
+          GitHubWebHook::Announcer => {
+            channels: opts[:github_webhook][:channels],
+          },
         }
       end
     end
@@ -124,14 +131,14 @@ module VpsFree::Irc::Bot
   def self.start(*args)
     bot = new(*args)
 
-    exit = Proc.new do
+    do_exit = Proc.new do
       # bot.quit must be executed in a new thread, as it cannot synchronize
       # mutexes in a trap context.
       Thread.new { bot.quit('So long, and thanks for all the fish') }
     end
 
-    Signal.trap('TERM', &exit)
-    Signal.trap('INT', &exit)
+    Signal.trap('TERM', &do_exit)
+    Signal.trap('INT', &do_exit)
     
     DayChange.start
     bot.start

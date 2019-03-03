@@ -50,3 +50,10 @@
 # Weather forecast (openweathermap.org)
 # :forecast:
 #     :api_key: your_key
+
+# GitHub WebHook server
+# :github_webhook:
+#     :host: 127.0.0.1
+#     :port: 8000
+#     :secret: supersecrettoken
+#     :channels: '#channel1'
