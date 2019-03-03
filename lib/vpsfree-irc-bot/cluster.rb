@@ -22,21 +22,21 @@ module VpsFree::Irc::Bot
 
         if maintenance > 0
           reply(
-              m,
-              "Under maintenance: "+
-              nodes.select { |n|
-                n.maintenance_lock != 'no'
-              }.map { |n| n.name }.join(', ')
+            m,
+            "Under maintenance: "+
+            nodes.select { |n|
+              n.maintenance_lock != 'no'
+            }.map { |n| n.name }.join(', ')
           )
         end
         
         if down > 0
           reply(
-              m,
-              "Down: "+
-              nodes.select { |n|
-                !n.attributes[:status] && n.maintenance_lock == 'no'
-              }.map { |n| n.name }.join(', ')
+            m,
+            "Down: "+
+            nodes.select { |n|
+              !n.attributes[:status] && n.maintenance_lock == 'no'
+            }.map { |n| n.name }.join(', ')
           )
         end
       end

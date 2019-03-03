@@ -81,8 +81,8 @@ module VpsFree::Irc::Bot
       muted = State.get.muted_until
 
       reply_action(
-          m,
-          muted ? "is muted until #{muted.iso8601}" : 'is not muted'
+        m,
+        muted ? "is muted until #{muted.iso8601}" : 'is not muted'
       )
     end
   end

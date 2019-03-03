@@ -19,11 +19,11 @@ module VpsFree::Irc::Bot
     end
 
     UserStorage.defaults(
-        messages: 0,
-        karma: {
-            today: {given: 0, taken: 0, received: 0},
-            total: {given: 0, taken: 0, received: 0},
-        },
+      messages: 0,
+      karma: {
+        today: {given: 0, taken: 0, received: 0},
+        total: {given: 0, taken: 0, received: 0},
+      },
     )
 
     def initialize(*_)
@@ -83,10 +83,10 @@ module VpsFree::Irc::Bot
         rank = sorted.index { |name, _| name == m.user.nick }
         
         reply(
-            m,
-            "Your rank is #{rank+1} of #{users.size} users "+
-            "with karma #{sorted[rank][1][:karma][:total][:received]} and "+
-            "#{sorted[rank][1][:messages]} messages"
+          m,
+          "Your rank is #{rank+1} of #{users.size} users "+
+          "with karma #{sorted[rank][1][:karma][:total][:received]} and "+
+          "#{sorted[rank][1][:messages]} messages"
         )
       end
     end

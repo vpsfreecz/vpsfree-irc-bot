@@ -19,8 +19,8 @@ module VpsFree::Irc::Bot
 
       def get(city)
         res = Net::HTTP.get(
-            'api.openweathermap.org',
-            "/data/2.5/weather?q=#{city}&APPID=#{api_key}"
+          'api.openweathermap.org',
+          "/data/2.5/weather?q=#{city}&APPID=#{api_key}"
         )
         JSON.parse(res, symbolize_names: true)
       end

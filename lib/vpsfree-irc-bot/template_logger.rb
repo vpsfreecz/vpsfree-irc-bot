@@ -140,18 +140,18 @@ module VpsFree::Irc::Bot
       to_root = Array.new(@path.count('/'), '..')
 
       render(
-          :header,
-          channel: @channel,
-          time: @opened_at,
-          previous: File.join(
-              *to_root,
-              format_path(@opened_at.to_date.prev_day),
-          ),
-          next: File.join(
-              *to_root,
-              format_path(@opened_at.to_date.next_day),
-          ),
-          root: File.join(*to_root),
+        :header,
+        channel: @channel,
+        time: @opened_at,
+        previous: File.join(
+          *to_root,
+          format_path(@opened_at.to_date.prev_day),
+        ),
+        next: File.join(
+          *to_root,
+          format_path(@opened_at.to_date.next_day),
+        ),
+        root: File.join(*to_root),
       )
     end
 
@@ -173,24 +173,24 @@ module VpsFree::Irc::Bot
 
     def template_dir
       File.join(
-          File.dirname(File.realpath(__FILE__)),
-          '..', '..',
-          'templates',
-          @tpl,
+        File.dirname(File.realpath(__FILE__)),
+        '..', '..',
+        'templates',
+        @tpl,
       ) 
     end
 
     def template(name)
       File.join(
-          template_dir,
-          "#{name}.erb",
+        template_dir,
+        "#{name}.erb",
       )
     end
 
     def format_path(t)
       t.strftime(@path) % {
-          server: @channel.bot.config.server,
-          channel: @channel.to_s,
+        server: @channel.bot.config.server,
+        channel: @channel.to_s,
       }
     end
 

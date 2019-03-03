@@ -9,8 +9,8 @@ module VpsFree::Irc::Bot
 
     def initialize
       @opts = {
-          archive_dst: '.',
-          api_url: 'https://api.vpsfree.cz',
+        archive_dst: '.',
+        api_url: 'https://api.vpsfree.cz',
       }
     end
     

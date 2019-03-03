@@ -22,10 +22,10 @@ module VpsFree::Irc::Bot
           bot.channels.each do |channel|
             next unless config[:channels].include?(channel.name)
             log_mutable_send(
-                channel,
-                "News from vpsAdmin: "+
-                "[#{DateTime.iso8601(e.published_at).to_time.strftime('%Y-%m-%d %H:%M')}] "+
-                ReverseMarkdown.convert(e.message).strip
+              channel,
+              "News from vpsAdmin: "+
+              "[#{DateTime.iso8601(e.published_at).to_time.strftime('%Y-%m-%d %H:%M')}] "+
+              ReverseMarkdown.convert(e.message).strip
             )
           end
         end

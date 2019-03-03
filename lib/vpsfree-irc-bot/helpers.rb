@@ -22,9 +22,9 @@ module VpsFree::Irc::Bot
       t = Time.now
       msg.split("\n").each do |line|
         logger.log(
-            type,
-            MessageStub.new(t, channel, bot, line),
-            *args
+          type,
+          MessageStub.new(t, channel, bot, line),
+          *args
         )
       end
     end

@@ -74,9 +74,9 @@ module VpsFree::Irc::Bot
         return url unless @archive_dir
         
         dir = File.join(
-            @archive_dir,
-            @name,
-            Time.now.strftime('%Y-%B'),
+          @archive_dir,
+          @name,
+          Time.now.strftime('%Y-%B'),
         )
         search = URI.escape(m['Message-ID'].to_s) \
           .gsub('@', '%40') \

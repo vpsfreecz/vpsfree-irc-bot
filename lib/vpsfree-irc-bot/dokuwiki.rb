@@ -59,8 +59,8 @@ module VpsFree::Irc::Bot
 
         unless cur_i
           error(
-              "Version '#{change['version']}' of '#{change['name']}' "+
-              "not found in page versions"
+            "Version '#{change['version']}' of '#{change['name']}' "+
+            "not found in page versions"
           )
           return
         end
@@ -70,16 +70,16 @@ module VpsFree::Irc::Bot
         case cur['type'].upcase
         when 'C'  # page created
           send_channels(
-              "Page #{change['name']} created by #{change['author']} "+
-              "(#{page_url(change['name'])})"
+            "Page #{change['name']} created by #{change['author']} "+
+            "(#{page_url(change['name'])})"
           )
 
         when 'E'  # page changed
           prev = revs[cur_i + 1]
 
           send_channels(
-              "Page #{change['name']} changed by #{change['author']} "+
-              "(#{page_url(change['name'])})"
+            "Page #{change['name']} changed by #{change['author']} "+
+            "(#{page_url(change['name'])})"
           )
           
           if prev
@@ -91,8 +91,8 @@ module VpsFree::Irc::Bot
 
         when 'D'  # deleted
           send_channels(
-              "Page #{change['name']} deleted by #{change['author']} "+
-              "(#{page_url(change['name'])})"
+            "Page #{change['name']} deleted by #{change['author']} "+
+            "(#{page_url(change['name'])})"
           )
 
         else
@@ -103,8 +103,8 @@ module VpsFree::Irc::Bot
       rescue XMLRPC::FaultException => e
         error("RPC failed: #{e.faultCode} - #{e.faultString}")
         send_channels(
-            "Page #{change['name']} changed by #{change['author']} "+
-            "(#{page_url(change['name'])})"
+          "Page #{change['name']} changed by #{change['author']} "+
+          "(#{page_url(change['name'])})"
         )
       end
 
@@ -181,7 +181,7 @@ module VpsFree::Irc::Bot
         doc = Nokogiri::HTML(html)
 
         {
-            irc: doc.xpath("//div[@class='maintainer']//tr[@class='irc']/td").text.strip,
+          irc: doc.xpath("//div[@class='maintainer']//tr[@class='irc']/td").text.strip,
         }
       
       rescue XMLRPC::FaultException => e

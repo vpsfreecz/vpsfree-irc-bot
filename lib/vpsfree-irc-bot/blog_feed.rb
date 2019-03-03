@@ -22,10 +22,10 @@ module VpsFree::Irc::Bot
         break if t < @since
 
         articles << {
-            date: t,
-            title: item.xpath('title').text,
-            link: item.xpath('link').text,
-            author: item.xpath('dc:creator').text,
+          date: t,
+          title: item.xpath('title').text,
+          link: item.xpath('link').text,
+          author: item.xpath('dc:creator').text,
         }
       end
 
@@ -33,9 +33,9 @@ module VpsFree::Irc::Bot
         bot.channels.each do |channel|
           next unless config[:channels].include?(channel.name)
           log_mutable_send(
-              channel,
-              "[blog] #{a[:title]} by #{a[:author]}\n"+
-              "[blog] #{a[:link]}"
+            channel,
+            "[blog] #{a[:title]} by #{a[:author]}\n"+
+            "[blog] #{a[:link]}"
           )
         end
       end

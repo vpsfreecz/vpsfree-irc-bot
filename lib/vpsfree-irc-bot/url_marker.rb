@@ -14,9 +14,9 @@ module VpsFree::Irc::Bot
       return if /^\s*(http(s?):\/\/[^\s]+)\s*$/ !~ m.message
     
       response, url = fetch(
-          $1,
-          max_redirects: config[:max_redirects] || 5,
-          max_size: config[:max_size] || 10*1024*1024,
+        $1,
+        max_redirects: config[:max_redirects] || 5,
+        max_size: config[:max_size] || 10*1024*1024,
       )
       doc = Nokogiri::HTML(response)
     

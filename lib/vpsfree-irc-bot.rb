@@ -61,61 +61,61 @@ module VpsFree::Irc::Bot
         c.nick = opts[:nick] || NAME
         c.realname = 'vpsFree.cz IRC Bot'
         c.plugins.plugins = [
-            Base,
-            ChannelLog,
-            ChannelLastLog,
-            Cluster,
-            Uptime,
-            Rank,
-            UrlMarker,
-            WebEventLog,
-            MailingLists,
-            Greeter,
-            DokuWiki,
-            BlogFeed,
-            KeepNick,
-            KeepChannels,
-            Mute,
-            OutageReports,
-            Forecast,
-            EasterEggs,
+          Base,
+          ChannelLog,
+          ChannelLastLog,
+          Cluster,
+          Uptime,
+          Rank,
+          UrlMarker,
+          WebEventLog,
+          MailingLists,
+          Greeter,
+          DokuWiki,
+          BlogFeed,
+          KeepNick,
+          KeepChannels,
+          Mute,
+          OutageReports,
+          Forecast,
+          EasterEggs,
         ]
 
         c.plugins.options = {
-            Cluster => {
-                api_url: opts[:api_url],
-            },
-            WebEventLog => {
-                api_url: opts[:api_url],
-                channels: opts[:web_event_log][:channels],
-            },
-            ChannelLog => {
-                archive_url: opts[:archive_url],
-                archive_dst: opts[:archive_dst],
-            },
-            Base => {
-                nickserv: opts[:nickserv],
-            },
-            UrlMarker => opts[:url_marker],
-            MailingLists => opts[:mailing_lists],
-            DokuWiki => {
-                wikis: opts[:dokuwiki],
-            },
-            BlogFeed => opts[:blog],
-            KeepNick => {
-                nick: c.nick,
-            },
-            KeepChannels => {
-                channels: channels,
-            },
-            OutageReports => {
-                api_url: opts[:api_url],
-                channels: opts[:outage_reports][:channels],
-            },
-            Forecast => opts[:forecast],
-            EasterEggs => {
-                api_url: opts[:api_url],
-            },
+          Cluster => {
+            api_url: opts[:api_url],
+          },
+          WebEventLog => {
+            api_url: opts[:api_url],
+            channels: opts[:web_event_log][:channels],
+          },
+          ChannelLog => {
+            archive_url: opts[:archive_url],
+            archive_dst: opts[:archive_dst],
+          },
+          Base => {
+            nickserv: opts[:nickserv],
+          },
+          UrlMarker => opts[:url_marker],
+          MailingLists => opts[:mailing_lists],
+          DokuWiki => {
+            wikis: opts[:dokuwiki],
+          },
+          BlogFeed => opts[:blog],
+          KeepNick => {
+            nick: c.nick,
+          },
+          KeepChannels => {
+            channels: channels,
+          },
+          OutageReports => {
+            api_url: opts[:api_url],
+            channels: opts[:outage_reports][:channels],
+          },
+          Forecast => opts[:forecast],
+          EasterEggs => {
+            api_url: opts[:api_url],
+          },
         }
       end
     end

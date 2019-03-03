@@ -38,8 +38,8 @@ module VpsFree::Irc::Bot
           if config[:archive_url] \
              && c = bot.channels.detect { |chan| chan.to_s == chan_name }
             log_send(
-                c,
-                "Yesterday's log can be found at #{html_day_log_uri(chan_name, yesterday)}"
+              c,
+              "Yesterday's log can be found at #{html_day_log_uri(chan_name, yesterday)}"
             )
           end
         end
@@ -78,18 +78,18 @@ module VpsFree::Irc::Bot
         end
 
         @loggers[m.channel.to_s] = [
-            HtmlLogger.new(
-                m.channel,
-                'html',
-                File.join(config[:archive_dst], 'html/'),
-                HTML_PATH, 
-            ),
-            TemplateLogger.new(
-                m.channel,
-                'yml',
-                File.join(config[:archive_dst], 'yml/'),
-                YAML_PATH,
-            ),
+          HtmlLogger.new(
+            m.channel,
+            'html',
+            File.join(config[:archive_dst], 'html/'),
+            HTML_PATH, 
+          ),
+          TemplateLogger.new(
+            m.channel,
+            'yml',
+            File.join(config[:archive_dst], 'yml/'),
+            YAML_PATH,
+          ),
         ]
 
       else
@@ -150,11 +150,11 @@ module VpsFree::Irc::Bot
       case which
       when nil
         uri = URI.encode(
-                File.join(
-                config[:archive_url],
-                bot.config.server,
-                channel.to_s,
-            )
+          File.join(
+            config[:archive_url],
+            bot.config.server,
+            channel.to_s,
+          )
         )
       when 'today'
         uri = html_day_log_uri(channel.to_s, Time.now)
@@ -180,13 +180,13 @@ module VpsFree::Irc::Bot
     # @param t [Time]
     def html_day_log_uri(channel, t)
       URI.encode(
-          File.join(
-              config[:archive_url],
-              t.strftime(HTML_PATH) % {
-                  server: bot.config.server,
-                  channel: channel,
-              }
-          )
+        File.join(
+          config[:archive_url],
+          t.strftime(HTML_PATH) % {
+            server: bot.config.server,
+            channel: channel,
+          }
+        )
       )
     end
   end

@@ -23,26 +23,26 @@ module VpsFree::Irc::Bot
     
     mailman do |m|
       m.server = {
-            address: config[:server],
-            port: config[:port],
-            user_name: config[:username],
-            password: config[:password],
-            enable_ssl: config[:enable_ssl],
+        address: config[:server],
+        port: config[:port],
+        user_name: config[:username],
+        password: config[:password],
+        enable_ssl: config[:enable_ssl],
       }
       m.archive_dir = config[:archive_dir]
 
       LISTS.each do |list, opts|
         m.list name: "#{list}-list",
-              id: opts[:id],
-              prefix: opts[:prefix] || "[vpsFree.cz: #{list}-list]",
-              method: list == :outage ? :"#{list}_list" : :report_message
+          id: opts[:id],
+          prefix: opts[:prefix] || "[vpsFree.cz: #{list}-list]",
+          method: list == :outage ? :"#{list}_list" : :report_message
       end
     end
 
     def outage_list(list, m, url)
       notices = [
-          "#{list.prefix} Výpadek / Outage",
-          "#{list.prefix} Odstávka / Maintenance",
+        "#{list.prefix} Výpadek / Outage",
+        "#{list.prefix} Odstávka / Maintenance",
       ]
       
       return if notices.detect { |s| m.subject.start_with?(s) }
@@ -63,11 +63,11 @@ module VpsFree::Irc::Bot
       sender = m[:from].display_names.first
 
       send_channels(
-          "[#{list.name}] "+
-          (re ? 'Re: ' : '')+
-          "#{m.subject[prefix.size+1..-1]}"+
-          (sender ? " from #{sender}" : '')+
-          " (#{url})"
+        "[#{list.name}] "+
+        (re ? 'Re: ' : '')+
+        "#{m.subject[prefix.size+1..-1]}"+
+        (sender ? " from #{sender}" : '')+
+        " (#{url})"
       )
     end
 

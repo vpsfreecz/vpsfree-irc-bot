@@ -84,9 +84,9 @@ module VpsFree::Irc::Bot
     def log(m, opts = {})
       @mutex.synchronize do
         hash = {
-            time: m.time,
-            nick: m.user.nick,
-            message: m.message,
+          time: m.time,
+          nick: m.user.nick,
+          message: m.message,
         }
         hash.update(opts)
 

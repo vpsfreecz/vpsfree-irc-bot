@@ -15,20 +15,20 @@ module VpsFree::Irc::Bot
       case cmd
       when :help
         m.reply([
-            "OK, just stay there, I'm coming!",
-            "Just keep swimming",
+          "OK, just stay there, I'm coming!",
+          "Just keep swimming",
         ].sample)
       
       when :muted?
         m.reply([
-            "I dunno, are you?",
+          "I dunno, are you?",
         ].sample)
       
       when :ping
         m.reply([
-            "I don't feel like playing today",
-            "Did you say something?",
-            "Hm?",
+          "I don't feel like playing today",
+          "Did you say something?",
+          "Hm?",
         ].sample)
 
       when :status
@@ -43,7 +43,7 @@ module VpsFree::Irc::Bot
         if down.count > 0
           if is_time?(0.2)
             m.reply([
-                "Houston, we have a problem",
+              "Houston, we have a problem",
             ].sample)
 
           else
@@ -51,21 +51,21 @@ module VpsFree::Irc::Bot
               s = down.name
               
               m.reply([
-                  "#{s} went afk",
-                  "#{s} went away",
-                  "#{s} is taking a break",
-                  "#{s} is taking five",
-                  "#{s} went to the happy hunting ground",
+                "#{s} went afk",
+                "#{s} went away",
+                "#{s} is taking a break",
+                "#{s} is taking five",
+                "#{s} went to the happy hunting ground",
               ].sample)
 
             else
               s = "#{down[0..-2].map { |v| v.name }.join(', ')} and #{down.last.name}"
               
               m.reply([
-                  "#{s} went afk",
-                  "#{s} went away",
-                  "#{s} are taking a break",
-                  "#{s} went to the happy hunting ground",
+                "#{s} went afk",
+                "#{s} went away",
+                "#{s} are taking a break",
+                "#{s} went to the happy hunting ground",
               ].sample)
             end
           end
@@ -73,28 +73,28 @@ module VpsFree::Irc::Bot
         else
           if is_time?(0.3)
             forecast = Forecast.as_text([
-                'Prague',
-                'Brno',
-                'Ostrava',
-                'Bratislava',
+              'Prague',
+              'Brno',
+              'Ostrava',
+              'Bratislava',
             ].sample)
 
             m.reply("Weather in #{forecast}")
 
           else
             m.reply([
-                "No, not today. Please, not today!",
-                "I'm almost afraid to look. Are you sure?",
-                "Why, I'm fine, thanks for asking",
-                "It's.. ummmm.. fine, everything is just fine",
+              "No, not today. Please, not today!",
+              "I'm almost afraid to look. Are you sure?",
+              "Why, I'm fine, thanks for asking",
+              "It's.. ummmm.. fine, everything is just fine",
             ].sample)
           end
         end
      
       when :uptime
         m.reply([
-            "Sorry, I've lost count",
-            "Sorry, I've lost track of time",
+          "Sorry, I've lost count",
+          "Sorry, I've lost track of time",
         ].sample)
 
       else

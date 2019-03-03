@@ -8,12 +8,12 @@ module VpsFree::Irc::Bot
     include Command
 
     REMINDERS = [
-        [0, 'Ladies and gentlemen, we are going DOWN!'],
-        [1*60, 'a minute'],
-        [10*60, '10 minutes'],
-        [30*60, '30 minutes'],
-        [1*60*60, 'an hour'],
-        [6*60*60, 'six hours'],
+      [0, 'Ladies and gentlemen, we are going DOWN!'],
+      [1*60, 'a minute'],
+      [10*60, '10 minutes'],
+      [30*60, '30 minutes'],
+      [1*60*60, 'an hour'],
+      [6*60*60, 'six hours'],
     ]
 
     set required_options: %i(api_url channels)
@@ -99,9 +99,9 @@ module VpsFree::Irc::Bot
         client do |api|
           begin
             describe_outage(
-                id,
-                outage_to_hash(api.outage.show(id)),
-                m
+              id,
+              outage_to_hash(api.outage.show(id)),
+              m
             )
 
           rescue HaveAPI::Client::ActionFailed => e
@@ -135,7 +135,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
       Reason: #{outage.en_summary}
   Handled by: #{outage.handler.list.map { |v| v.full_name }.join(', ')}
 #{outage_url(outage.id)}
-          END
+        END
       )
     
     rescue => e
@@ -209,13 +209,13 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
 
     def outage_to_hash(outage)
       {
-          planned: outage.planned,
-          begins_at: get_date(outage.begins_at).to_i,
-          duration: outage.duration,
-          type: outage.type,
-          summary: outage.en_summary,
-          entities: outage.entity.list.map { |v| v.label },
-          handlers: outage.handler.list.map { |v| v.full_name },
+        planned: outage.planned,
+        begins_at: get_date(outage.begins_at).to_i,
+        duration: outage.duration,
+        type: outage.type,
+        summary: outage.en_summary,
+        entities: outage.entity.list.map { |v| v.label },
+        handlers: outage.handler.list.map { |v| v.full_name },
       }
     end
 
@@ -228,7 +228,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
       Reason: #{outage[:summary]}
   Handled by: #{outage[:handlers].join(', ')}
 #{outage_url(id)}
-            END
+        END
       )
     end
   end
