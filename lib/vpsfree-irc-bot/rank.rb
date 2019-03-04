@@ -175,6 +175,15 @@ module VpsFree::Irc::Bot
             data[:karma][:today][:received] += n
             true
           end
+
+          # Announce the change
+          storage.get(channel, whom) do |data|
+            target.send(
+              "#{whom.nick}'s karma "+
+              (n > 0 ? 'increased' : 'decreased')+
+              " to #{data[:karma][:total][:received]}"
+            )
+          end
         end
       end
     end
