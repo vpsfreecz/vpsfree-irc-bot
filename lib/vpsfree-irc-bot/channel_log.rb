@@ -34,14 +34,6 @@ module VpsFree::Irc::Bot
 
         @loggers.each do |chan_name, loggers|
           loggers.each { |l| l.next_day }
- 
-          if config[:archive_url] \
-             && c = bot.channels.detect { |chan| chan.to_s == chan_name }
-            log_send(
-              c,
-              "Yesterday's log can be found at #{html_day_log_uri(chan_name, yesterday)}"
-            )
-          end
         end
       end
     end
