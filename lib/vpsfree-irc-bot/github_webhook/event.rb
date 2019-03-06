@@ -169,6 +169,11 @@ END
       ret = ''
       ret << "[#{repository.name}] #{sender.login} "
 
+      if fast_forward?
+        ret << "fast-forwarded #{branch} to #{after[0..8]}"
+        return ret
+      end
+
       if forced
         ret << 'force-pushed '
       else
@@ -192,6 +197,10 @@ END
 
       ret << compare
       ret
+    end
+
+    def fast_forward?
+      commits.all? { |c| !c.distinct }
     end
 
     def announce?
