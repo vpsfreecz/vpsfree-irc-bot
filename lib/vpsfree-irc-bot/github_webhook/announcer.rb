@@ -30,7 +30,10 @@ module VpsFree::Irc::Bot
       event = self.class.get_event
 
       bot.channels.each do |channel|
-        next unless config[:channels].include?(channel.name)
+        if !config[:channels].has_key?(channel.name) \
+           || !config[:channels][channel.name].include?(event.repository.full_name)
+          next
+        end
 
         log_mutable_send(
           channel,

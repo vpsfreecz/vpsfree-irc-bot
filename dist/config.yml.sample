@@ -56,4 +56,7 @@
 #     :host: 127.0.0.1
 #     :port: 8000
 #     :secret: supersecrettoken
-#     :channels: '#channel1'
+#     :channels:
+#          '#channel1':
+#              - user1/repoa
+#              - user2/repob
