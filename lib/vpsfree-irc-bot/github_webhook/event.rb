@@ -215,7 +215,7 @@ END
 
     def to_s
       <<END
-[#{repository.name}] #{user.login} #{action} issue ##{issue.id}
+[#{repository.name}] #{sender.login} #{action} issue ##{issue.id}
 #{issue.html_url}
 END
     end
@@ -236,7 +236,7 @@ END
 
     def to_s
       <<END
-[#{repository.name}] #{user.login} #{action} pull request ##{pull_request.id}
+[#{repository.name}] #{sender.login} #{action} pull request ##{pull_request.id}
 #{pull_request.html_url}
 END
     end
