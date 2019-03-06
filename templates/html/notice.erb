@@ -1,0 +1,9 @@
+<p id="l<%= @counter %>">
+<a href="#l<%= @counter %>" class="time">[<%= @time.strftime('%H:%M:%S') %>]</a>
+<span class="msg">
+    <span class="notice">
+        Notice(<span class="nick"><%= encode(@m.user.nick) %></span>):
+    </span>
+    <%= auto_link(@m.message) %>
+</span>
+</p>

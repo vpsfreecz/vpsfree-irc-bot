@@ -3,8 +3,8 @@ module VpsFree::Irc::Bot
     MessageStub = Struct.new(:time, :channel, :user, :message, :params)
 
     # @param channel [Cinch::Channel]
-    # @param type [Symbol]
     # @param msg [String]
+    # @param type [Symbol]
     def log_send(channel, msg, type = :msg, *args)
       if self.is_a?(ChannelLog)
         logger = self
@@ -12,9 +12,11 @@ module VpsFree::Irc::Bot
         logger = bot.plugins.detect { |p| p.is_a?(ChannelLog) }
       end
 
-      if type == :me
+      case type
+      when :me
         channel.action(msg)
-
+      when :notice
+        channel.notice(msg)
       else
         channel.send(msg)
       end

@@ -134,7 +134,7 @@ a.time {
 	color: #b5b5b5;
 }
 
-.event.join {
+.event.join, .notice {
 	color: #2fa388;
 }
 

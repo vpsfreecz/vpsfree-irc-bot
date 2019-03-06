@@ -1,0 +1,6 @@
+- type: notice
+  timestamp: <%= @time.to_i %>
+  user:
+    nick: '<%= yml_escape(@m.user.nick) %>'
+    host: '<%= yml_escape(@m.user.host) %>'
+  message: '<%= yml_escape(@m.message) %>'
