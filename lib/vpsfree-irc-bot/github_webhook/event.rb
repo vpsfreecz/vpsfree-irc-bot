@@ -158,6 +158,8 @@ END
     extract *%i(ref before after created forced compare)
     attr_reader :branch, :commits
 
+    COUNT = 10
+
     def parse(data)
       @commits = data['commits'].map { |v| Commit.new(v) }
       @branch = ref.split('/').last
@@ -173,17 +175,19 @@ END
         ret << 'pushed '
       end
       
-      ret << "#{commits.count} commits to #{branch}\n"
+      ret << "#{commits.count} #{noun(commits.count, 'commit', 'commits')} "
+      ret << "to #{branch}\n"
       
-      commits[0..10].each do |c|
+      commits[0..COUNT].each do |c|
         ret << "#{repository.name}/#{branch} "
         ret << "#{c.id[0..8]} #{c.author.name}: #{c.message.split("\n").first}"
         ret << "\n"
       end
 
-      if commits.count > 10
+      if commits.count > COUNT
         ret << "#{repository.name}/#{branch} "
-        ret << "...and #{commits.count - 10} more commits\n"
+        ret << "...and #{commits.count - COUNT} more "
+        ret << "#{noun(commits.count - COUNT, 'commit', 'commits')}\n"
       end
 
       ret << compare
@@ -193,6 +197,10 @@ END
     def announce?
       return false if commits.empty? && created
       true
+    end
+
+    def noun(n, singular, plural)
+      n > 1 ? plural : singular
     end
   end
 
