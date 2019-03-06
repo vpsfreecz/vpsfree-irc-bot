@@ -192,7 +192,11 @@ module VpsFree::Irc::Bot
       def send_channels(msg)
         bot.channels.each do |channel|
           next unless config[:channels].include?(channel.name)
-          log_mutable_send(channel, (config[:prefix] || '[DokuWiki]')+' '+msg)
+          log_mutable_send(
+            channel,
+            (config[:prefix] || '[DokuWiki]')+' '+msg,
+            :notice
+          )
         end
       end
     end

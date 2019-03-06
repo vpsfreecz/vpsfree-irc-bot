@@ -28,7 +28,8 @@ module VpsFree::Irc::Bot
               channel,
               "News from vpsAdmin: "+
               "[#{DateTime.iso8601(e.published_at).to_time.strftime('%Y-%m-%d %H:%M')}] "+
-              ReverseMarkdown.convert(e.message).strip
+              ReverseMarkdown.convert(e.message).strip,
+              :notice
             )
           end
         end

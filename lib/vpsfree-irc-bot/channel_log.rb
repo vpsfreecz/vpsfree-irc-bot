@@ -55,7 +55,7 @@ module VpsFree::Irc::Bot
         # ignore /me
         return
       end
-      log(:msg, m)
+      log(m.command == 'NOTICE' ? :notice : :msg, m)
     end
 
     def action(m)

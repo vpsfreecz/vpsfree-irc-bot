@@ -37,7 +37,8 @@ module VpsFree::Irc::Bot
           log_mutable_send(
             channel,
             "[blog] #{a[:title]} by #{a[:author]}\n"+
-            "[blog] #{a[:link]}"
+            "[blog] #{a[:link]}",
+            :notice
           )
         end
       end

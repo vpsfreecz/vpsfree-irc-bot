@@ -207,7 +207,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
     def send_channels(msg)
       bot.channels.each do |c|
         next unless config[:channels].include?(c.name)
-        log_mutable_send(c, msg)
+        log_mutable_send(c, msg, :notice)
       end
     end
 

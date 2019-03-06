@@ -37,7 +37,8 @@ module VpsFree::Irc::Bot
 
         log_mutable_send(
           channel,
-          MultiLine.new(event.to_s)
+          MultiLine.new(event.to_s),
+          :notice
         )
 
         p event
