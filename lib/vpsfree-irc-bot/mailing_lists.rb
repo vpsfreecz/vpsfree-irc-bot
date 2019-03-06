@@ -1,4 +1,7 @@
 require 'base64'
+require 'cinch'
+require 'vpsfree-irc-bot/helpers'
+require 'vpsfree-irc-bot/mailman'
 
 module VpsFree::Irc::Bot
   class MailingLists

@@ -1,3 +1,6 @@
+require 'cinch'
+require 'vpsfree-irc-bot/api'
+
 module VpsFree::Irc::Bot
   class EasterEggs
     include Cinch::Plugin

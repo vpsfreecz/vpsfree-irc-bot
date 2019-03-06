@@ -1,4 +1,5 @@
 require 'cinch'
+require 'require_all'
 
 module VpsFree
   module Irc
@@ -6,40 +7,7 @@ module VpsFree
   end
 end
 
-require_relative 'vpsfree-irc-bot/state'
-require_relative 'vpsfree-irc-bot/helpers'
-require_relative 'vpsfree-irc-bot/api'
-require_relative 'vpsfree-irc-bot/multi_line'
-require_relative 'vpsfree-irc-bot/day_change'
-require_relative 'vpsfree-irc-bot/command'
-require_relative 'vpsfree-irc-bot/persistence'
-require_relative 'vpsfree-irc-bot/file_storage'
-require_relative 'vpsfree-irc-bot/user_storage'
-require_relative 'vpsfree-irc-bot/base'
-require_relative 'vpsfree-irc-bot/channel_log'
-require_relative 'vpsfree-irc-bot/channel_lastlog'
-require_relative 'vpsfree-irc-bot/template_logger'
-require_relative 'vpsfree-irc-bot/html_logger'
-require_relative 'vpsfree-irc-bot/yml_logger'
-require_relative 'vpsfree-irc-bot/cluster'
-require_relative 'vpsfree-irc-bot/uptime'
-require_relative 'vpsfree-irc-bot/rank'
-require_relative 'vpsfree-irc-bot/url_marker'
-require_relative 'vpsfree-irc-bot/web_event_log'
-require_relative 'vpsfree-irc-bot/mailman'
-require_relative 'vpsfree-irc-bot/mailing_lists'
-require_relative 'vpsfree-irc-bot/greeter'
-require_relative 'vpsfree-irc-bot/dokuwiki'
-require_relative 'vpsfree-irc-bot/blog_feed'
-require_relative 'vpsfree-irc-bot/keep_nick'
-require_relative 'vpsfree-irc-bot/keep_channels'
-require_relative 'vpsfree-irc-bot/outage_reports'
-require_relative 'vpsfree-irc-bot/mute'
-require_relative 'vpsfree-irc-bot/forecast'
-require_relative 'vpsfree-irc-bot/github_webhook'
-require_relative 'vpsfree-irc-bot/easter_eggs'
-require_relative 'vpsfree-irc-bot/help'
-require_relative 'vpsfree-irc-bot/version'
+require_rel 'vpsfree-irc-bot/*.rb'
 
 module VpsFree::Irc::Bot
   NAME = 'vpsfbot'

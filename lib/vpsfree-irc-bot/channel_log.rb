@@ -1,5 +1,8 @@
+require 'cinch'
 require 'thread'
 require 'uri'
+require 'vpsfree-irc-bot/command'
+require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
   class ChannelLog

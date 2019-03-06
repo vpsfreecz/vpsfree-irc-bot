@@ -1,5 +1,6 @@
 require 'json'
 require 'sinatra'
+require 'thread'
 
 module VpsFree::Irc::Bot
   class GitHubWebHook::Server

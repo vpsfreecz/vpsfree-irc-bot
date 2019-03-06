@@ -1,3 +1,5 @@
+require 'vpsfree-irc-bot/persistence'
+
 module VpsFree::Irc::Bot
   class FileStorage < Persistence
     # @param server [String]

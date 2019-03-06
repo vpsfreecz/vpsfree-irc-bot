@@ -1,5 +1,6 @@
 require 'htmlentities'
 require 'rinku'
+require 'vpsfree-irc-bot/template_logger'
 
 module VpsFree::Irc::Bot
   class TemplateLogger

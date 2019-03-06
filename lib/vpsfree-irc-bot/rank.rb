@@ -1,3 +1,7 @@
+require 'cinch'
+require 'vpsfree-irc-bot/command'
+require 'vpsfree-irc-bot/helpers'
+require 'vpsfree-irc-bot/user_storage'
 require 'yaml'
 
 module VpsFree::Irc::Bot

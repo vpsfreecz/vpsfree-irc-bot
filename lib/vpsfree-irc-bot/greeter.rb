@@ -1,3 +1,7 @@
+require 'cinch'
+require 'vpsfree-irc-bot/command'
+require 'vpsfree-irc-bot/helpers'
+
 module VpsFree::Irc::Bot
   class Greeter
     include Cinch::Plugin

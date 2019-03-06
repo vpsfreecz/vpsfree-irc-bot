@@ -1,6 +1,8 @@
+require 'cinch'
 require 'nokogiri'
 require 'open-uri'
 require 'time'
+require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
   class BlogFeed

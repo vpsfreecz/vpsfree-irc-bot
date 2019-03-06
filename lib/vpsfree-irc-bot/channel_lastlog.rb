@@ -1,4 +1,6 @@
+require 'cinch'
 require 'thread'
+require 'vpsfree-irc-bot/command'
 
 module VpsFree::Irc::Bot
   class ChannelLastLog

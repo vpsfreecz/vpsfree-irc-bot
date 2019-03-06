@@ -1,5 +1,8 @@
+require 'cinch'
 require 'date'
 require 'chronic_duration'
+require 'vpsfree-irc-bot/command'
+require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
   class Mute

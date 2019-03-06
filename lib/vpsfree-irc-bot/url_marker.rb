@@ -1,5 +1,7 @@
+require 'cinch'
 require 'open-uri'
 require 'nokogiri'
+require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
   class UrlMarker

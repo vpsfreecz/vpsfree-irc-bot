@@ -1,4 +1,6 @@
+require 'fileutils'
 require 'thread'
+require 'vpsfree-irc-bot/persistence'
 
 module VpsFree::Irc::Bot
   class UserStorage < Persistence

@@ -1,4 +1,6 @@
+require 'cinch'
 require 'thread'
+require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
   class GitHubWebHook::Announcer

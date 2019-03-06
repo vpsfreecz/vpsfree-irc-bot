@@ -1,4 +1,8 @@
+require 'cinch'
 require 'date'
+require 'vpsfree-irc-bot/api'
+require 'vpsfree-irc-bot/command'
+require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
   class OutageReports

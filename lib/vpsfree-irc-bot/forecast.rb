@@ -1,5 +1,7 @@
+require 'cinch'
 require 'net/http'
 require 'json'
+require 'vpsfree-irc-bot/command'
 
 module VpsFree::Irc::Bot
   class Forecast

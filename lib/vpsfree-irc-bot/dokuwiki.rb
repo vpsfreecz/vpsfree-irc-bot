@@ -1,3 +1,4 @@
+require 'cinch'
 require 'nokogiri'
 require 'xmlrpc/client'
 require 'uri'

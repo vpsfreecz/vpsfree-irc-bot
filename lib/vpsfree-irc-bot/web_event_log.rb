@@ -1,7 +1,10 @@
+require 'cinch'
 require 'date'
 require 'json'
 require 'open-uri'
 require 'reverse_markdown'
+require 'vpsfree-irc-bot/api'
+require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
   class WebEventLog

@@ -1,3 +1,5 @@
+require 'cinch'
+
 module VpsFree::Irc::Bot
   class KeepNick
     include Cinch::Plugin
