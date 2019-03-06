@@ -155,7 +155,7 @@ END
 
   class PushEvent < Event
     event :push
-    extract *%i(ref before after forced compare)
+    extract *%i(ref before after created forced compare)
     attr_reader :branch, :commits
 
     def parse(data)
@@ -188,6 +188,11 @@ END
 
       ret << compare
       ret
+    end
+
+    def announce?
+      return false if commits.empty? && created
+      true
     end
   end
 
