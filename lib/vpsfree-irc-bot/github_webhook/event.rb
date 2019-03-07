@@ -155,7 +155,7 @@ END
 
   class PushEvent < Event
     event :push
-    extract *%i(ref before after created forced compare)
+    extract *%i(ref before after created deleted forced compare)
     attr_reader :branch, :commits
 
     COUNT = 10
@@ -205,6 +205,7 @@ END
 
     def announce?
       return false if commits.empty? && created
+      return false if deleted
       true
     end
 
