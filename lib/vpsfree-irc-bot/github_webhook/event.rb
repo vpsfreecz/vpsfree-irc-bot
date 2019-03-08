@@ -111,20 +111,20 @@ module VpsFree::Irc::Bot::GitHubWebHook
 
   class Issue
     include Helpers
-    attr_reader :id, :title, :state, :html_url
+    attr_reader :id, :number, :title, :state, :html_url
     
     def initialize(data)
-      extract(data, *%i(id title state html_url))
+      extract(data, *%i(id number title state html_url))
       @user = User.new(data['user'])
     end
   end
 
   class PullRequest
     include Helpers
-    attr_reader :id, :title, :state, :html_url
+    attr_reader :id, :number, :title, :state, :html_url
     
     def initialize(data)
-      extract(data, *%i(id title state html_url))
+      extract(data, *%i(id number title state html_url))
       @user = User.new(data['user'])
     end
   end
@@ -238,7 +238,7 @@ END
 
     def to_s
       <<END
-[#{repository.name}] #{sender.login} #{action} issue ##{issue.id}
+[#{repository.name}] #{sender.login} #{action} issue ##{issue.number}
 #{issue.html_url}
 END
     end
@@ -259,7 +259,7 @@ END
 
     def to_s
       <<END
-[#{repository.name}] #{sender.login} #{action} pull request ##{pull_request.id}
+[#{repository.name}] #{sender.login} #{action} pull request ##{pull_request.number}
 #{pull_request.html_url}
 END
     end
