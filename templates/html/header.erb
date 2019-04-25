@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>
             <%= @time.strftime('%Y-%m-%d') %> |
-            <%= @channel.bot.config.server %> <%= @channel %> |
+            <%= @server_label %> <%= @channel %> |
             vpsFree.cz IRC archive
         </title>
         <link rel="stylesheet" href="<%= @root %>/assets/style.css">
@@ -19,7 +19,7 @@
                         width="164" height="48">
                 </a>
                 <span>
-                    <a href="../../.."><%= @channel.bot.config.server %></a>&nbsp;
+                    <a href="../../.."><%= @server_label %></a>&nbsp;
                     <a href="../.."><%= @channel %></a>
                </span>
             </h1>

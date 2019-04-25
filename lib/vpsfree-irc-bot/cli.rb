@@ -95,15 +95,16 @@ END
           exit(1)
         end
 
-        server = @opts[:server]
+        label = @opts[:server][:label]
+        host = @opts[:server][:host]
         channels = @opts[:channels]
 
       else
-        server = ARGV[0]
+        label = host = ARGV[0]
         channels = ARGV[1..-1]
       end
 
-      VpsFree::Irc::Bot.start(server, channels, @opts)
+      VpsFree::Irc::Bot.start(label, host, channels, @opts)
     end
   end
 end

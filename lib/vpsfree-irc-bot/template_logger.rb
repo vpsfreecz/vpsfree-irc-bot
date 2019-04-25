@@ -19,7 +19,8 @@ module VpsFree::Irc::Bot
       end
     end
 
-    def initialize(channel, tpl, dir, path)
+    def initialize(server_label, channel, tpl, dir, path)
+      @server_label = server_label
       @channel = channel
       @tpl = tpl
       @path = path
@@ -141,6 +142,7 @@ module VpsFree::Irc::Bot
 
       render(
         :header,
+        server_label: @server_label,
         channel: @channel,
         time: @opened_at,
         previous: File.join(
@@ -188,10 +190,7 @@ module VpsFree::Irc::Bot
     end
 
     def format_path(t)
-      t.strftime(@path) % {
-        server: @channel.bot.config.server,
-        channel: @channel.to_s,
-      }
+      t.strftime(@path)
     end
 
     def next_day?(t)

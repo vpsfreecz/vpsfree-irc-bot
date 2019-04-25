@@ -12,22 +12,23 @@ require_rel 'vpsfree-irc-bot/*.rb'
 module VpsFree::Irc::Bot
   NAME = 'vpsfbot'
 
-  # @param server [String]
+  # @param label [String] server label
+  # @param host [String] actual address/hostname to connect to
   # @param channels [Array<String>]
   # @param opts [Hash]
   # @option opts [String] nick
   # @option opts [String] archive_url
   # @option opts [String] archive_dst
   # @option opts [String] api_url
-  def self.new(server, channels, opts = {})
+  def self.new(label, host, channels, opts = {})
     # Initialize storage to avoid later thread collisions
-    UserStorage.init(server)
+    UserStorage.init(label)
 
     GitHubWebHook::Server.start(opts[:github_webhook])
 
     Cinch::Bot.new do
       configure do |c|
-        c.server = server
+        c.server = host
         c.channels = channels
         c.nick = opts[:nick] || NAME
         c.realname = 'vpsFree.cz IRC Bot'
@@ -62,6 +63,7 @@ module VpsFree::Irc::Bot
             channels: opts[:web_event_log][:channels],
           },
           ChannelLog => {
+            server_label: label,
             archive_url: opts[:archive_url],
             archive_dst: opts[:archive_dst],
           },
@@ -81,6 +83,7 @@ module VpsFree::Irc::Bot
             channels: channels,
           },
           OutageReports => {
+            server_label: label,
             api_url: opts[:api_url],
             channels: opts[:outage_reports][:channels],
           },

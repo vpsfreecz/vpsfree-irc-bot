@@ -20,7 +20,7 @@ module VpsFree::Irc::Bot
       [6*60*60, 'six hours'],
     ]
 
-    set required_options: %i(api_url channels)
+    set required_options: %i(server_label api_url channels)
 
     timer 60, method: :check, threaded: false
     timer 30, method: :remind, threaded: false
@@ -33,7 +33,7 @@ module VpsFree::Irc::Bot
 
     def post_api_setup
       @webui = client { |api| api.system_config.show('webui', 'base_url').value }
-      @store = FileStorage.new(bot.config.server, :outages)
+      @store = FileStorage.new(config[:server_label], :outages)
       @since = Time.now
 
       client do |api|

@@ -1,4 +1,6 @@
-:server: irc.example.com
+:server:
+  :label: irc.example.com
+  :host: irc.example.com
 :channels:
   - '#channel1'
   - '#channel2'

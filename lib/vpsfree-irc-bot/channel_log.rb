@@ -10,10 +10,10 @@ module VpsFree::Irc::Bot
     include Command
     include Helpers
 
-    HTML_PATH = '%{server}/%{channel}/%Y/%m/%d.html'
-    YAML_PATH = '%{server}/%{channel}/%Y/%m/%d.yml'
+    HTML_PATH = '%{server}/%{channel}/%%Y/%%m/%%d.html'
+    YAML_PATH = '%{server}/%{channel}/%%Y/%%m/%%d.yml'
 
-    set required_options: %i(archive_dst)
+    set required_options: %i(server_label archive_dst)
 
     listen_to :connect, method: :connect
     listen_to :topic, method: :topic
@@ -74,16 +74,18 @@ module VpsFree::Irc::Bot
 
         @loggers[m.channel.to_s] = [
           HtmlLogger.new(
+            config[:server_label],
             m.channel,
             'html',
             File.join(config[:archive_dst], 'html/'),
-            HTML_PATH, 
+            resolve_path(HTML_PATH, m.channel.to_s),
           ),
           TemplateLogger.new(
+            config[:server_label],
             m.channel,
             'yml',
             File.join(config[:archive_dst], 'yml/'),
-            YAML_PATH,
+            resolve_path(YAML_PATH, m.channel.to_s),
           ),
         ]
 
@@ -147,7 +149,7 @@ module VpsFree::Irc::Bot
         uri = URI.encode(
           File.join(
             config[:archive_url],
-            bot.config.server,
+            config[:server_label],
             channel.to_s,
           )
         )
@@ -177,12 +179,18 @@ module VpsFree::Irc::Bot
       URI.encode(
         File.join(
           config[:archive_url],
-          t.strftime(HTML_PATH) % {
-            server: bot.config.server,
-            channel: channel,
-          }
+          t.strftime(resolve_path(HTML_PATH, channel))
         )
       )
+    end
+
+    # @param path [String]
+    # @param channel [String]
+    def resolve_path(path, channel)
+      path % {
+        server: config[:server_label],
+        channel: channel,
+      }
     end
   end
 end
