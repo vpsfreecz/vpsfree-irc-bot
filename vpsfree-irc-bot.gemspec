@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'htmlentities'
   spec.add_runtime_dependency 'rinku'
   spec.add_runtime_dependency 'nokogiri'
-  spec.add_runtime_dependency 'haveapi-client', '~> 0.12.0'
+  spec.add_runtime_dependency 'haveapi-client', '~> 0.13.0'
   spec.add_runtime_dependency 'json'
   spec.add_runtime_dependency 'reverse_markdown'
   spec.add_runtime_dependency 'mail'
