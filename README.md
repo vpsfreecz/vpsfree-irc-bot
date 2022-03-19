@@ -11,3 +11,15 @@ Bots are configured by config files located at
 
     # useradd -m -d /home/vpsfbot -s /bin/false vpsfbot
     # mkdir /etc/vpsfree-irc-bot
+
+## Bundix
+Until (https://github.com/nix-community/bundix/pull/68)[bundix#68] is resolved, use:
+
+     bundle config set --local force_ruby_platform true
+
+before
+
+     bundix -l
+
+Our issue is with nokogiri, which uses platform-specific gems that bundler has
+problems with.
