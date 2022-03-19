@@ -16,8 +16,21 @@ in stdenv.mkDerivation rec {
   ];
 
   shellHook = ''
+    export GEM_HOME="$PWD/.gems"
+    mkdir -p "$GEM_HOME"
+    export GEM_PATH="$GEM_HOME:$PWD/lib"
+    export PATH="$GEM_HOME/bin:$PATH"
+
+    BUNDLE="$GEM_HOME/bin/bundle"
+
+    [ ! -x "$BUNDLE" ] && ${pkgs.ruby}/bin/gem install bundler
+
+    export BUNDLE_PATH="$GEM_HOME"
+    export BUNDLE_GEMFILE="$PWD/Gemfile"
+
     export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
-    bundle install
+    $BUNDLE install
+
     export RUBYOPT=-rbundler/setup
   '';
 }
