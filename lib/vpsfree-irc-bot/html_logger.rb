@@ -35,6 +35,12 @@ module VpsFree::Irc::Bot
 
       FileUtils.mkdir_p(File.join(@dst, 'assets'))
       FileUtils::cp_r(assets, @dst)
+
+      # On NixOS, the copied files are not user-writable, which prevents us
+      # from overwriting the assets in case they're updated.
+      Dir.glob(File.join(@dst, 'assets', '*')).each do |f|
+        File.chmod(0644, f)
+      end
     end
 
     def last_counter
