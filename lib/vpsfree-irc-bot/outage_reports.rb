@@ -20,7 +20,7 @@ module VpsFree::Irc::Bot
       [6*60*60, 'six hours'],
     ]
 
-    set required_options: %i(server_label api_url channels)
+    set required_options: %i(server_label api_url channels state_dir)
 
     timer 60, method: :check, threaded: false
     timer 30, method: :remind, threaded: false
@@ -33,7 +33,7 @@ module VpsFree::Irc::Bot
 
     def post_api_setup
       @webui = client { |api| api.system_config.show('webui', 'base_url').value }
-      @store = FileStorage.new(config[:server_label], :outages)
+      @store = FileStorage.new(config[:state_dir], config[:server_label], :outages)
       @since = Time.now
 
       client do |api|
@@ -67,7 +67,7 @@ module VpsFree::Irc::Bot
 
         @since = Time.now if !outages.empty? || !updates.empty?
       end
-        
+
     rescue => e
       exception(e)
     end
@@ -81,7 +81,7 @@ module VpsFree::Irc::Bot
 
           next if delta > t
           break if outage[:reminded] == t || (t - delta) > 60
-       
+
           if t == 0
             send_channels("Outage ##{id} has begun: #{msg}")
 
@@ -118,7 +118,7 @@ module VpsFree::Irc::Bot
 
       # Show current outages
       return reply(m, 'No outage reported') if @store.empty?
-      
+
       now = Time.now.to_i
 
       relevant = @store.select { |id, outage| outage[:begins_at] <= Time.now.to_i }
@@ -141,7 +141,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
 #{outage_url(outage.id)}
         END
       )
-    
+
     rescue => e
       exception(e)
     end
@@ -151,7 +151,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
 
       attrs = %i(begins_at finished_at state type duration)
       changes = []
-      
+
       attrs.each do |attr|
         v = update.send(attr)
         next unless v
@@ -173,7 +173,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
           changes << "Outage type: #{v}"
         end
       end
-     
+
       if update.outage.state == 'announced'
         @store[update.outage_id] = outage_to_hash(update.outage)
 
@@ -183,7 +183,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
 
       send_channels("Update of outage ##{update.outage_id} at #{fmt_date(update.created_at)}")
       changes.each { |v| send_channels(v) }
-      
+
       if update.en_summary && !update.en_summary.empty?
         send_channels("Summary: #{update.en_summary}")
       end
@@ -203,7 +203,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
     def outage_url(id)
       File.join(@webui, "?page=outage&action=show&id=#{id}")
     end
-    
+
     def send_channels(msg)
       bot.channels.each do |c|
         next unless config[:channels].include?(c.name)

@@ -15,8 +15,8 @@ module VpsFree::Irc::Bot
       end
     end
 
-    def self.init(server)
-      @instance = new(server)
+    def self.init(state_dir, server)
+      @instance = new(state_dir, server)
     end
 
     def self.instance
@@ -24,10 +24,10 @@ module VpsFree::Irc::Bot
     end
 
     private
-    def initialize(server)
+    def initialize(state_dir, server)
       @channels = {}
       @changed = {}
-      super(server)
+      super(state_dir, server)
       FileUtils.mkpath(save_dir)
     end
 
@@ -56,7 +56,7 @@ module VpsFree::Irc::Bot
     def set_all
       do_sync do
         ret = yield(@channels)
-        
+
         if ret === true
           @channels.each_key do |chan|
             @changed[chan] = true
@@ -124,7 +124,7 @@ module VpsFree::Irc::Bot
 
       FileUtils.mv("#{file}.new", file)
     end
-    
+
     def persistence
       Thread.new do
         loop do

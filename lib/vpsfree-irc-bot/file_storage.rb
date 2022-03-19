@@ -2,20 +2,21 @@ require 'vpsfree-irc-bot/persistence'
 
 module VpsFree::Irc::Bot
   class FileStorage < Persistence
+    # @param state_dir [String]
     # @param server [String]
     # @param name [Symbol]
     # @return [FileStorage]
-    def self.get(server, name)
+    def self.get(state_dir, server, name)
       @instances ||= {}
       @instances[server] ||= {}
-      @instances[server][name] ||= new(server, name)
+      @instances[server][name] ||= new(state_dir, server, name)
     end
 
     private
-    def initialize(server, name)
+    def initialize(state_dir, server, name)
       @name = name
       @data = {}
-      super(server)
+      super(state_dir, server)
     end
 
     public
@@ -61,17 +62,17 @@ module VpsFree::Irc::Bot
         @data.delete_if(&block)
       end
     end
-    
+
     include Enumerable
 
     def select(&block)
       do_sync { @data.select(&block) }
     end
-    
+
     protected
     def load
       return unless File.exists?(save_file)
-      
+
       @data = YAML.load(File.read(save_file))
     end
 

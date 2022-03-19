@@ -22,7 +22,7 @@ module VpsFree::Irc::Bot
   # @option opts [String] api_url
   def self.new(label, host, channels, opts = {})
     # Initialize storage to avoid later thread collisions
-    UserStorage.init(label)
+    UserStorage.init(opts[:state_dir], label)
 
     GitHubWebHook::Server.start(opts[:github_webhook])
 
@@ -86,6 +86,7 @@ module VpsFree::Irc::Bot
             server_label: label,
             api_url: opts[:api_url],
             channels: opts[:outage_reports][:channels],
+            state_dir: opts[:state_dir],
           },
           Forecast => opts[:forecast],
           EasterEggs => {
@@ -110,7 +111,7 @@ module VpsFree::Irc::Bot
 
     Signal.trap('TERM', &do_exit)
     Signal.trap('INT', &do_exit)
-    
+
     DayChange.start
     bot.start
   end

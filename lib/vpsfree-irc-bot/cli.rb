@@ -9,6 +9,7 @@ module VpsFree::Irc::Bot
 
     def initialize
       @opts = {
+        state_dir: File.join(Dir.home, '.vpsfree-irc-bot'),
         archive_dst: '.',
         api_url: 'https://api.vpsfree.cz',
         config: [],

@@ -2,10 +2,11 @@ require 'thread'
 
 module VpsFree::Irc::Bot
   class Persistence
-    def initialize(server)
+    def initialize(state_dir, server)
+      @state_dir = state_dir
       @server = server
       @mutex = Mutex.new
-      
+
       load
       persistence
     end
@@ -21,7 +22,7 @@ module VpsFree::Irc::Bot
     end
 
     def save_dir
-      File.join(Dir.home, '.vpsfree-irc-bot', @server)
+      File.join(@state_dir, @server)
     end
   end
 end
