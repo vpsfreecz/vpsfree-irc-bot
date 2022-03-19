@@ -1,64 +1,64 @@
-:server:
-  :label: irc.example.com
-  :host: irc.example.com
-:channels:
+server:
+  label: irc.example.com
+  host: irc.example.com
+channels:
   - '#channel1'
   - '#channel2'
 
 # NickServ
-# :nickserv: password
+# nickserv: password
 
 # URL to web archive
-:archive_url: http://irc.example.com
+archive_url: http://irc.example.com
 
 # Configuration of plugin MailingLists
-# :mailing_lists:
-#     :server: pop3.example.com
-#     :port: 995
-#     :username: 
-#     :password:
-#     :enable_ssl: true
-#     :archive_dir: /var/lib/mailman/archives/public
+# mailing_lists:
+#     server: pop3.example.com
+#     port: 995
+#     username:
+#     password:
+#     enable_ssl: true
+#     archive_dir: /var/lib/mailman/archives/public
 
 # Outage reports
-# :outage_reports:
-#     :channels: '#channel1'
+# outage_reports:
+#     channels: '#channel1'
 
 # DokuWiki
-# :dokuwiki:
-#     - :url: https://kb.vpsfree.cz
-#       :namespace_slash: true
-#       :rewrite: 1
-#       :prefix: '[KB]'
-#     - :url: https://kb.vpsfree.org
-#       :namespace_slash: true
-#       :rewrite: 1
-#       :prefix: '[KB]'
+# dokuwiki:
+#     - url: https://kb.vpsfree.cz
+#       namespace_slash: true
+#       rewrite: 1
+#       prefix: '[KB]'
+#     - url: https://kb.vpsfree.org
+#       namespace_slash: true
+#       rewrite: 1
+#       prefix: '[KB]'
 
 # Blog feed
-# :blog:
-#     :url: https://blog.vpsfree.cz/feed/
-#     :channels: '#channel1'
+# blog:
+#     url: https://blog.vpsfree.cz/feed/
+#     channels: '#channel1'
 
 # Web event log
-# :web_event_log:
-#     :channels: '#channel1'
+# web_event_log:
+#     channels: '#channel1'
 
 # URL marker
-# :url_marker:
-#     :max_redirects: 5
-#     :max_size: 10485760
+# url_marker:
+#     max_redirects: 5
+#     max_size: 10485760
 
 # Weather forecast (openweathermap.org)
-# :forecast:
-#     :api_key: your_key
+# forecast:
+#     api_key: your_key
 
 # GitHub WebHook server
-# :github_webhook:
-#     :host: 127.0.0.1
-#     :port: 8000
-#     :secret: supersecrettoken
-#     :channels:
+# github_webhook:
+#     host: 127.0.0.1
+#     port: 8000
+#     secret: supersecrettoken
+#     channels:
 #          '#channel1':
 #              - user1/repoa
 #              - user2/repob
