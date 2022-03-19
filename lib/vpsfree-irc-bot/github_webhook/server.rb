@@ -1,5 +1,5 @@
 require 'json'
-require 'sinatra'
+require 'sinatra/base'
 require 'thread'
 
 module VpsFree::Irc::Bot
