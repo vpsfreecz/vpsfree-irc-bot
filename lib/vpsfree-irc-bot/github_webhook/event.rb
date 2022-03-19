@@ -68,7 +68,7 @@ module VpsFree::Irc::Bot::GitHubWebHook
       extract(payload, *self.class.to_extract) if self.class.to_extract
       parse(payload)
     end
-    
+
     def parse(payload)
       # reimplement
     end
@@ -77,7 +77,7 @@ module VpsFree::Irc::Bot::GitHubWebHook
       true
     end
   end
-  
+
   class User
     include Helpers
     attr_reader :id, :login, :html_url
@@ -102,7 +102,7 @@ module VpsFree::Irc::Bot::GitHubWebHook
 
     include Helpers
     attr_reader :id, :message, :author, :distinct
-    
+
     def initialize(data)
       extract(data, *%i(id message distinct))
       @author = Author.new(data['author']['name'], data['author']['email'])
@@ -112,7 +112,7 @@ module VpsFree::Irc::Bot::GitHubWebHook
   class Issue
     include Helpers
     attr_reader :id, :number, :title, :state, :html_url
-    
+
     def initialize(data)
       extract(data, *%i(id number title state html_url))
       @user = User.new(data['user'])
@@ -122,7 +122,7 @@ module VpsFree::Irc::Bot::GitHubWebHook
   class PullRequest
     include Helpers
     attr_reader :id, :number, :title, :state, :html_url
-    
+
     def initialize(data)
       extract(data, *%i(id number title state html_url))
       @user = User.new(data['user'])
@@ -179,20 +179,21 @@ END
       else
         ret << 'pushed '
       end
-      
-      ret << "#{commits.count} #{noun(commits.count, 'commit', 'commits')} "
+
+      ret << "#{commits.length} #{noun(commits.length, 'commit', 'commits')} "
       ret << "to #{branch}\n"
-      
-      commits[0..COUNT].each do |c|
+
+      show_count = commits.length == COUNT+1 ? COUNT : COUNT - 1
+
+      commits[0..show_count].each do |c|
         ret << "#{repository.name}/#{branch} "
         ret << "#{c.id[0..8]} #{c.author.name}: #{c.message.split("\n").first}"
         ret << "\n"
       end
 
-      if commits.count > COUNT
+      if commits.length > COUNT+1
         ret << "#{repository.name}/#{branch} "
-        ret << "...and #{commits.count - COUNT} more "
-        ret << "#{noun(commits.count - COUNT, 'commit', 'commits')}\n"
+        ret << "...and #{commits.length - COUNT} more commits\n"
       end
 
       ret << compare
