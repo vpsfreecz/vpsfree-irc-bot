@@ -28,9 +28,7 @@ in stdenv.mkDerivation rec {
     export BUNDLE_PATH="$GEM_HOME"
     export BUNDLE_GEMFILE="$PWD/Gemfile"
 
-    export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
-    $BUNDLE install
-
-    export RUBYOPT=-rbundler/setup
+    $BUNDLE config build.nokogiri --use-system-libraries
+    echo run `bundle install` if needed
   '';
 }
