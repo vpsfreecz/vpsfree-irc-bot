@@ -5,7 +5,7 @@ group :development do
   gem 'rake'
 end
 
-gem 'cinch', '~> 2.3.2'
+gem 'grinch', '~> 1.1.0'
 gem 'htmlentities'
 gem 'rinku'
 gem 'nokogiri'
