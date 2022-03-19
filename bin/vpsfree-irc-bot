@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
+$: << File.realpath(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'vpsfree-irc-bot'
 VpsFree::Irc::Bot::Cli.run
