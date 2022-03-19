@@ -1,5 +1,10 @@
 source 'https://rubygems.org'
 
+begin
+  $: << File.realpath(File.join(File.dirname(__FILE__), 'lib'))
+rescue Errno::ENOENT
+end
+
 group :development do
   gem 'bundler'
   gem 'rake'
