@@ -134,7 +134,7 @@ a.time {
 	color: #b5b5b5;
 }
 
-.event.join, .notice {
+.event.join, .notice, .end-of-day {
 	color: #2fa388;
 }
 
@@ -147,7 +147,7 @@ a.time {
 }
 
 .msg .nick, .status {
-	color: #f49153;	
+	color: #f49153;
 }
 
 .nick, .status {

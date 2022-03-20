@@ -133,7 +133,14 @@ module VpsFree::Irc::Bot
     end
 
     def close
-      @handle.write(render(:footer))
+      to_root = Array.new(@path.count('/'), '..')
+      next_day = @opened_at.to_date.next_day
+
+      @handle.write(render(
+        :footer,
+        next_day: next_day,
+        next_path: File.join(*to_root, format_path(next_day)),
+      ))
       @handle.close
     end
 
@@ -179,7 +186,7 @@ module VpsFree::Irc::Bot
         '..', '..',
         'templates',
         @tpl,
-      ) 
+      )
     end
 
     def template(name)
