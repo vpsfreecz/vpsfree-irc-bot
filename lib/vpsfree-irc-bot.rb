@@ -93,7 +93,9 @@ module VpsFree::Irc::Bot
             api_url: opts[:api_url],
           },
           GitHubWebHook::Announcer => {
-            channels: opts[:github_webhook][:channels],
+            channels: Hash[opts[:github_webhook][:channels].map do |k, v|
+              [k.to_s, v]
+            end],
           },
         }
       end

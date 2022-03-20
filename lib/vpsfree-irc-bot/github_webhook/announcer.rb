@@ -6,7 +6,7 @@ module VpsFree::Irc::Bot
   class GitHubWebHook::Announcer
     include Cinch::Plugin
     include Helpers
-    
+
     set required_options: %i(channels)
     timer 1, method: :check, threaded: false
 
