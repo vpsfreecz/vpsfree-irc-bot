@@ -1,16 +1,16 @@
 vpsFree.cz IRC Bot
 ==================
 
-## Deployment with systemd
+An IRC bot which can be found on irc.libera.chat #vpsfree and #vpsadminos.
+Provides channel log and integration with vpsFree.cz's infrastructure.
 
-The systemd service `vpsfree-irc-bot@.service` runs the bot as user `vpsfbot`. The bot
-should be installed in `/opt/vpsfree-irc-bot` and its executable at
-`/opt/vpsfree-irc-bot/bin/vpsfree-irc-bot`.
-Bots are configured by config files located at
-`/etc/vpsfree-irc-bot/%i.yml`, where `%i` is service instance name.
+More information can be also found in
+(https://kb.vpsfree.org/information/chat#bot)[vpsFree.cz's knowledge base].
 
-    # useradd -m -d /home/vpsfbot -s /bin/false vpsfbot
-    # mkdir /etc/vpsfree-irc-bot
+## Deployment with Nix
+
+NixOS module, package and configuration can be found at
+(https://github.com/vpsfreecz/vpsfree-cz-configuration)[vpsfree-cz-configuration].
 
 ## Bundix
 Until (https://github.com/nix-community/bundix/pull/68)[bundix#68] is resolved, use:
