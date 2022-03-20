@@ -112,7 +112,7 @@ module VpsFree::Irc::Bot
       @handle = File.open(@file, 'a')
     end
 
-    def write(*args)
+    def write(*args, **kwargs)
       t = Time.now
 
       @mutex.synchronize do
@@ -126,7 +126,7 @@ module VpsFree::Irc::Bot
           @opened_at = Time.now
         end
 
-        @handle.write(render(*args))
+        @handle.write(render(*args, **kwargs))
         @handle.flush
         @counter += 1
       end
@@ -168,7 +168,7 @@ module VpsFree::Irc::Bot
 
     end
 
-    def render(name, opts = {})
+    def render(name, **opts)
       unless @renderers[name]
         @renderers[name] = Renderer.new(template(name))
       end
