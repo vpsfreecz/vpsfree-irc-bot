@@ -36,7 +36,7 @@ module VpsFree::Irc::Bot
         next unless @loggers
 
         @loggers.each do |chan_name, loggers|
-          loggers.each { |l| l.next_day }
+          loggers.each { |l| l.go_to_next_day }
         end
       end
     end

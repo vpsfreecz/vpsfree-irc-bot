@@ -73,7 +73,7 @@ module VpsFree::Irc::Bot
       write(tr.has_key?(type) ? tr[type] : type, opts)
     end
 
-    def next_day
+    def go_to_next_day
       t = Time.now
 
       @mutex.synchronize do
