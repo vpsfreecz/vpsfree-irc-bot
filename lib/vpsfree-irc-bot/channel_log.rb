@@ -128,7 +128,7 @@ module VpsFree::Irc::Bot
         unless users.has_key?(m.user.last_nick)
           fail "user '#{m.user.last_nick}' not found"
         end
-        
+
         users[m.user.nick] = users[m.user.last_nick]
         users.delete(m.user.last_nick)
 
@@ -151,11 +151,12 @@ module VpsFree::Irc::Bot
             config[:archive_url],
             config[:server_label],
             channel.to_s,
+            '/',
           )
         )
       when 'today'
         uri = html_day_log_uri(channel.to_s, Time.now)
-      
+
       else
         reply(m, "'which' must be empty or 'today'")
         return
