@@ -17,13 +17,13 @@ module VpsFree::Irc::Bot
             id: '"vpsFree.cz Community list" <community-list.lists.vpsfree.cz>',
         },
     }
-    
+
     include Cinch::Plugin
     include MailMan
     include Helpers
 
     set required_options: %i(server port username password channels)
-    
+
     mailman do |m|
       m.server = {
         address: config[:server],
@@ -32,7 +32,6 @@ module VpsFree::Irc::Bot
         password: config[:password],
         enable_ssl: config[:enable_ssl],
       }
-      m.archive_dir = config[:archive_dir]
 
       LISTS.each do |list, opts|
         m.list name: "#{list}-list",
@@ -47,15 +46,15 @@ module VpsFree::Irc::Bot
         "#{list.prefix} Výpadek / Outage",
         "#{list.prefix} Odstávka / Maintenance",
       ]
-      
+
       return if notices.detect { |s| m.subject.start_with?(s) }
-    
+
       report_message(list, m, url)
     end
 
     def report_message(list, m, url)
       rx = /^((Re:\s*)*#{Regexp.escape(list.prefix)})/
-      
+
       if rx !~ m.subject
         warn("Stray message: #{m.subject}")
         return
