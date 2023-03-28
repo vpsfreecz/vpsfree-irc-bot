@@ -16,6 +16,11 @@ module VpsFree::Irc::Bot
     set required_options: %i(channels)
 
     def check
+      unless api_setup?
+        warn 'Skipping web event log check, API not set up'
+        return
+      end
+
       client do |api|
         @since ||= Time.now
 
@@ -36,7 +41,7 @@ module VpsFree::Irc::Bot
 
         @since = Time.now if events.any?
       end
-        
+
     rescue => e
       exception(e)
     end

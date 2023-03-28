@@ -13,8 +13,12 @@ module VpsFree::Irc::Bot
     command :status do
       desc 'show cluster status'
     end
-    
+
     def cmd_status(m, channel)
+      unless api_setup?
+        return reply(m, "Status unknown, unable to reach vpsAdmin API")
+      end
+
       client do |api|
         nodes = api.node.public_status
 
@@ -34,7 +38,7 @@ module VpsFree::Irc::Bot
             }.map { |n| n.name }.join(', ')
           )
         end
-        
+
         if down > 0
           reply(
             m,

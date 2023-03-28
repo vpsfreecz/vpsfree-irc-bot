@@ -51,6 +51,11 @@ module VpsFree::Irc::Bot
     end
 
     def check
+      unless api_setup?
+        warn 'Skipping outage check, API not set up'
+        return
+      end
+
       client do |api|
         outages = api.outage.list(state: :announced, since: @since)
         outages.each do |outage|
@@ -73,6 +78,11 @@ module VpsFree::Irc::Bot
     end
 
     def remind
+      unless api_setup?
+        warn 'Skipping outage reminder, API not set up'
+        return
+      end
+
       now = Time.now.to_i
 
       @store.each do |id, outage|
@@ -96,6 +106,10 @@ module VpsFree::Irc::Bot
     end
 
     def cmd_outage(m, channel, raw_id = nil)
+      unless api_setup?
+        return reply(m, 'Status unknown, unable to reach vpsAdmin API')
+      end
+
       # Show selected outage
       if raw_id
         id = raw_id.to_i
