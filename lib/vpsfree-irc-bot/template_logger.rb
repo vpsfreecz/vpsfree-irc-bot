@@ -70,7 +70,7 @@ module VpsFree::Irc::Bot
           leave: :action,
       }
 
-      write(tr.has_key?(type) ? tr[type] : type, opts)
+      write(tr.has_key?(type) ? tr[type] : type, **opts)
     end
 
     def go_to_next_day
