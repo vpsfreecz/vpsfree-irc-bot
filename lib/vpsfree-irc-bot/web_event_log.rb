@@ -32,7 +32,7 @@ module VpsFree::Irc::Bot
             log_mutable_send(
               channel,
               "News from vpsAdmin: "+
-              "[#{DateTime.iso8601(e.published_at).to_time.strftime('%Y-%m-%d %H:%M')}] "+
+              "[#{DateTime.iso8601(e.published_at).to_time.localtime.strftime('%Y-%m-%d %H:%M')}] "+
               ReverseMarkdown.convert(e.message).strip,
               :notice
             )
