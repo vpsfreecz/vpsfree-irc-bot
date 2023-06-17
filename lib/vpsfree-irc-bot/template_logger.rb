@@ -7,7 +7,7 @@ module VpsFree::Irc::Bot
   class TemplateLogger
     class Renderer
       def initialize(tpl)
-        @erb = ERB.new(File.new(tpl).read, 0, '-')
+        @erb = ERB.new(File.new(tpl).read, trim_mode: '-')
         @coder = HTMLEntities.new
       end
 
