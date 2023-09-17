@@ -1,8 +1,10 @@
+require 'cgi'
 require 'cinch'
 require 'thread'
 require 'uri'
 require 'vpsfree-irc-bot/command'
 require 'vpsfree-irc-bot/helpers'
+require 'vpsfree-irc-bot/log_path'
 
 module VpsFree::Irc::Bot
   class ChannelLog
@@ -10,8 +12,8 @@ module VpsFree::Irc::Bot
     include Command
     include Helpers
 
-    HTML_PATH = '%{server}/%{channel}/%%Y/%%m/%%d.html'
-    YAML_PATH = '%{server}/%{channel}/%%Y/%%m/%%d.yml'
+    HTML_PATH = LogPath.new('html')
+    YAML_PATH = LogPath.new('yml')
 
     set required_options: %i(server_label archive_dst)
 
@@ -78,14 +80,14 @@ module VpsFree::Irc::Bot
             m.channel,
             'html',
             File.join(config[:archive_dst], 'html/'),
-            resolve_path(HTML_PATH, m.channel.to_s),
+            HTML_PATH.resolve(server: config[:server_label], channel: m.channel.to_s),
           ),
           TemplateLogger.new(
             config[:server_label],
             m.channel,
             'yml',
             File.join(config[:archive_dst], 'yml/'),
-            resolve_path(YAML_PATH, m.channel.to_s),
+            YAML_PATH.resolve(server: config[:server_label], channel: m.channel.to_s),
           ),
         ]
 
@@ -146,13 +148,11 @@ module VpsFree::Irc::Bot
 
       case which
       when nil
-        uri = URI.encode(
-          File.join(
-            config[:archive_url],
-            config[:server_label],
-            channel.to_s,
-            '/',
-          )
+        uri = File.join(
+          config[:archive_url],
+          CGI.escape(config[:server_label]),
+          CGI.escape(channel.to_s),
+          '/',
         )
       when 'today'
         uri = html_day_log_uri(channel.to_s, Time.now)
@@ -177,21 +177,10 @@ module VpsFree::Irc::Bot
     # @param channel [String]
     # @param t [Time]
     def html_day_log_uri(channel, t)
-      URI.encode(
-        File.join(
-          config[:archive_url],
-          t.strftime(resolve_path(HTML_PATH, channel))
-        )
+      File.join(
+        config[:archive_url],
+        HTML_PATH.as_url(server: config[:server_label], channel: channel, time: t)
       )
-    end
-
-    # @param path [String]
-    # @param channel [String]
-    def resolve_path(path, channel)
-      path % {
-        server: config[:server_label],
-        channel: channel,
-      }
     end
   end
 end

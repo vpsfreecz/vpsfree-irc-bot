@@ -133,7 +133,7 @@ module VpsFree::Irc::Bot
     end
 
     def close
-      to_root = Array.new(@path.count('/'), '..')
+      to_root = Array.new(@path.depth, '..')
       next_day = @opened_at.to_date.next_day
 
       @handle.write(render(
@@ -145,7 +145,7 @@ module VpsFree::Irc::Bot
     end
 
     def header
-      to_root = Array.new(@path.count('/'), '..')
+      to_root = Array.new(@path.depth, '..')
 
       render(
         :header,
@@ -197,7 +197,7 @@ module VpsFree::Irc::Bot
     end
 
     def format_path(t)
-      t.strftime(@path)
+      @path.as_local(time: t)
     end
 
     def next_day?(t)
