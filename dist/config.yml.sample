@@ -52,6 +52,13 @@ archive_url: http://irc.example.com
 # forecast:
 #     api_key: your_key
 
+# Discourse WebHook server
+# discourse_webhook:
+#     host: 127.0.0.1
+#     port: 8001
+#     secret: supersecrettoken
+#     channels: '#channel1'
+
 # GitHub WebHook server
 # github_webhook:
 #     host: 127.0.0.1

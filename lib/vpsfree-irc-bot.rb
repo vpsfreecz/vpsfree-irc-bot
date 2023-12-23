@@ -24,6 +24,7 @@ module VpsFree::Irc::Bot
     # Initialize storage to avoid later thread collisions
     UserStorage.init(opts[:state_dir], label)
 
+    DiscourseWebHook::Server.start(opts[:discourse_webhook])
     GitHubWebHook::Server.start(opts[:github_webhook])
 
     Cinch::Bot.new do
@@ -51,6 +52,7 @@ module VpsFree::Irc::Bot
           OutageReports,
           Forecast,
           EasterEggs,
+          DiscourseWebHook::Announcer,
           GitHubWebHook::Announcer,
         ]
 
@@ -91,6 +93,9 @@ module VpsFree::Irc::Bot
           Forecast => opts[:forecast],
           EasterEggs => {
             api_url: opts[:api_url],
+          },
+          DiscourseWebHook::Announcer => {
+            channels: opts[:discourse_webhook][:channels]
           },
           GitHubWebHook::Announcer => {
             channels: Hash[opts[:github_webhook][:channels].map do |k, v|
