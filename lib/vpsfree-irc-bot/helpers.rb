@@ -16,7 +16,9 @@ module VpsFree::Irc::Bot
       when :me
         channel.action(msg)
       when :notice
-        channel.notice(msg)
+        # matterbridge does not pass IRC notices, so until that is changed,
+        # send normal messages.
+        channel.send(msg)
       else
         channel.send(msg)
       end
