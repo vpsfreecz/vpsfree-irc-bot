@@ -146,9 +146,9 @@ module VpsFree::Irc::Bot
     protected
     def report_outage(outage)
       send_channels(<<-END
-New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reported at #{fmt_date(outage.begins_at)}
+New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outage.id} reported at #{fmt_date(outage.begins_at)}
      Systems: #{outage.entity.list.map { |v| v.label }.join(', ')}
-        Type: #{outage.type}
+      Impact: #{outage.impact}
     Duration: #{outage.duration} minutes
       Reason: #{outage.en_summary}
   Handled by: #{outage.handler.list.map { |v| v.full_name }.join(', ')}
@@ -184,7 +184,7 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
           changes << "      State: #{v}"
 
         when :type
-          changes << "Outage type: #{v}"
+          changes << "Impact type: #{v}"
         end
       end
 
@@ -227,10 +227,10 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
 
     def outage_to_hash(outage)
       {
-        planned: outage.planned,
+        type: outage.type,
         begins_at: get_date(outage.begins_at).to_i,
         duration: outage.duration,
-        type: outage.type,
+        impact: outage.impact,
         summary: outage.en_summary,
         entities: outage.entity.list.map { |v| v.label },
         handlers: outage.handler.list.map { |v| v.full_name },
@@ -239,9 +239,9 @@ New #{outage.planned ? 'scheduled maintenance' : 'outage'} ##{outage.id} reporte
 
     def describe_outage(id, outage, m)
       reply(m, <<-END
-#{outage[:planned] ? 'Scheduled maintenance' : 'Outage'} ##{id} reported at #{fmt_date(outage[:begins_at])}
+#{outage[:type] == 'maintenance' ? 'Scheduled maintenance' : 'Outage'} ##{id} reported at #{fmt_date(outage[:begins_at])}
      Systems: #{outage[:entities].join(', ')}
- Outage type: #{outage[:type]}
+ Impact type: #{outage[:impact]}
     Duration: #{outage[:duration]} minutes
       Reason: #{outage[:summary]}
   Handled by: #{outage[:handlers].join(', ')}
