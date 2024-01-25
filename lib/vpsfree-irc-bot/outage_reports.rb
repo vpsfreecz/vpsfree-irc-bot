@@ -93,10 +93,10 @@ module VpsFree::Irc::Bot
           break if outage[:reminded] == t || (t - delta) > 60
 
           if t == 0
-            send_channels("Outage ##{id} has begun: #{msg}")
+            send_channels("#{outage[:type].capitalize} ##{id} has begun: #{msg}")
 
           else
-            send_channels("Outage ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
+            send_channels("#{outage[:type].capitalize} ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
           end
 
           outage[:reminded] = t
@@ -195,7 +195,7 @@ New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outa
         @store.delete(update.outage_id)
       end
 
-      send_channels("Update of outage ##{update.outage_id} at #{fmt_date(update.created_at)}")
+      send_channels("Update of #{update.type.capitalize} ##{update.outage_id} at #{fmt_date(update.created_at)}")
       changes.each { |v| send_channels(v) }
 
       if update.en_summary && !update.en_summary.empty?
