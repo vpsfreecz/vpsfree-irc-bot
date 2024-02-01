@@ -163,7 +163,7 @@ New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outa
     def report_update(update)
       return if update.state == 'announced'
 
-      attrs = %i(begins_at finished_at state type duration)
+      attrs = %i(begins_at finished_at state impact duration)
       changes = []
 
       attrs.each do |attr|
@@ -183,8 +183,8 @@ New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outa
         when :state
           changes << "      State: #{v}"
 
-        when :type
-          changes << "Impact type: #{v}"
+        when :impact
+          changes << "     Impact: #{v}"
         end
       end
 
@@ -241,7 +241,7 @@ New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outa
       reply(m, <<-END
 #{outage[:type] == 'maintenance' ? 'Scheduled maintenance' : 'Outage'} ##{id} reported at #{fmt_date(outage[:begins_at])}
      Systems: #{outage[:entities].join(', ')}
- Impact type: #{outage[:impact]}
+      Impact: #{outage[:impact]}
     Duration: #{outage[:duration]} minutes
       Reason: #{outage[:summary]}
   Handled by: #{outage[:handlers].join(', ')}
