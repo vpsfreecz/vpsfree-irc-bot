@@ -12,7 +12,7 @@ in stdenv.mkDerivation rec {
     libxslt
     zlib
     openssl
-    pkgconfig
+    pkg-config
   ];
 
   shellHook = ''
