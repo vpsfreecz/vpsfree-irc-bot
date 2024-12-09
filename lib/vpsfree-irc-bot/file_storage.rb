@@ -71,7 +71,7 @@ module VpsFree::Irc::Bot
 
     protected
     def load
-      return unless File.exists?(save_file)
+      return unless File.exist?(save_file)
 
       @data = YAML.load(File.read(save_file))
     end

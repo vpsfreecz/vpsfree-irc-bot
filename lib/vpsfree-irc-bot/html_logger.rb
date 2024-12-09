@@ -31,7 +31,7 @@ module VpsFree::Irc::Bot
 
     def copy_assets
       assets = File.join(template_dir, 'assets')
-      return unless Dir.exists?(assets)
+      return unless Dir.exist?(assets)
 
       FileUtils.mkdir_p(File.join(@dst, 'assets'))
       FileUtils::cp_r(assets, @dst)

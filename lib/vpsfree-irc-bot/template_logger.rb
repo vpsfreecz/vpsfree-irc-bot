@@ -93,7 +93,7 @@ module VpsFree::Irc::Bot
 
       FileUtils.mkpath(@dir)
 
-      if File.exists?(@file) && File.size(@file) > 0
+      if File.exist?(@file) && File.size(@file) > 0
         open_existing
 
       else

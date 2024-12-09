@@ -107,7 +107,7 @@ module VpsFree::Irc::Bot
     end
 
     def load
-      return unless Dir.exists?(save_dir)
+      return unless Dir.exist?(save_dir)
 
       Dir.glob(File.join(save_dir, '*.yml')) do |f|
         @channels[ File.basename(f).split('.')[0] ] = YAML.load(File.read(f))
