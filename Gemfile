@@ -20,7 +20,7 @@ gem 'reverse_markdown'
 gem 'mail'
 gem 'chronic_duration'
 gem 'require_all', '~> 2.0.0'
-gem 'sinatra', '~> 3.0.5'
+gem 'sinatra', '~> 4.1.1'
 gem 'thin'
 gem 'xmlrpc'
 gem 'rexml' # needed by xmlrpc, a bundled gem since Ruby 3.0
