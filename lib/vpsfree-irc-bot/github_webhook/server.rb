@@ -6,7 +6,7 @@ module VpsFree::Irc::Bot
   class GitHubWebHook::Server
     def self.create(opts)
       Sinatra.new do
-        set :server, :thin
+        set :server, :puma
         set :server_settings, {signals: false} # let sinatra trap exits
         set :bind, opts[:host]
         set :port, opts[:port]
