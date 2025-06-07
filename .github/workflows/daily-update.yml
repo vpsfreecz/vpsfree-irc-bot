@@ -1,0 +1,48 @@
+name: Daily update
+on:
+  schedule:
+    - cron: '30 4 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Set up Ruby + Bundler cache
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+          bundler-cache: true
+
+      - name: Setup git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update package dependencies
+        run: |
+          # Until [bundix#68](https://github.com/nix-community/bundix/pull/68) is resolved
+          bundle config set --local force_ruby_platform true
+
+          rm -f gemset.nix Gemfile.lock
+          nix-shell -p bundix --run "bundix -l"
+          
+          git add gemset.nix Gemfile.lock
+          git diff --cached --quiet && exit 0
+
+          git commit -m "Update dependencies"
+
+      - name: Push updates
+        run: |
+          git push origin master
+
