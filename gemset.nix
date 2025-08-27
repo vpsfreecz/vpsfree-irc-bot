@@ -232,10 +232,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0w5nkmk3zwg1mqxvki70ljrkrpbpkhjmfx9cd6rf9hllb1sbmz3g";
+      sha256 = "0dddmvm7hyxqykhvqliby7mhpqxgx2xz4s7nix60hka65ygcmfk6";
       type = "gem";
     };
-    version = "3.2025.0819";
+    version = "3.2025.0826";
   };
   mini_mime = {
     groups = ["default"];
@@ -485,10 +485,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1jmbf6lf7pcyacpb939xjjpn1f84c3nw83dy3p1lwjx0l2ljfif7";
+      sha256 = "05y4lwzci16c2xgckmpxkzq4czgkyaiiqhvrabdgaym3aj2jd10k";
       type = "gem";
     };
-    version = "3.4.1";
+    version = "3.4.2";
   };
   rinku = {
     groups = ["default"];

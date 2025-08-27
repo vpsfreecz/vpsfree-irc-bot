@@ -51,7 +51,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0819)
+    mime-types-data (3.2025.0826)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (5.25.5)
@@ -96,7 +96,7 @@ GEM
       netrc (~> 0.8)
     reverse_markdown (3.0.0)
       nokogiri
-    rexml (3.4.1)
+    rexml (3.4.2)
     rinku (2.0.6)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
