@@ -72,7 +72,7 @@ GEM
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     numerizer (0.1.1)
-    puma (7.0.3)
+    puma (7.0.4)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.1)
