@@ -57,7 +57,7 @@ GEM
     minitest (5.25.5)
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
-    net-imap (0.5.11)
+    net-imap (0.5.12)
       date
       net-protocol
     net-pop (0.1.2)
@@ -75,7 +75,7 @@ GEM
     puma (7.0.4)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.1)
+    rack (3.2.2)
     rack-protection (4.1.1)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
@@ -112,7 +112,7 @@ GEM
     timeout (0.4.3)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    uri (1.0.3)
+    uri (1.0.4)
     webrick (1.9.1)
     xmlrpc (0.3.3)
       webrick
