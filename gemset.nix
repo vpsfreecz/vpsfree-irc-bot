@@ -128,10 +128,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "002156ziygi704fdn4mz4sc43vznw4h77vz9adrxl797w9w7dmpb";
+      sha256 = "1hy5jvzd4wagk0k0yq7bjm6fa7ba7vjggzjfpri95jifkzvbvbxv";
       type = "gem";
     };
-    version = "4.4.1";
+    version = "4.4.2";
   };
   http-accept = {
     groups = ["default"];
