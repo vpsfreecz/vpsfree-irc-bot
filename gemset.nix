@@ -546,10 +546,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1nqf9rg974k4bjji7aggalg8pfvbkd9hys4hv5y450jb21qgkxph";
+      sha256 = "1jwhj5y89j5c6pk5hjw8jmrm3iila0krn2c31lnlrn217z8yyal5";
       type = "gem";
     };
-    version = "0.4.4";
+    version = "0.5.0";
   };
   tzinfo = {
     dependencies = ["concurrent-ruby"];
