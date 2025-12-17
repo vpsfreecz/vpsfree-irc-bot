@@ -25,10 +25,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0612spks81fvpv2zrrv3371lbs6mwd7w6g5zafglyk75ici1x87a";
+      sha256 = "11iv1mz1rwfm6qh5pj4d2lwrrvvqzkw9v8ziz76fwrjmxzzpsygc";
       type = "gem";
     };
-    version = "3.3.1";
+    version = "4.0.0";
   };
   chronic_duration = {
     dependencies = ["numerizer"];
@@ -546,10 +546,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1jwhj5y89j5c6pk5hjw8jmrm3iila0krn2c31lnlrn217z8yyal5";
+      sha256 = "1bz11pq7n1g51f50jqmgyf5b1v64p1pfqmy5l21y6vpr37b2lwkd";
       type = "gem";
     };
-    version = "0.5.0";
+    version = "0.6.0";
   };
   tzinfo = {
     dependencies = ["concurrent-ruby"];
