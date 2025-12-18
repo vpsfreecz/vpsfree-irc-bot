@@ -25,10 +25,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "11iv1mz1rwfm6qh5pj4d2lwrrvvqzkw9v8ziz76fwrjmxzzpsygc";
+      sha256 = "19y406nx17arzsbc515mjmr6k5p59afprspa1k423yd9cp8d61wb";
       type = "gem";
     };
-    version = "4.0.0";
+    version = "4.0.1";
   };
   chronic_duration = {
     dependencies = ["numerizer"];
@@ -248,14 +248,15 @@
     version = "2.8.9";
   };
   minitest = {
+    dependencies = ["prism"];
     groups = ["default"];
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1mbpz92ml19rcxxfjrj91gmkif9khb1xpzyw38f81rvglgw1ffrd";
+      sha256 = "1gjklhryvvd3byyk5psxyfka8vas3pxwb62b5f6s2pkk3py9g9ac";
       type = "gem";
     };
-    version = "5.27.0";
+    version = "6.0.0";
   };
   mustermann = {
     dependencies = ["ruby2_keywords"];
@@ -274,10 +275,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1j3c1yz2yaznmpriq7f26wa13siaw1dzavrzv3qdrbc5ih2bnj2x";
+      sha256 = "1imc50a9ic3ynsl3k0japhmb0ggrgp2c186cfqbcclv892nsrjh8";
       type = "gem";
     };
-    version = "0.6.0";
+    version = "0.6.2";
   };
   net-pop = {
     dependencies = ["net-protocol"];
@@ -352,6 +353,16 @@
       type = "gem";
     };
     version = "0.1.1";
+  };
+  prism = {
+    groups = ["default"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "0sqwckzzpj1mmmjnqcvqmq6adlxbhkf5ij3b6ir4i33ih4d2ih5z";
+      type = "gem";
+    };
+    version = "1.6.0";
   };
   puma = {
     dependencies = ["nio4r"];
