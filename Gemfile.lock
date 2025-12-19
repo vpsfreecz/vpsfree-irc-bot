@@ -73,7 +73,7 @@ GEM
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     numerizer (0.1.1)
-    prism (1.6.0)
+    prism (1.7.0)
     puma (7.1.0)
       nio4r (~> 2.0)
     racc (1.8.1)
