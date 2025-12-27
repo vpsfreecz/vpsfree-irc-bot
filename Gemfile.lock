@@ -54,7 +54,7 @@ GEM
     mime-types-data (3.2025.0924)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (6.0.0)
+    minitest (6.0.1)
       prism (~> 1.5)
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)

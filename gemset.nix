@@ -253,10 +253,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1gjklhryvvd3byyk5psxyfka8vas3pxwb62b5f6s2pkk3py9g9ac";
+      sha256 = "1fslin1vyh60snwygx8jnaj4kwhk83f3m0v2j2b7bsg2917wfm3q";
       type = "gem";
     };
-    version = "6.0.0";
+    version = "6.0.1";
   };
   mustermann = {
     dependencies = ["ruby2_keywords"];
