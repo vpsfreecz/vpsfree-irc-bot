@@ -339,10 +339,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1hcwwr2h8jnqqxmf8mfb52b0dchr7pm064ingflb78wa00qhgk6m";
+      sha256 = "15anyh2ir3kdji93kw770xxwm5rspn9rzx9b9zh1h9gnclcd4173";
       type = "gem";
     };
-    version = "1.18.10";
+    version = "1.19.0";
   };
   numerizer = {
     groups = ["default"];
