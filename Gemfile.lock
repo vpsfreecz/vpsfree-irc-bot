@@ -24,7 +24,7 @@ GEM
     domain_name (0.6.20240107)
     drb (2.2.3)
     grinch (1.1.0)
-    haveapi-client (0.26.2)
+    haveapi-client (0.26.3)
       activesupport (>= 7.0)
       highline (~> 3.1)
       json
@@ -73,7 +73,7 @@ GEM
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     numerizer (0.1.1)
-    prism (1.7.0)
+    prism (1.8.0)
     puma (7.1.0)
       nio4r (~> 2.0)
     racc (1.8.1)

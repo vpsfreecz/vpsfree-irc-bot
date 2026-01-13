@@ -107,10 +107,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0mc9gcy2qhn5i3gw52zvfk8669vawfr0zfla8lcim6qp2460bddz";
+      sha256 = "1cwr18rqgfbvzhg5279lvqa6n9hi41n2acrz82pq4yvj0b99ac8l";
       type = "gem";
     };
-    version = "0.26.2";
+    version = "0.26.3";
   };
   highline = {
     dependencies = ["reline"];
@@ -359,10 +359,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "00silqnlzzm97gn21lm39q95hjn058waqky44j25r67p9drjy1hh";
+      sha256 = "0m0jkk1y537xc2rw5fg7sid5fnd4a9mw2gphqmiflc2mxwb3lic4";
       type = "gem";
     };
-    version = "1.7.0";
+    version = "1.8.0";
   };
   puma = {
     dependencies = ["nio4r"];
