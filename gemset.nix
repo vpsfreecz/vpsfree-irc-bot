@@ -222,10 +222,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0a27k4jcrx7pvb0p59fn1frh14iy087c2aygrdkmgwsrbshvqxpj";
+      sha256 = "0k5h85yk7pznq7i5nxh53jkrjivrskxpysv6iw4qf77r39xzm24c";
       type = "gem";
     };
-    version = "3.2025.0924";
+    version = "3.2026.0113";
   };
   mini_mime = {
     groups = ["default"];
