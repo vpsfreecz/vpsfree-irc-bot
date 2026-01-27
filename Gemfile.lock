@@ -24,7 +24,7 @@ GEM
     domain_name (0.6.20240107)
     drb (2.2.3)
     grinch (1.1.0)
-    haveapi-client (0.26.3)
+    haveapi-client (0.26.5)
       activesupport (>= 7.0)
       highline (~> 3.1)
       json
