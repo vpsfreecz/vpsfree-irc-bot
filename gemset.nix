@@ -222,10 +222,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0k5h85yk7pznq7i5nxh53jkrjivrskxpysv6iw4qf77r39xzm24c";
+      sha256 = "0ayiqys92isim8h1fvnhl37plqkyv8j8zgvm1s9sv1x96qj6jn2a";
       type = "gem";
     };
-    version = "3.2026.0113";
+    version = "3.2026.0127";
   };
   mini_mime = {
     groups = ["default"];
@@ -359,10 +359,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0m0jkk1y537xc2rw5fg7sid5fnd4a9mw2gphqmiflc2mxwb3lic4";
+      sha256 = "11ggfikcs1lv17nhmhqyyp6z8nq5pkfcj6a904047hljkxm0qlvv";
       type = "gem";
     };
-    version = "1.8.0";
+    version = "1.9.0";
   };
   puma = {
     dependencies = ["nio4r"];
