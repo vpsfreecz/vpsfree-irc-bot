@@ -594,14 +594,14 @@
     version = "1.9.2";
   };
   xmlrpc = {
-    dependencies = ["webrick"];
+    dependencies = ["rexml" "webrick"];
     groups = ["default"];
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0fwfnccagsjrbvrav5nbk3zracj9zncr7i375nn20jd4cfy4cggc";
+      sha256 = "0hjlvq952c80khrj084a3csawrwlshd1v3n8abv5hbpqry6y18jk";
       type = "gem";
     };
-    version = "0.3.3";
+    version = "0.3.4";
   };
 }
