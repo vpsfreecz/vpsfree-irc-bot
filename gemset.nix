@@ -149,10 +149,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1nisbrpigpac3w67k1331ygyiaf4g2l7n6v7y8dgkrfaxlfh3n4d";
+      sha256 = "1aga7z4p0dka4zcqw9i05wa4ab1q7h7cgnj328ldqqfycjz84jxs";
       type = "gem";
     };
-    version = "1.1.4";
+    version = "1.1.6";
   };
   i18n = {
     dependencies = ["concurrent-ruby"];
