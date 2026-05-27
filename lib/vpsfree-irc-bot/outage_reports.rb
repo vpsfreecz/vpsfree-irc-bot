@@ -20,6 +20,11 @@ module VpsFree::Irc::Bot
       [6*60*60, 'six hours'],
     ]
 
+    OUTAGE_TYPE_LABELS = {
+      'planned_outage' => 'planned outage',
+      'unplanned_outage' => 'unplanned outage',
+    }.freeze
+
     set required_options: %i(server_label api_url channels state_dir)
 
     timer 60, method: :check, threaded: false
@@ -93,10 +98,10 @@ module VpsFree::Irc::Bot
           break if outage[:reminded] == t || (t - delta) > 60
 
           if t == 0
-            send_channels("#{outage[:type].capitalize} ##{id} has begun: #{msg}")
+            send_channels("#{outage_type_label(outage[:type], capitalize: true)} ##{id} has begun: #{msg}")
 
           else
-            send_channels("#{outage[:type].capitalize} ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
+            send_channels("#{outage_type_label(outage[:type], capitalize: true)} ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
           end
 
           outage[:reminded] = t
@@ -146,7 +151,7 @@ module VpsFree::Irc::Bot
     protected
     def report_outage(outage)
       send_channels(<<-END
-New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outage.id} reported at #{fmt_date(outage.begins_at)}
+New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outage.begins_at)}
      Systems: #{outage.entity.list.map { |v| v.label }.join(', ')}
       Impact: #{outage.impact}
     Duration: #{outage.duration} minutes
@@ -195,7 +200,7 @@ New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outa
         @store.delete(update.outage_id)
       end
 
-      send_channels("Update of #{update.type.capitalize} ##{update.outage_id} at #{fmt_date(update.created_at)}")
+      send_channels("Update of #{outage_type_label(update.type)} ##{update.outage_id} at #{fmt_date(update.created_at)}")
       changes.each { |v| send_channels(v) }
 
       if update.en_summary && !update.en_summary.empty?
@@ -218,6 +223,27 @@ New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outa
       File.join(@webui, "?page=outage&action=show&id=#{id}")
     end
 
+    def outage_type(type)
+      case type.to_s
+      when 'maintenance'
+        'planned_outage'
+      when 'outage'
+        'unplanned_outage'
+      else
+        type.to_s
+      end
+    end
+
+    def outage_type_label(type, capitalize: false)
+      label = OUTAGE_TYPE_LABELS.fetch(outage_type(type), type.to_s.tr('_', ' '))
+
+      if capitalize && !label.empty?
+        label[0].upcase + (label[1..] || '')
+      else
+        label
+      end
+    end
+
     def send_channels(msg)
       bot.channels.each do |c|
         next unless config[:channels].include?(c.name)
@@ -227,7 +253,7 @@ New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outa
 
     def outage_to_hash(outage)
       {
-        type: outage.type,
+        type: outage_type(outage.type),
         begins_at: get_date(outage.begins_at).to_i,
         duration: outage.duration,
         impact: outage.impact,
@@ -239,7 +265,7 @@ New #{outage.type == 'maintenance' ? 'scheduled maintenance' : 'outage'} ##{outa
 
     def describe_outage(id, outage, m)
       reply(m, <<-END
-#{outage[:type] == 'maintenance' ? 'Scheduled maintenance' : 'Outage'} ##{id} reported at #{fmt_date(outage[:begins_at])}
+#{outage_type_label(outage[:type], capitalize: true)} ##{id} reported at #{fmt_date(outage[:begins_at])}
      Systems: #{outage[:entities].join(', ')}
       Impact: #{outage[:impact]}
     Duration: #{outage[:duration]} minutes
