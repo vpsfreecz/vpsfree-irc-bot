@@ -25,6 +25,16 @@ module VpsFree::Irc::Bot
       'unplanned_outage' => 'unplanned outage',
     }.freeze
 
+    IMPACT_LABELS = {
+      'tbd' => 'TBD',
+      'system_restart' => 'System restart',
+      'system_reset' => 'System reset',
+      'network' => 'Network',
+      'performance' => 'Performance',
+      'unavailability' => 'Unavailability',
+      'export' => 'NFS export',
+    }.freeze
+
     set required_options: %i(server_label api_url channels state_dir)
 
     timer 60, method: :check, threaded: false
@@ -153,7 +163,7 @@ module VpsFree::Irc::Bot
       send_channels(<<-END
 New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outage.begins_at)}
      Systems: #{outage.entity.list.map { |v| v.label }.join(', ')}
-      Impact: #{outage.impact}
+      Impact: #{impact_label(outage.impact)}
     Duration: #{outage.duration} minutes
       Reason: #{outage.en_summary}
   Handled by: #{outage.handler.list.map { |v| v.full_name }.join(', ')}
@@ -189,7 +199,7 @@ New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outag
           changes << "      State: #{v}"
 
         when :impact
-          changes << "     Impact: #{v}"
+          changes << "     Impact: #{impact_label(v)}"
         end
       end
 
@@ -244,6 +254,10 @@ New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outag
       end
     end
 
+    def impact_label(impact)
+      IMPACT_LABELS.fetch(impact.to_s, impact.to_s.tr('_', ' '))
+    end
+
     def send_channels(msg)
       bot.channels.each do |c|
         next unless config[:channels].include?(c.name)
@@ -267,7 +281,7 @@ New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outag
       reply(m, <<-END
 #{outage_type_label(outage[:type], capitalize: true)} ##{id} reported at #{fmt_date(outage[:begins_at])}
      Systems: #{outage[:entities].join(', ')}
-      Impact: #{outage[:impact]}
+      Impact: #{impact_label(outage[:impact])}
     Duration: #{outage[:duration]} minutes
       Reason: #{outage[:summary]}
   Handled by: #{outage[:handlers].join(', ')}
