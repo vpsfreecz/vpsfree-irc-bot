@@ -96,9 +96,9 @@ module VpsFree::Irc::Bot
             channels: opts[:discourse_webhook][:channels]
           },
           GitHubWebHook::Announcer => {
-            channels: Hash[opts[:github_webhook][:channels].map do |k, v|
-              [k.to_s, v]
-            end],
+            channels: GitHubWebHook::Announcer.normalize_channels(
+              opts[:github_webhook][:channels]
+            ),
           },
         }
       end

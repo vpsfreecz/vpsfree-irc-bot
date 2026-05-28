@@ -60,3 +60,12 @@ archive_url: http://irc.example.com
 #          '#channel1':
 #              - user1/repoa
 #              - user2/repob
+#          '#channel2':
+#              repositories:
+#                  - user1/repoa
+#                  - user2/repob
+#              event_types:
+#                  - push
+#                  - issues
+#                  - pull_request
+#              default_branch_only: true

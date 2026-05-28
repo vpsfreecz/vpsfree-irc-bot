@@ -76,6 +76,10 @@ module VpsFree::Irc::Bot::GitHubWebHook
     def announce?
       true
     end
+
+    def default_branch?
+      false
+    end
   end
 
   class User
@@ -89,10 +93,11 @@ module VpsFree::Irc::Bot::GitHubWebHook
 
   class Repository
     include Helpers
-    attr_reader :id, :name, :full_name, :owner, :html_url, :description
+    attr_reader :id, :name, :full_name, :owner, :html_url, :description,
+                :default_branch
 
     def initialize(data)
-      extract(data, *%i(id name full_name html_url description))
+      extract(data, *%i(id name full_name html_url description default_branch))
       @owner = User.new(data['owner'])
     end
   end
@@ -162,7 +167,7 @@ END
 
     def parse(data)
       @commits = data['commits'].map { |v| Commit.new(v) }
-      @branch = ref.split('/').last
+      @branch = branch_from_ref
     end
 
     def to_s
@@ -210,8 +215,21 @@ END
       true
     end
 
+    def default_branch?
+      repository.default_branch && ref == "refs/heads/#{repository.default_branch}"
+    end
+
     def noun(n, singular, plural)
       n > 1 ? plural : singular
+    end
+
+    protected
+    def branch_from_ref
+      if ref.start_with?('refs/heads/')
+        ref.delete_prefix('refs/heads/')
+      else
+        ref.split('/').last
+      end
     end
   end
 

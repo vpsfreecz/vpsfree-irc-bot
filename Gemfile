@@ -10,6 +10,10 @@ group :development do
   gem 'rake'
 end
 
+group :test do
+  gem 'rspec'
+end
+
 gem 'grinch', '~> 1.1.0'
 gem 'htmlentities'
 gem 'rinku'
