@@ -16,18 +16,18 @@ module VpsFree::Irc::Bot
     command :rank do
       desc 'show your rank'
     end
-    
+
     command :top do
       arg :n, required: false
-      desc "show top N users"
+      desc 'show top N users'
     end
 
     UserStorage.defaults(
       messages: 0,
       karma: {
-        today: {given: 0, taken: 0, received: 0},
-        total: {given: 0, taken: 0, received: 0},
-      },
+        today: { given: 0, taken: 0, received: 0 },
+        total: { given: 0, taken: 0, received: 0 }
+      }
     )
 
     def initialize(*_)
@@ -35,10 +35,10 @@ module VpsFree::Irc::Bot
 
       DayChange.on do
         UserStorage.instance.set_all do |channels|
-          channels.each do |name, users|
-            users.each do |nick, data|
+          channels.each_value do |users|
+            users.each_value do |data|
               data[:karma] ||= {}
-              data[:karma][:today] = {given: 0, taken: 0, received: 0}
+              data[:karma][:today] = { given: 0, taken: 0, received: 0 }
             end
           end
 
@@ -58,9 +58,9 @@ module VpsFree::Irc::Bot
       m.channel.users.each_key do |user|
         safe_nick = Regexp.escape(user.nick)
 
-        if /^#{safe_nick}[\s|:|,]\s*(\+\d+|-\d+)(\s*$|,\s|$)/ =~ m.message
+        if /^#{safe_nick}[\s|:,]\s*(\+\d+|-\d+)(\s*$|,\s|$)/ =~ m.message
           # karma +- n
-          n = $1.to_i
+          n = ::Regexp.last_match(1).to_i
 
           n = -10 if n < -10
           n = 10 if n > 10
@@ -68,9 +68,9 @@ module VpsFree::Irc::Bot
           update_karma(m.target, m.channel, m.user, user, n)
           break
 
-        elsif /^#{safe_nick}(\+\+|\-\-)/ =~ m.message
+        elsif /^#{safe_nick}(\+\+|--)/ =~ m.message
           # karma +- 1
-          update_karma(m.target, m.channel, m.user, user, $1 == '++' ? 1 : -1)
+          update_karma(m.target, m.channel, m.user, user, ::Regexp.last_match(1) == '++' ? 1 : -1)
           break
         end
       end
@@ -80,18 +80,17 @@ module VpsFree::Irc::Bot
       UserStorage.instance.get_channel(channel) do |users|
         if users.empty?
           m.reply('You have no rank yet.')
-          return
-        end
+        else
+          sorted = sort(users)
+          rank = sorted.index { |name, _| name == m.user.nick }
 
-        sorted = sort(users)
-        rank = sorted.index { |name, _| name == m.user.nick }
-        
-        reply(
-          m,
-          "Your rank is #{rank+1} of #{users.size} users "+
-          "with karma #{sorted[rank][1][:karma][:total][:received]} and "+
-          "#{sorted[rank][1][:messages]} messages"
-        )
+          reply(
+            m,
+            "Your rank is #{rank + 1} of #{users.size} users " \
+            "with karma #{sorted[rank][1][:karma][:total][:received]} and " \
+            "#{sorted[rank][1][:messages]} messages"
+          )
+        end
       end
     end
 
@@ -101,26 +100,26 @@ module VpsFree::Irc::Bot
       n = 10 if n > 10
 
       UserStorage.instance.get_channel(channel.to_s) do |users|
-        if users.size == 0
-          reply(m, "No users to rank yet.")
-          return
+        if users.empty?
+          reply(m, 'No users to rank yet.')
+        else
+          i = 1
+          msg = MultiLine.new
+          msg << "Top #{n} users from #{channel}:\n"
+
+          sort(users)[0..(n - 1)].each do |u, stats|
+            msg << "#{i.to_s.rjust(2)}. #{u} "
+            msg << "(karma #{stats[:karma][:total][:received]}, #{stats[:messages]} messages)\n"
+            i += 1
+          end
+
+          m.user.send(msg)
         end
-
-        i = 1
-        msg = MultiLine.new
-        msg << "Top #{n} users from #{channel}:\n"
-
-        sort(users)[0..n-1].each do |u, stats|
-          msg << "#{i.to_s.rjust(2)}. #{u} "
-          msg << "(karma #{stats[:karma][:total][:received]}, #{stats[:messages]} messages)\n"
-          i += 1
-        end
-
-        m.user.send(msg)
       end
     end
 
     protected
+
     # @param target [Cinch::Target]
     # @param channel [Cinch::Channel]
     # @param who [Cinch::User] who gives karma
@@ -131,31 +130,31 @@ module VpsFree::Irc::Bot
         target.send("You can't change your own karma bro")
         return
       end
-      
+
       UserStorage.instance.synchronize do |storage|
         catch(:break) do
           # Check the giver
           storage.get(channel, who) do |data|
             if n > 0 && (n + data[:karma][:today][:given]) > 10
-              target.send("Cannot give more than 10 karma points per day")
+              target.send('Cannot give more than 10 karma points per day')
               throw(:break)
 
             elsif n < 0 && (n + data[:karma][:today][:taken]) < -10
-              target.send("Cannot take more than 10 karma points per day")
+              target.send('Cannot take more than 10 karma points per day')
               throw(:break)
             end
           end
-          
+
           # Check the receiver
           storage.get(channel, whom) do |data|
             received = data[:karma][:today][:received]
 
             if n > 0 && (n + received) > 50
-              target.send("Cannot receive more than 50 karma points per day")
+              target.send('Cannot receive more than 50 karma points per day')
               throw(:break)
 
             elsif n < 0 && received < 0 && (n + received) < -50
-              target.send("Cannot lose more than 50 karma points per day")
+              target.send('Cannot lose more than 50 karma points per day')
               throw(:break)
             end
           end
@@ -183,8 +182,8 @@ module VpsFree::Irc::Bot
           # Announce the change
           storage.get(channel, whom) do |data|
             target.send(
-              "#{whom.nick}'s karma "+
-              (n > 0 ? 'increased' : 'decreased')+
+              "#{whom.nick}'s karma " +
+              (n > 0 ? 'increased' : 'decreased') +
               " to #{data[:karma][:total][:received]}"
             )
           end

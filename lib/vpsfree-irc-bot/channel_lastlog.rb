@@ -1,5 +1,4 @@
 require 'cinch'
-require 'thread'
 require 'vpsfree-irc-bot/command'
 
 module VpsFree::Irc::Bot
@@ -8,7 +7,7 @@ module VpsFree::Irc::Bot
     include Command
 
     SIZE = 50
-    
+
     listen_to :connect, method: :connect
     listen_to :join, method: :join
     listen_to :action, method: :action
@@ -24,13 +23,13 @@ module VpsFree::Irc::Bot
       @mutex = Mutex.new
     end
 
-    def connect(m)
+    def connect(_m)
       @buffers = {}
     end
 
     def join(m)
       return if bot.nick != m.user.nick
-      
+
       @buffers[m.channel.to_s] = []
     end
 
@@ -39,12 +38,12 @@ module VpsFree::Irc::Bot
         # ignore /me
         return
       end
-      
+
       log(m)
     end
 
     def action(m)
-      log(m, status: true, message: m.message['ACTION'.size + 2..-2])
+      log(m, status: true, message: m.message[('ACTION'.size + 2)..-2])
     end
 
     def cmd_lastlog(m, channel, raw_n = nil)
@@ -54,41 +53,42 @@ module VpsFree::Irc::Bot
       @mutex.synchronize do
         buf = @buffers[channel.to_s]
         from = buf.size >= n ? buf.size - n : 0
-        slice = buf[from .. buf.size]
+        slice = buf[from..buf.size]
 
         str = MultiLine.new
 
-        if slice.any?
-          str << "Last #{slice.size} messages from '#{channel}':\n"
+        str << if slice.any?
+                 "Last #{slice.size} messages from '#{channel}':\n"
 
-        else
-          str << "There are no messages from '#{channel}' in the log."
-        end
+               else
+                 "There are no messages from '#{channel}' in the log."
+               end
 
         slice.each do |msg|
           s = "[#{msg[:time].strftime('%Y-%m-%d %H:%M:%S')}] "
 
-          if msg[:status]
-            s += " * #{msg[:nick]} #{msg[:message]}"
+          s += if msg[:status]
+                 " * #{msg[:nick]} #{msg[:message]}"
 
-          else
-            s += "< #{msg[:nick]}> #{msg[:message]}"
-          end
+               else
+                 "< #{msg[:nick]}> #{msg[:message]}"
+               end
 
           str << s << "\n"
         end
 
         m.user.send(str)
-      end 
+      end
     end
 
     protected
+
     def log(m, opts = {})
       @mutex.synchronize do
         hash = {
           time: m.time,
           nick: m.user.nick,
-          message: m.message,
+          message: m.message
         }
         hash.update(opts)
 

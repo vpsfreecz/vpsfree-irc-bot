@@ -1,5 +1,4 @@
 require 'cinch'
-require 'thread'
 require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
@@ -7,7 +6,7 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Helpers
 
-    set required_options: %i(channels)
+    set required_options: %i[channels]
     timer 1, method: :check, threaded: false
 
     class << self

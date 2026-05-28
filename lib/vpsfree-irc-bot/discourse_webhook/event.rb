@@ -69,7 +69,7 @@ module VpsFree::Irc::Bot::DiscourseWebHook
         instance,
         't',
         topic['slug'],
-        topic['id'].to_s,
+        topic['id'].to_s
       )
 
       @title = topic['title']
@@ -92,7 +92,7 @@ module VpsFree::Irc::Bot::DiscourseWebHook
         't',
         post['topic_slug'],
         post['topic_id'].to_s,
-        post['post_number'].to_s,
+        post['post_number'].to_s
       )
 
       @topic_title = post['topic_title']

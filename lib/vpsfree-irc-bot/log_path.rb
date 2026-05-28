@@ -26,7 +26,7 @@ module VpsFree::Irc::Bot
     # @param server [String, nil]
     # @param channel [String, nil]
     # @param time [Time]
-    def as_local(server: nil, channel: nil, time:)
+    def as_local(time:, server: nil, channel: nil)
       server ||= @server
       channel ||= @channel
 
@@ -39,7 +39,7 @@ module VpsFree::Irc::Bot
       File.join(
         server,
         channel,
-        time.strftime('%Y/%m/%d') + '.' + @suffix,
+        "#{time.strftime('%Y/%m/%d')}.#{@suffix}"
       )
     end
 
@@ -47,7 +47,7 @@ module VpsFree::Irc::Bot
     # @param server [String, nil]
     # @param channel [String, nil]
     # @param time [Time]
-    def as_url(server: nil, channel: nil, time:)
+    def as_url(time:, server: nil, channel: nil)
       server ||= @server
       channel ||= @channel
 
@@ -60,7 +60,7 @@ module VpsFree::Irc::Bot
       File.join(
         CGI.escape(server),
         CGI.escape(channel),
-        time.strftime('%Y/%m/%d') + '.' + @suffix,
+        "#{time.strftime('%Y/%m/%d')}.#{@suffix}"
       )
     end
 
@@ -70,6 +70,7 @@ module VpsFree::Irc::Bot
     end
 
     protected
+
     def set(server: nil, channel: nil)
       @server = server
       @channel = channel

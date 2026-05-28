@@ -11,7 +11,8 @@ module VpsFree::Irc::Bot
 
       @cmds.each do |cmd|
         next if cmd.help === false
-        self << " "*4 + cmd_line(cmd, mode, require_channel) + "\n"
+
+        self << "#{' ' * 4}#{cmd_line(cmd, mode, require_channel)}\n"
       end
     end
 
@@ -26,14 +27,14 @@ module VpsFree::Irc::Bot
       sig << '<channel>' if require_channel && mode == :private && cmd.channel
 
       cmd.args.each do |arg|
-        if arg.required
-          sig << '<' + arg.name.to_s + '>'
+        sig << if arg.required
+                 "<#{arg.name}>"
 
-        else
-          sig << '[' + arg.name.to_s + ']'
-        end
+               else
+                 "[#{arg.name}]"
+               end
       end
-      
+
       sig
     end
 
@@ -44,19 +45,19 @@ module VpsFree::Irc::Bot
       chan_sig = cmd_args(cmd, :channel, false).join(' ')
       priv_sig = cmd_args(cmd, :private, @bot.channel_list.count > 1).join(' ')
 
-      self << <<END
-Syntax:
-  Channel: !#{cmd.name} #{chan_sig}
-           #{@bot.nick}: #{cmd.name} #{chan_sig}
-  Private: #{cmd.name} #{priv_sig}
+      self << <<~END
+        Syntax:
+          Channel: !#{cmd.name} #{chan_sig}
+                   #{@bot.nick}: #{cmd.name} #{chan_sig}
+          Private: #{cmd.name} #{priv_sig}
 
-END
-      
-    if cmd.aliases.any?
-      self << "Aliases:\n#{cmd.aliases.map { |v| "    #{v}" }.join("\n")}\n\n"
-    end
+      END
 
-    self << "Description:\n    #{cmd.desc}"
+      if cmd.aliases.any?
+        self << "Aliases:\n#{cmd.aliases.map { |v| "    #{v}" }.join("\n")}\n\n"
+      end
+
+      self << "Description:\n    #{cmd.desc}"
     end
 
     def to_s

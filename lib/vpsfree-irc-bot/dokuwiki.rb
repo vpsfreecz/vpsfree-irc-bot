@@ -9,7 +9,7 @@ module VpsFree::Irc::Bot
 
     INTERVAL = 120
 
-    set required_options: %i(wikis)
+    set required_options: %i[wikis]
     timer INTERVAL, method: :check, threaded: false
 
     def initialize(*args)
@@ -20,12 +20,9 @@ module VpsFree::Irc::Bot
 
     def check
       @wikis.each do |w|
-        begin
-          w.check
-
-        rescue => e
-          exception(e)
-        end
+        w.check
+      rescue StandardError => e
+        exception(e)
       end
     end
 
@@ -48,9 +45,9 @@ module VpsFree::Irc::Bot
         ret.each { |change| handle_change(change) } unless State.get.muted?
 
         @since = Time.now.to_i unless ret.empty?
-
       rescue XMLRPC::FaultException => e
-        return if e.faultCode == 321  # No changes
+        return if e.faultCode == 321 # No changes
+
         error("RPC failed: #{e.faultCode} - #{e.faultString}")
       end
 
@@ -60,8 +57,8 @@ module VpsFree::Irc::Bot
 
         unless cur_i
           error(
-            "Version '#{change['version']}' of '#{change['name']}' "+
-            "not found in page versions"
+            "Version '#{change['version']}' of '#{change['name']}' " \
+            'not found in page versions'
           )
           return
         end
@@ -71,7 +68,7 @@ module VpsFree::Irc::Bot
         case cur['type'].upcase
         when 'C'  # page created
           send_channels(
-            "Page #{change['name']} created by #{change['author']} "+
+            "Page #{change['name']} created by #{change['author']} " \
             "(#{page_url(change['name'])})"
           )
 
@@ -79,10 +76,10 @@ module VpsFree::Irc::Bot
           prev = revs[cur_i + 1]
 
           send_channels(
-            "Page #{change['name']} changed by #{change['author']} "+
+            "Page #{change['name']} changed by #{change['author']} " \
             "(#{page_url(change['name'])})"
           )
-          
+
           if prev
             send_channels("Summary: #{cur['sum']}") if cur['sum'] && !cur['sum'].strip.empty?
             send_channels("Diff: #{diff_url(change['name'], prev, cur)}")
@@ -92,29 +89,28 @@ module VpsFree::Irc::Bot
 
         when 'D'  # deleted
           send_channels(
-            "Page #{change['name']} deleted by #{change['author']} "+
+            "Page #{change['name']} deleted by #{change['author']} " \
             "(#{page_url(change['name'])})"
           )
 
         else
           error("Unknown revision type '#{cur['type']}'")
-          return
+          nil
         end
-
       rescue XMLRPC::FaultException => e
         error("RPC failed: #{e.faultCode} - #{e.faultString}")
         send_channels(
-          "Page #{change['name']} changed by #{change['author']} "+
+          "Page #{change['name']} changed by #{change['author']} " \
           "(#{page_url(change['name'])})"
         )
       end
 
       def page_url(page)
         url = [config[:url]]
-        page = page.gsub(/:/, '/') if config[:namespace_slash]
+        page = page.gsub(':', '/') if config[:namespace_slash]
 
         case config[:rewrite]
-        when nil, 0  # no rewrite
+        when nil, 0 # no rewrite
           url << "doku.php?id=#{page}"
 
         when 1  # rewrite using .htaccess
@@ -129,20 +125,20 @@ module VpsFree::Irc::Bot
 
       def diff_url(page, rev1, rev2)
         url = page_url(page)
-        
+
         case config[:rewrite]
-        when nil, 0  # no rewrite
+        when nil, 0 # no rewrite
           url << '&'
 
-        when 1, 2  # rewrite using .htaccess or internal
+        when 1, 2 # rewrite using .htaccess or internal
           url << '?'
         end
 
-        url << "do=diff" \
+        url << 'do=diff' \
             << "&rev2[0]=#{rev1['version']}" \
             << "&rev2[1]=#{rev2['version']}" \
-            << "&difftype=sidebyside"
-        
+            << '&difftype=sidebyside'
+
         url
       end
 
@@ -160,10 +156,10 @@ module VpsFree::Irc::Bot
         html = @server.call('wiki.getPageHTML', page)
         doc = Nokogiri::HTML(html)
         ret = []
-        
+
         doc.xpath("//ul[contains(@class,'maintainers')]/li/a").each do |link|
-          m = {nick: link.text.strip}
-          
+          m = { nick: link.text.strip }
+
           if link['data-page-exists'] === '1'
             m.update(fetch_maintainer(link['data-page-id']))
           end
@@ -172,7 +168,6 @@ module VpsFree::Irc::Bot
         end
 
         ret
-      
       rescue XMLRPC::FaultException => e
         error("RPC failed: #{e.faultCode} - #{e.faultString}")
       end
@@ -182,9 +177,8 @@ module VpsFree::Irc::Bot
         doc = Nokogiri::HTML(html)
 
         {
-          irc: doc.xpath("//div[@class='maintainer']//tr[@class='irc']/td").text.strip,
+          irc: doc.xpath("//div[@class='maintainer']//tr[@class='irc']/td").text.strip
         }
-      
       rescue XMLRPC::FaultException => e
         error("RPC failed: #{e.faultCode} - #{e.faultString}")
       end
@@ -192,9 +186,10 @@ module VpsFree::Irc::Bot
       def send_channels(msg)
         bot.channels.each do |channel|
           next unless config[:channels].include?(channel.name)
+
           log_mutable_send(
             channel,
-            (config[:prefix] || '[DokuWiki]')+' '+msg,
+            "#{config[:prefix] || '[DokuWiki]'} #{msg}",
             :notice
           )
         end

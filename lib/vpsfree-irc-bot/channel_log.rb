@@ -1,6 +1,5 @@
 require 'cgi'
 require 'cinch'
-require 'thread'
 require 'uri'
 require 'vpsfree-irc-bot/command'
 require 'vpsfree-irc-bot/helpers'
@@ -15,7 +14,7 @@ module VpsFree::Irc::Bot
     HTML_PATH = LogPath.new('html')
     YAML_PATH = LogPath.new('yml')
 
-    set required_options: %i(server_label archive_dst)
+    set required_options: %i[server_label archive_dst]
 
     listen_to :connect, method: :connect
     listen_to :topic, method: :topic
@@ -34,16 +33,16 @@ module VpsFree::Irc::Bot
       super
       @users_mutex = Mutex.new
 
-      DayChange.on do |yesterday|
+      DayChange.on do |_yesterday|
         next unless @loggers
 
-        @loggers.each do |chan_name, loggers|
-          loggers.each { |l| l.go_to_next_day }
+        @loggers.each_value do |loggers|
+          loggers.each(&:go_to_next_day)
         end
       end
     end
 
-    def connect(m)
+    def connect(_m)
       @loggers = {}
       @users = {}
     end
@@ -57,6 +56,7 @@ module VpsFree::Irc::Bot
         # ignore /me
         return
       end
+
       log(m.command == 'NOTICE' ? :notice : :msg, m)
     end
 
@@ -80,15 +80,15 @@ module VpsFree::Irc::Bot
             m.channel,
             'html',
             File.join(config[:archive_dst], 'html/'),
-            HTML_PATH.resolve(server: config[:server_label], channel: m.channel.to_s),
+            HTML_PATH.resolve(server: config[:server_label], channel: m.channel.to_s)
           ),
           TemplateLogger.new(
             config[:server_label],
             m.channel,
             'yml',
             File.join(config[:archive_dst], 'yml/'),
-            YAML_PATH.resolve(server: config[:server_label], channel: m.channel.to_s),
-          ),
+            YAML_PATH.resolve(server: config[:server_label], channel: m.channel.to_s)
+          )
         ]
 
       else
@@ -128,7 +128,7 @@ module VpsFree::Irc::Bot
     def nick(m)
       channel_users do |users|
         unless users.has_key?(m.user.last_nick)
-          fail "user '#{m.user.last_nick}' not found"
+          raise "user '#{m.user.last_nick}' not found"
         end
 
         users[m.user.nick] = users[m.user.last_nick]
@@ -152,7 +152,7 @@ module VpsFree::Irc::Bot
           config[:archive_url],
           CGI.escape(config[:server_label]),
           CGI.escape(channel.to_s),
-          '/',
+          '/'
         )
       when 'today'
         uri = html_day_log_uri(channel.to_s, Time.now)
@@ -170,6 +170,7 @@ module VpsFree::Irc::Bot
     end
 
     protected
+
     def channel_users
       @users_mutex.synchronize { yield(@users) }
     end

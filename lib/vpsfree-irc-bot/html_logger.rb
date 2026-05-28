@@ -5,9 +5,9 @@ require 'vpsfree-irc-bot/template_logger'
 module VpsFree::Irc::Bot
   class TemplateLogger
     class Renderer
-      def encode(v, hashtag = false)
+      def encode(v, hashtag: false)
         ret = @coder.encode(v, :basic)
-        ret.gsub!(/#/, '%23') if hashtag
+        ret.gsub!('#', '%23') if hashtag
         ret
       end
 
@@ -24,6 +24,7 @@ module VpsFree::Irc::Bot
     end
 
     protected
+
     def open_new
       super
       write_tz(@opened_at)
@@ -34,12 +35,12 @@ module VpsFree::Irc::Bot
       return unless Dir.exist?(assets)
 
       FileUtils.mkdir_p(File.join(@dst, 'assets'))
-      FileUtils::cp_r(assets, @dst)
+      FileUtils.cp_r(assets, @dst)
 
       # On NixOS, the copied files are not user-writable, which prevents us
       # from overwriting the assets in case they're updated.
       Dir.glob(File.join(@dst, 'assets', '*')).each do |f|
-        File.chmod(0644, f)
+        File.chmod(0o644, f)
       end
     end
 

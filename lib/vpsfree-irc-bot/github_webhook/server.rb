@@ -1,13 +1,12 @@
 require 'json'
 require 'sinatra/base'
-require 'thread'
 
 module VpsFree::Irc::Bot
   class GitHubWebHook::Server
     def self.create(opts)
       Sinatra.new do
         set :server, :puma
-        set :server_settings, {signals: false} # let sinatra trap exits
+        set :server_settings, { signals: false } # let sinatra trap exits
         set :bind, opts[:host]
         set :port, opts[:port]
         set :secret_token, opts[:secret]
@@ -31,15 +30,16 @@ module VpsFree::Irc::Bot
         end
 
         def verify_signature(payload_body)
-          signature = 'sha1=' + OpenSSL::HMAC.hexdigest(
+          digest = OpenSSL::HMAC.hexdigest(
             OpenSSL::Digest.new('sha1'),
             settings.secret_token,
             payload_body
           )
+          signature = "sha1=#{digest}"
 
-          unless Rack::Utils.secure_compare(signature, request.env['HTTP_X_HUB_SIGNATURE'])
-            return halt 400, 'Invalid signature'
-          end
+          return if Rack::Utils.secure_compare(signature, request.env['HTTP_X_HUB_SIGNATURE'])
+
+          halt 400, 'Invalid signature'
         end
       end
     end

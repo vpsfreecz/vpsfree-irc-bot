@@ -41,7 +41,7 @@ module VpsFree::Irc::Bot
 
       def wind_dir(degrees)
         v = ((degrees / 22.5) + 0.5).to_i
-        %w(N NNE NE ENE E ESE SE SSE S SSW SW WSW W WNW NW NNW)[v % 16]
+        %w[N NNE NE ENE E ESE SE SSE S SSW SW WSW W WNW NW NNW][v % 16]
       end
     end
 
@@ -49,7 +49,7 @@ module VpsFree::Irc::Bot
       self.class.api_key = config[:api_key]
     end
 
-    def cmd_forecast(m, channel, city)
+    def cmd_forecast(m, _channel, city)
       m.reply(self.class.as_text(city))
     end
   end

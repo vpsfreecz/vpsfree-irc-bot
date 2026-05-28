@@ -13,7 +13,7 @@ module VpsFree::Irc::Bot
     include Api
 
     timer 60, method: :check, threaded: false
-    set required_options: %i(channels)
+    set required_options: %i[channels]
 
     def check
       unless api_setup?
@@ -29,6 +29,7 @@ module VpsFree::Irc::Bot
         events.each do |e|
           bot.channels.each do |channel|
             next unless config[:channels].include?(channel.name)
+
             log_mutable_send(
               channel,
               "News from vpsAdmin: #{ReverseMarkdown.convert(e.message).strip}",
@@ -39,8 +40,7 @@ module VpsFree::Irc::Bot
 
         @since = Time.now if events.any?
       end
-
-    rescue => e
+    rescue StandardError => e
       exception(e)
     end
   end

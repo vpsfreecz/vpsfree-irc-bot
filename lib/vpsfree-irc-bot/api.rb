@@ -1,4 +1,3 @@
-require 'thread'
 require 'haveapi/client'
 
 module VpsFree::Irc::Bot
@@ -14,7 +13,7 @@ module VpsFree::Irc::Bot
       begin
         @api.setup
         @api_setup = true
-      rescue => e
+      rescue StandardError => e
         warn "Exception during API setup: #{e.message} (#{e.class})"
         Timer(15, shots: 1, threaded: false) { api_setup }
         return
@@ -24,7 +23,8 @@ module VpsFree::Irc::Bot
     end
 
     def client
-      fail 'API not set up yet' unless @api_setup
+      raise 'API not set up yet' unless @api_setup
+
       @api_mutex.synchronize { yield(@api) }
     end
 
@@ -33,7 +33,7 @@ module VpsFree::Irc::Bot
     end
 
     def self.included(klass)
-      klass.set(required_options: %i(api_url))
+      klass.set(required_options: %i[api_url])
       klass.timer(0, method: :api_setup, shots: 1, threaded: false)
     end
   end

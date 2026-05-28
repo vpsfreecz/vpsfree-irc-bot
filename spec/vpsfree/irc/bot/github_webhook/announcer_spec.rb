@@ -69,15 +69,15 @@ RSpec.describe VpsFree::Irc::Bot::GitHubWebHook::Announcer do
     channels = described_class.normalize_channels(
       '#vpsfree' => {
         'repositories' => ['vpsfreecz/web'],
-        'event_types' => %w(push issues pull_request),
-        'default_branch_only' => true,
+        'event_types' => %w[push issues pull_request],
+        'default_branch_only' => true
       }
     )
 
     channels['#vpsfree']
   end
 
-  def push_event(repository: 'vpsfreecz/web', default_branch: 'master', ref:)
+  def push_event(ref:, repository: 'vpsfreecz/web', default_branch: 'master')
     event(
       'push',
       repository,
@@ -96,9 +96,9 @@ RSpec.describe VpsFree::Irc::Bot::GitHubWebHook::Announcer do
           'distinct' => true,
           'author' => {
             'name' => 'Tester',
-            'email' => 'tester@example.org',
-          },
-        },
+            'email' => 'tester@example.org'
+          }
+        }
       ]
     )
   end
@@ -115,7 +115,7 @@ RSpec.describe VpsFree::Irc::Bot::GitHubWebHook::Announcer do
         'title' => 'Issue',
         'state' => 'open',
         'html_url' => 'https://github.com/vpsfreecz/web/issues/42',
-        'user' => user('reporter'),
+        'user' => user('reporter')
       }
     )
   end
@@ -133,7 +133,7 @@ RSpec.describe VpsFree::Irc::Bot::GitHubWebHook::Announcer do
         'title' => 'PR',
         'state' => 'open',
         'html_url' => 'https://github.com/vpsfreecz/web/pull/7',
-        'user' => user('contributor'),
+        'user' => user('contributor')
       }
     )
   end
@@ -174,7 +174,7 @@ RSpec.describe VpsFree::Irc::Bot::GitHubWebHook::Announcer do
       type,
       {
         'sender' => user('sender'),
-        'repository' => repository(repository_name, default_branch),
+        'repository' => repository(repository_name, default_branch)
       }.merge(attrs)
     )
   end
@@ -189,7 +189,7 @@ RSpec.describe VpsFree::Irc::Bot::GitHubWebHook::Announcer do
       'html_url' => "https://github.com/#{full_name}",
       'description' => 'Repository',
       'default_branch' => default_branch,
-      'owner' => user(owner_name),
+      'owner' => user(owner_name)
     }
   end
 
@@ -197,7 +197,7 @@ RSpec.describe VpsFree::Irc::Bot::GitHubWebHook::Announcer do
     {
       'id' => 200,
       'login' => login,
-      'html_url' => "https://github.com/#{login}",
+      'html_url' => "https://github.com/#{login}"
     }
   end
 end

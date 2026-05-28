@@ -1,5 +1,3 @@
-require 'thread'
-
 module VpsFree::Irc::Bot
   class Persistence
     def initialize(state_dir, server)
@@ -12,6 +10,7 @@ module VpsFree::Irc::Bot
     end
 
     protected
+
     def do_sync(&block)
       if @mutex.owned?
         block.call

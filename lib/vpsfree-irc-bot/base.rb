@@ -24,7 +24,7 @@ module VpsFree::Irc::Bot
       channel false
     end
 
-    def connect(m)
+    def connect(_m)
       return unless config[:nickserv]
 
       User('NickServ').send("identify #{config[:nickserv]}")
@@ -38,22 +38,21 @@ module VpsFree::Irc::Bot
 
         begin
           help.command(cmd.to_sym)
-
         rescue ArgumentError => e
           m.user.send(e.message)
         end
 
       else
-        help << <<END
-vpsFree.cz IRC Bot v#{VERSION}
-====================#{'=' * VERSION.size}
-  
-END
+        help << <<~END
+          vpsFree.cz IRC Bot v#{VERSION}
+          ====================#{'=' * VERSION.size}
+          #{'  '}
+        END
 
         if channel
           help << "Channel commands:\n"
           help.commands(:channel)
-        
+
         else
           help << "Private commands:\n"
           help.commands(:private)
@@ -65,21 +64,17 @@ END
       m.user.send(help)
     end
 
-    def cmd_ping(m, channel)
+    def cmd_ping(m, _channel)
       reply(m, 'pong')
     end
 
     def channel_not_found(m)
-      return if /^(#{bot.nick}[:|,|\s])/ !~ m.message
+      return if /^(#{bot.nick}[:|,\s])/ !~ m.message
 
-      cmd_str = m.message[$1.size .. -1].strip
+      cmd_str = m.message[::Regexp.last_match(1).size..].strip
 
-      Command.commands.each do |cmd|
-        cmd.names.each do |n|
-          return if /!?#{n}/ =~ cmd_str || /^!?#{n}/ =~ cmd_str
-        end
-      end
-      
+      return if known_channel_command?(cmd_str)
+
       reply(m, "Command '#{cmd_str}' not found. Say 'help' to get a list of commands.")
     end
 
@@ -90,13 +85,25 @@ END
       # Ignore messages from NickServ
       return if m.user.nick == 'NickServ'
 
-      Command.commands.each do |cmd|
-        cmd.names.each do |n|
-          return if /^!?#{n}/ =~ m.message
-        end
-      end
+      return if known_private_command?(m.message)
 
       reply(m, "Command '#{m.message}' not found. Say 'help' to get a list of commands.")
+    end
+
+    protected
+
+    def known_channel_command?(cmd_str)
+      Command.commands.any? do |cmd|
+        cmd.names.any? do |n|
+          /!?#{n}/ =~ cmd_str || /^!?#{n}/ =~ cmd_str
+        end
+      end
+    end
+
+    def known_private_command?(message)
+      Command.commands.any? do |cmd|
+        cmd.names.any? { |n| /^!?#{n}/ =~ message }
+      end
     end
   end
 end

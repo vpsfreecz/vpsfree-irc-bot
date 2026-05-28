@@ -12,16 +12,16 @@ module VpsFree::Irc::Bot
         state_dir: File.join(Dir.home, '.vpsfree-irc-bot'),
         archive_dst: '.',
         api_url: 'https://api.vpsfree.cz',
-        config: [],
+        config: []
       }
     end
 
     def run
-      usage = <<END
-Usage: #{$0} [options] [-c CONFIG] | [<server> <channel...>]
+      usage = <<~END
+        Usage: #{$0} [options] [-c CONFIG] | [<server> <channel...>]
 
-Options:
-END
+        Options:
+      END
 
       opt_parser = OptionParser.new do |opts|
         opts.banner = usage
@@ -73,30 +73,28 @@ END
       if @opts[:config].any?
         @opts[:config].each do |cfg_path|
           begin
-            cfg = YAML.safe_load(File.read(cfg_path), symbolize_names: true)
+            cfg = YAML.safe_load_file(cfg_path, symbolize_names: true)
 
             unless cfg.is_a?(::Hash)
-              warn "Config must yield a hash"
+              warn 'Config must yield a hash'
               exit(1)
             end
 
             @opts = merge_config(@opts, cfg)
-
           rescue Errno::ENOENT
             warn "Config file '#{cfg_path}' does not exist"
             exit(1)
-
           rescue Psych::SyntaxError => e
             warn "Invalid config file: #{e.message}"
             exit(1)
           end
 
           if !@opts[:server]
-            warn "Configure server"
+            warn 'Configure server'
             exit(1)
 
           elsif !@opts[:channels]
-            warn "Configure channels"
+            warn 'Configure channels'
             exit(1)
           end
 
@@ -107,15 +105,16 @@ END
 
       else
         label = host = ARGV[0]
-        channels = ARGV[1..-1]
+        channels = ARGV[1..]
       end
 
       VpsFree::Irc::Bot.start(label, host, channels, @opts)
     end
 
     protected
+
     def merge_config(src, override)
-      src.merge(override) do |k, old_v, new_v|
+      src.merge(override) do |_k, old_v, new_v|
         if old_v.instance_of?(Hash)
           merge_config(old_v, new_v)
         else

@@ -13,6 +13,7 @@ module VpsFree::Irc::Bot
     end
 
     private
+
     def initialize(state_dir, server, name)
       @name = name
       @data = {}
@@ -20,6 +21,7 @@ module VpsFree::Irc::Bot
     end
 
     public
+
     def [](k)
       do_sync do
         @changed = true
@@ -70,18 +72,17 @@ module VpsFree::Irc::Bot
     end
 
     protected
+
     def load
       return unless File.exist?(save_file)
 
-      @data = YAML.load(File.read(save_file))
+      @data = YAML.load_file(save_file)
     end
 
     def save
       FileUtils.mkpath(save_dir)
 
-      File.open("#{save_file}.new", 'w') do |f|
-        f.write(YAML.dump(@data))
-      end
+      File.write("#{save_file}.new", YAML.dump(@data))
 
       FileUtils.mv("#{save_file}.new", save_file)
     end

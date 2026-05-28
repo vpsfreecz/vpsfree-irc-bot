@@ -1,7 +1,6 @@
 require 'fileutils'
 require 'erb'
 require 'date'
-require 'thread'
 
 module VpsFree::Irc::Bot
   class TemplateLogger
@@ -14,7 +13,7 @@ module VpsFree::Irc::Bot
       def render(opts)
         opts.each { |k, v| instance_variable_set("@#{k}", v) }
         ret = @erb.result(binding)
-        opts.each { |k, v| instance_variable_set("@#{k}", nil) }
+        opts.each_key { |k| instance_variable_set("@#{k}", nil) }
         ret
       end
     end
@@ -36,17 +35,17 @@ module VpsFree::Irc::Bot
       opts = {
           m: m,
           time: m.time,
-          counter: @counter,
+          counter: @counter
       }
 
       case type
       when :me
-        if m.message.start_with?("\u0001")
-          opts[:status] = m.message['ACTION'.size + 2..-2]
+        opts[:status] = if m.message.start_with?("\u0001")
+                          m.message[('ACTION'.size + 2)..-2]
 
-        else
-          opts[:status] = m.message
-        end
+                        else
+                          m.message
+                        end
 
       when :join
         opts[:event] = 'has joined'
@@ -67,7 +66,7 @@ module VpsFree::Irc::Bot
 
       tr = {
           join: :action,
-          leave: :action,
+          leave: :action
       }
 
       write(tr.has_key?(type) ? tr[type] : type, **opts)
@@ -85,6 +84,7 @@ module VpsFree::Irc::Bot
     end
 
     protected
+
     def open
       @opened_at = Time.now
       @counter = 0
@@ -137,10 +137,10 @@ module VpsFree::Irc::Bot
       next_day = @opened_at.to_date.next_day
 
       @handle.write(render(
-        :footer,
-        next_day: next_day,
-        next_path: File.join(*to_root, format_path(next_day)),
-      ))
+                      :footer,
+                      next_day: next_day,
+                      next_path: File.join(*to_root, format_path(next_day))
+                    ))
       @handle.close
     end
 
@@ -154,19 +154,17 @@ module VpsFree::Irc::Bot
         time: @opened_at,
         previous: File.join(
           *to_root,
-          format_path(@opened_at.to_date.prev_day),
+          format_path(@opened_at.to_date.prev_day)
         ),
         next: File.join(
           *to_root,
-          format_path(@opened_at.to_date.next_day),
+          format_path(@opened_at.to_date.next_day)
         ),
-        root: File.join(*to_root),
+        root: File.join(*to_root)
       )
     end
 
-    def tz_changed(t)
-
-    end
+    def tz_changed(t); end
 
     def render(name, **opts)
       unless @renderers[name]
@@ -182,17 +180,17 @@ module VpsFree::Irc::Bot
 
     def template_dir
       File.join(
-        File.dirname(File.realpath(__FILE__)),
+        __dir__,
         '..', '..',
         'templates',
-        @tpl,
+        @tpl
       )
     end
 
     def template(name)
       File.join(
         template_dir,
-        "#{name}.erb",
+        "#{name}.erb"
       )
     end
 
@@ -201,7 +199,7 @@ module VpsFree::Irc::Bot
     end
 
     def next_day?(t)
-      ! (@opened_at.to_date === t.to_date)
+      !(@opened_at.to_date === t.to_date)
     end
   end
 end

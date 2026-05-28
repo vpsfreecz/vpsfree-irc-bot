@@ -1,5 +1,4 @@
 require 'cinch'
-require 'thread'
 require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
@@ -21,15 +20,15 @@ module VpsFree::Irc::Bot
         return false unless repositories.include?(event.repository.full_name)
         return false if event_types && !event_types.include?(event.type)
 
-        if default_branch_only && event.type == 'push'
-          return false unless event.default_branch?
+        if default_branch_only && event.type == 'push' && !event.default_branch?
+          return false
         end
 
         true
       end
     end
 
-    set required_options: %i(channels)
+    set required_options: %i[channels]
     timer 1, method: :check, threaded: false
 
     class << self
@@ -80,6 +79,7 @@ module VpsFree::Irc::Bot
       end
 
       protected
+
       def config_value(config, key)
         return config[key] if config.has_key?(key)
         return config[key.to_s] if config.has_key?(key.to_s)

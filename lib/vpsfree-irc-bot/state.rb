@@ -1,21 +1,21 @@
-require 'thread'
-
 module VpsFree::Irc::Bot
   # Singleton class for holding the bot's state
   class State
-    @@instance = nil
+    @instance = nil
 
     def self.get
-      @@instance = new unless @@instance
-      @@instance
+      @instance ||= new
+      @instance
     end
 
     private
+
     def initialize
       @mutex = Mutex.new
     end
 
     public
+
     # @param n [Integer] duration in seconds
     def mute(until_time)
       sync { @muted_until = until_time }
@@ -37,13 +37,14 @@ module VpsFree::Irc::Bot
     end
 
     protected
-    def sync
-      @mutex.synchronize { yield }
+
+    def sync(&)
+      @mutex.synchronize(&)
     end
 
     def get_muted_until
-      if @muted_until
-        @muted_until = nil if (@muted_until) < Time.now
+      if @muted_until && (@muted_until < Time.now)
+        @muted_until = nil
       end
 
       @muted_until

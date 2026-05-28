@@ -13,16 +13,16 @@ module VpsFree::Irc::Bot
 
     REMINDERS = [
       [0, 'Ladies and gentlemen, we are going DOWN!'],
-      [1*60, 'a minute'],
-      [10*60, '10 minutes'],
-      [30*60, '30 minutes'],
-      [1*60*60, 'an hour'],
-      [6*60*60, 'six hours'],
-    ]
+      [1 * 60, 'a minute'],
+      [10 * 60, '10 minutes'],
+      [30 * 60, '30 minutes'],
+      [1 * 60 * 60, 'an hour'],
+      [6 * 60 * 60, 'six hours']
+    ].freeze
 
     OUTAGE_TYPE_LABELS = {
       'planned_outage' => 'planned outage',
-      'unplanned_outage' => 'unplanned outage',
+      'unplanned_outage' => 'unplanned outage'
     }.freeze
 
     IMPACT_LABELS = {
@@ -32,10 +32,10 @@ module VpsFree::Irc::Bot
       'network' => 'Network',
       'performance' => 'Performance',
       'unavailability' => 'Unavailability',
-      'export' => 'NFS export',
+      'export' => 'NFS export'
     }.freeze
 
-    set required_options: %i(server_label api_url channels state_dir)
+    set required_options: %i[server_label api_url channels state_dir]
 
     timer 60, method: :check, threaded: false
     timer 30, method: :remind, threaded: false
@@ -59,7 +59,7 @@ module VpsFree::Irc::Bot
         end
 
         # Remove closed/cancelled outages
-        @store.delete_if do |id, outage|
+        @store.delete_if do |id, _outage|
           !outages.detect { |o| o.id == id }
         end
       end
@@ -80,15 +80,14 @@ module VpsFree::Irc::Bot
           report_outage(outage)
         end
 
-        updates = api.outage_update.list(since: @since, meta: {includes: 'outage'})
+        updates = api.outage_update.list(since: @since, meta: { includes: 'outage' })
         updates.each do |update|
           report_update(update)
         end
 
         @since = Time.now if !outages.empty? || !updates.empty?
       end
-
-    rescue => e
+    rescue StandardError => e
       exception(e)
     end
 
@@ -111,7 +110,8 @@ module VpsFree::Irc::Bot
             send_channels("#{outage_type_label(outage[:type], capitalize: true)} ##{id} has begun: #{msg}")
 
           else
-            send_channels("#{outage_type_label(outage[:type], capitalize: true)} ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
+            label = outage_type_label(outage[:type], capitalize: true)
+            send_channels("#{label} ##{id} begins in #{msg} (#{fmt_date(outage[:begins_at])})")
           end
 
           outage[:reminded] = t
@@ -120,7 +120,7 @@ module VpsFree::Irc::Bot
       end
     end
 
-    def cmd_outage(m, channel, raw_id = nil)
+    def cmd_outage(m, _channel, raw_id = nil)
       unless api_setup?
         return reply(m, 'Status unknown, unable to reach vpsAdmin API')
       end
@@ -130,16 +130,13 @@ module VpsFree::Irc::Bot
         id = raw_id.to_i
 
         client do |api|
-          begin
-            describe_outage(
-              id,
-              outage_to_hash(api.outage.show(id)),
-              m
-            )
-
-          rescue HaveAPI::Client::ActionFailed => e
-            reply(m, "Outage '#{id}' not found")
-          end
+          describe_outage(
+            id,
+            outage_to_hash(api.outage.show(id)),
+            m
+          )
+        rescue HaveAPI::Client::ActionFailed => e
+          reply(m, "Outage '#{id}' not found")
         end
 
         return
@@ -150,7 +147,7 @@ module VpsFree::Irc::Bot
 
       now = Time.now.to_i
 
-      relevant = @store.select { |id, outage| outage[:begins_at] <= Time.now.to_i }
+      relevant = @store.select { |_id, outage| outage[:begins_at] <= Time.now.to_i }
       return reply(m, 'No relevant outage reported currently') if relevant.empty?
 
       relevant.each do |id, outage|
@@ -159,26 +156,26 @@ module VpsFree::Irc::Bot
     end
 
     protected
-    def report_outage(outage)
-      send_channels(<<-END
-New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outage.begins_at)}
-     Systems: #{outage.entity.list.map { |v| v.label }.join(', ')}
-      Impact: #{impact_label(outage.impact)}
-    Duration: #{outage.duration} minutes
-      Reason: #{outage.en_summary}
-  Handled by: #{outage.handler.list.map { |v| v.full_name }.join(', ')}
-#{outage_url(outage.id)}
-        END
-      )
 
-    rescue => e
+    def report_outage(outage)
+      send_channels(<<~END
+        New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outage.begins_at)}
+             Systems: #{outage.entity.list.map(&:label).join(', ')}
+              Impact: #{impact_label(outage.impact)}
+            Duration: #{outage.duration} minutes
+              Reason: #{outage.en_summary}
+          Handled by: #{outage.handler.list.map(&:full_name).join(', ')}
+        #{outage_url(outage.id)}
+      END
+                   )
+    rescue StandardError => e
       exception(e)
     end
 
     def report_update(update)
       return if update.state == 'announced'
 
-      attrs = %i(begins_at finished_at state impact duration)
+      attrs = %i[begins_at finished_at state impact duration]
       changes = []
 
       attrs.each do |attr|
@@ -210,7 +207,8 @@ New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outag
         @store.delete(update.outage_id)
       end
 
-      send_channels("Update of #{outage_type_label(update.type)} ##{update.outage_id} at #{fmt_date(update.created_at)}")
+      update_label = outage_type_label(update.type)
+      send_channels("Update of #{update_label} ##{update.outage_id} at #{fmt_date(update.created_at)}")
       changes.each { |v| send_channels(v) }
 
       if update.en_summary && !update.en_summary.empty?
@@ -261,6 +259,7 @@ New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outag
     def send_channels(msg)
       bot.channels.each do |c|
         next unless config[:channels].include?(c.name)
+
         log_mutable_send(c, msg, :notice)
       end
     end
@@ -272,21 +271,21 @@ New #{outage_type_label(outage.type)} ##{outage.id} reported at #{fmt_date(outag
         duration: outage.duration,
         impact: outage.impact,
         summary: outage.en_summary,
-        entities: outage.entity.list.map { |v| v.label },
-        handlers: outage.handler.list.map { |v| v.full_name },
+        entities: outage.entity.list.map(&:label),
+        handlers: outage.handler.list.map(&:full_name)
       }
     end
 
     def describe_outage(id, outage, m)
-      reply(m, <<-END
-#{outage_type_label(outage[:type], capitalize: true)} ##{id} reported at #{fmt_date(outage[:begins_at])}
-     Systems: #{outage[:entities].join(', ')}
-      Impact: #{impact_label(outage[:impact])}
-    Duration: #{outage[:duration]} minutes
-      Reason: #{outage[:summary]}
-  Handled by: #{outage[:handlers].join(', ')}
-#{outage_url(id)}
-        END
+      reply(m, <<~END
+        #{outage_type_label(outage[:type], capitalize: true)} ##{id} reported at #{fmt_date(outage[:begins_at])}
+             Systems: #{outage[:entities].join(', ')}
+              Impact: #{impact_label(outage[:impact])}
+            Duration: #{outage[:duration]} minutes
+              Reason: #{outage[:summary]}
+          Handled by: #{outage[:handlers].join(', ')}
+        #{outage_url(id)}
+      END
       )
     end
   end

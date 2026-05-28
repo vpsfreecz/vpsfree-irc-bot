@@ -9,7 +9,7 @@ module VpsFree::Irc::Bot
     include Cinch::Plugin
     include Helpers
 
-    set required_options: %i(url channels)
+    set required_options: %i[url channels]
     timer 120, method: :check, threaded: false
 
     def check
@@ -27,16 +27,17 @@ module VpsFree::Irc::Bot
           date: t,
           title: item.xpath('title').text,
           link: item.xpath('link').text,
-          author: item.xpath('dc:creator').text,
+          author: item.xpath('dc:creator').text
         }
       end
 
       articles.reverse_each do |a|
         bot.channels.each do |channel|
           next unless config[:channels].include?(channel.name)
+
           log_mutable_send(
             channel,
-            "[blog] #{a[:title]} by #{a[:author]}\n"+
+            "[blog] #{a[:title]} by #{a[:author]}\n" \
             "[blog] #{a[:link]}",
             :notice
           )
@@ -44,8 +45,7 @@ module VpsFree::Irc::Bot
       end
 
       @since = Time.now if articles.any?
-      
-    rescue => e
+    rescue StandardError => e
       exception(e)
     end
   end

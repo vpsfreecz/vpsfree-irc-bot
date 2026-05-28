@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'thread'
 require 'vpsfree-irc-bot/persistence'
 
 module VpsFree::Irc::Bot
@@ -19,19 +18,21 @@ module VpsFree::Irc::Bot
       @instance = new(state_dir, server)
     end
 
-    def self.instance
-      @instance
+    class << self
+      attr_reader :instance
     end
 
     private
+
     def initialize(state_dir, server)
       @channels = {}
       @changed = {}
-      super(state_dir, server)
+      super
       FileUtils.mkpath(save_dir)
     end
 
     public
+
     # @param channel [Cinch::Channel]
     # @param user [Cinch::User]
     def get(channel, user)
@@ -72,6 +73,7 @@ module VpsFree::Irc::Bot
     end
 
     protected
+
     # @param channel [String]
     # @param user [String]
     def do_get(channel, nick)
@@ -110,7 +112,7 @@ module VpsFree::Irc::Bot
       return unless Dir.exist?(save_dir)
 
       Dir.glob(File.join(save_dir, '*.yml')) do |f|
-        @channels[ File.basename(f).split('.')[0] ] = YAML.load(File.read(f))
+        @channels[File.basename(f).split('.')[0]] = YAML.load_file(f)
       end
     end
 
@@ -118,9 +120,7 @@ module VpsFree::Irc::Bot
     def save(channel)
       file = File.join(save_dir, "#{channel}.yml")
 
-      File.open("#{file}.new", 'w') do |f|
-        f.write(YAML.dump(@channels[channel]))
-      end
+      File.write("#{file}.new", YAML.dump(@channels[channel]))
 
       FileUtils.mv("#{file}.new", file)
     end

@@ -14,24 +14,24 @@ module VpsFree::Irc::Bot
       instance && !State.get.muted? && Random.rand(0..1000) <= (probability * 1000)
     end
 
-    def self.cmd_exec(cmd, m, channel, *args)
+    def self.cmd_exec(cmd, m, _channel, *_args)
       case cmd
       when :help
         m.reply([
           "OK, just stay there, I'm coming!",
-          "Just keep swimming",
+          'Just keep swimming'
         ].sample)
 
       when :muted?
         m.reply([
-          "I dunno, are you?",
+          'I dunno, are you?'
         ].sample)
 
       when :ping
         m.reply([
           "I don't feel like playing today",
-          "Did you say something?",
-          "Hm?",
+          'Did you say something?',
+          'Hm?'
         ].sample)
 
       when :status
@@ -43,61 +43,57 @@ module VpsFree::Irc::Bot
           down = nodes.select { |n| !n.attributes[:status] && n.maintenance_lock == 'no' }
         end
 
-        if down.count > 0
+        if down.any?
           if is_time?(0.2)
             m.reply([
-              "Houston, we have a problem",
+              'Houston, we have a problem'
+            ].sample)
+
+          elsif down.one?
+            s = down.name
+
+            m.reply([
+              "#{s} went afk",
+              "#{s} went away",
+              "#{s} is taking a break",
+              "#{s} is taking five",
+              "#{s} went to the happy hunting ground"
             ].sample)
 
           else
-            if down.count == 1
-              s = down.name
+            s = "#{down[0..-2].map(&:name).join(', ')} and #{down.last.name}"
 
-              m.reply([
-                "#{s} went afk",
-                "#{s} went away",
-                "#{s} is taking a break",
-                "#{s} is taking five",
-                "#{s} went to the happy hunting ground",
-              ].sample)
-
-            else
-              s = "#{down[0..-2].map { |v| v.name }.join(', ')} and #{down.last.name}"
-
-              m.reply([
-                "#{s} went afk",
-                "#{s} went away",
-                "#{s} are taking a break",
-                "#{s} went to the happy hunting ground",
-              ].sample)
-            end
+            m.reply([
+              "#{s} went afk",
+              "#{s} went away",
+              "#{s} are taking a break",
+              "#{s} went to the happy hunting ground"
+            ].sample)
           end
+
+        elsif is_time?(0.3)
+          forecast = Forecast.as_text(%w[
+            Prague
+            Brno
+            Ostrava
+            Bratislava
+          ].sample)
+
+          m.reply("Weather in #{forecast}")
 
         else
-          if is_time?(0.3)
-            forecast = Forecast.as_text([
-              'Prague',
-              'Brno',
-              'Ostrava',
-              'Bratislava',
-            ].sample)
-
-            m.reply("Weather in #{forecast}")
-
-          else
-            m.reply([
-              "No, not today. Please, not today!",
-              "I'm almost afraid to look. Are you sure?",
-              "Why, I'm fine, thanks for asking",
-              "It's.. ummmm.. fine, everything is just fine",
-            ].sample)
-          end
+          m.reply([
+            'No, not today. Please, not today!',
+            "I'm almost afraid to look. Are you sure?",
+            "Why, I'm fine, thanks for asking",
+            "It's.. ummmm.. fine, everything is just fine"
+          ].sample)
         end
 
       when :uptime
         m.reply([
           "Sorry, I've lost count",
-          "Sorry, I've lost track of time",
+          "Sorry, I've lost track of time"
         ].sample)
 
       else

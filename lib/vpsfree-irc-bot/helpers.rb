@@ -6,20 +6,17 @@ module VpsFree::Irc::Bot
     # @param msg [String]
     # @param type [Symbol]
     def log_send(channel, msg, type = :msg, *args)
-      if self.is_a?(ChannelLog)
-        logger = self
-      else
-        logger = bot.plugins.detect { |p| p.is_a?(ChannelLog) }
-      end
+      logger = if is_a?(ChannelLog)
+                 self
+               else
+                 bot.plugins.detect { |p| p.is_a?(ChannelLog) }
+               end
 
-      case type
-      when :me
+      if type == :me
         channel.action(msg)
-      when :notice
+      else
         # matterbridge does not pass IRC notices, so until that is changed,
         # send normal messages.
-        channel.send(msg)
-      else
         channel.send(msg)
       end
 
@@ -35,10 +32,10 @@ module VpsFree::Irc::Bot
 
     # Same arguments as for {#log_send}, except it does nothing if the bot
     # is muted.
-    def log_mutable_send(*args)
+    def log_mutable_send(*)
       return if State.get.muted?
 
-      log_send(*args)
+      log_send(*)
     end
 
     # @param m [Cinch::Message]

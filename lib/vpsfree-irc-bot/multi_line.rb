@@ -8,7 +8,7 @@ module VpsFree::Irc::Bot
       digits = cnt.to_s.size
 
       lines.each_with_index do |line, i|
-        yield(sprintf("[%0#{digits}d/%d] %s", i+1, cnt, line))
+        yield(format("[%0#{digits}d/%d] %s", i + 1, cnt, line))
       end
     end
 

@@ -53,7 +53,7 @@ module VpsFree::Irc::Bot::GitHubWebHook
       # Select attributes for auto-extraction from payload
       def extract(*attrs)
         @to_extract = attrs
-        attr_reader *attrs
+        attr_reader(*attrs)
       end
     end
 
@@ -84,20 +84,22 @@ module VpsFree::Irc::Bot::GitHubWebHook
 
   class User
     include Helpers
+
     attr_reader :id, :login, :html_url
 
     def initialize(data)
-      extract(data, *%i(id login html_url))
+      extract(data, *%i[id login html_url])
     end
   end
 
   class Repository
     include Helpers
+
     attr_reader :id, :name, :full_name, :owner, :html_url, :description,
                 :default_branch
 
     def initialize(data)
-      extract(data, *%i(id name full_name html_url description default_branch))
+      extract(data, *%i[id name full_name html_url description default_branch])
       @owner = User.new(data['owner'])
     end
   end
@@ -106,61 +108,64 @@ module VpsFree::Irc::Bot::GitHubWebHook
     Author = Struct.new(:name, :email)
 
     include Helpers
+
     attr_reader :id, :message, :author, :distinct
 
     def initialize(data)
-      extract(data, *%i(id message distinct))
+      extract(data, *%i[id message distinct])
       @author = Author.new(data['author']['name'], data['author']['email'])
     end
   end
 
   class Issue
     include Helpers
+
     attr_reader :id, :number, :title, :state, :html_url
 
     def initialize(data)
-      extract(data, *%i(id number title state html_url))
+      extract(data, *%i[id number title state html_url])
       @user = User.new(data['user'])
     end
   end
 
   class PullRequest
     include Helpers
+
     attr_reader :id, :number, :title, :state, :html_url
 
     def initialize(data)
-      extract(data, *%i(id number title state html_url))
+      extract(data, *%i[id number title state html_url])
       @user = User.new(data['user'])
     end
   end
 
   class CreateEvent < Event
     event :create
-    extract *%i(ref_type ref master_branch description)
+    extract(*%i[ref_type ref master_branch description])
 
     def to_s
-      <<END
-[#{repository.name}] #{sender.login} created #{ref_type} #{ref}
-[#{repository.name}] #{repository.html_url}
-END
+      <<~END
+        [#{repository.name}] #{sender.login} created #{ref_type} #{ref}
+        [#{repository.name}] #{repository.html_url}
+      END
     end
   end
 
   class DeleteEvent < Event
     event :delete
-    extract *%i(ref_type ref)
+    extract(*%i[ref_type ref])
 
     def to_s
-      <<END
-[#{repository.name}] #{sender.login} deleted #{ref_type} #{ref}
-[#{repository.name}] #{repository.html_url}
-END
+      <<~END
+        [#{repository.name}] #{sender.login} deleted #{ref_type} #{ref}
+        [#{repository.name}] #{repository.html_url}
+      END
     end
   end
 
   class PushEvent < Event
     event :push
-    extract *%i(ref before after created deleted forced compare)
+    extract(*%i[ref before after created deleted forced compare])
     attr_reader :branch, :commits
 
     COUNT = 10
@@ -179,16 +184,16 @@ END
         return ret
       end
 
-      if forced
-        ret << 'force-pushed '
-      else
-        ret << 'pushed '
-      end
+      ret << if forced
+               'force-pushed '
+             else
+               'pushed '
+             end
 
       ret << "#{commits.length} #{noun(commits.length, 'commit', 'commits')} "
       ret << "to #{branch}\n"
 
-      show_count = commits.length == COUNT+1 ? COUNT : COUNT - 1
+      show_count = commits.length == COUNT + 1 ? COUNT : COUNT - 1
 
       commits[0..show_count].each do |c|
         ret << "#{repository.name}/#{branch} "
@@ -196,7 +201,7 @@ END
         ret << "\n"
       end
 
-      if commits.length > COUNT+1
+      if commits.length > COUNT + 1
         ret << "#{repository.name}/#{branch} "
         ret << "...and #{commits.length - COUNT} more commits\n"
       end
@@ -212,6 +217,7 @@ END
     def announce?
       return false if commits.empty? && created
       return false if deleted
+
       true
     end
 
@@ -224,6 +230,7 @@ END
     end
 
     protected
+
     def branch_from_ref
       if ref.start_with?('refs/heads/')
         ref.delete_prefix('refs/heads/')
@@ -248,7 +255,7 @@ END
 
   class IssuesEvent < Event
     event :issues
-    extract *%i(action)
+    extract(*%i[action])
     attr_reader :issue
 
     def parse(data)
@@ -256,20 +263,20 @@ END
     end
 
     def to_s
-      <<END
-[#{repository.name}] #{sender.login} #{action} issue ##{issue.number}
-#{issue.html_url}
-END
+      <<~END
+        [#{repository.name}] #{sender.login} #{action} issue ##{issue.number}
+        #{issue.html_url}
+      END
     end
 
     def announce?
-      %w(opened deleted closed reopened).include?(action)
+      %w[opened deleted closed reopened].include?(action)
     end
   end
 
   class PullRequestEvent < Event
     event :pull_request
-    extract *%i(action number)
+    extract(*%i[action number])
     attr_reader :pull_request
 
     def parse(data)
@@ -277,14 +284,14 @@ END
     end
 
     def to_s
-      <<END
-[#{repository.name}] #{sender.login} #{action} pull request ##{pull_request.number}
-#{pull_request.html_url}
-END
+      <<~END
+        [#{repository.name}] #{sender.login} #{action} pull request ##{pull_request.number}
+        #{pull_request.html_url}
+      END
     end
 
     def announce?
-      %w(opened deleted closed reopened).include?(action)
+      %w[opened deleted closed reopened].include?(action)
     end
   end
 end

@@ -32,7 +32,7 @@ module VpsFree::Irc::Bot
           @channel = v
         end
       end
-      
+
       def help(v = nil)
         if v.nil?
           @help
@@ -58,9 +58,8 @@ module VpsFree::Irc::Bot
         args = parse_args(m, msg || m.message)
         return unless args
 
-        if VpsFree::Irc::Bot::EasterEggs.is_time? \
+        unless VpsFree::Irc::Bot::EasterEggs.is_time? \
            && VpsFree::Irc::Bot::EasterEggs.cmd_exec(@name, *args)
-        else
           plugin.send(:"cmd_#{@name}", *args)
         end
       end
@@ -73,7 +72,7 @@ module VpsFree::Irc::Bot
         if m.channel || !@channel
           args << m.channel
 
-        elsif m.bot.channel_list.count == 1
+        elsif m.bot.channel_list.one?
           args << m.bot.channel_list.first
 
         else
@@ -93,16 +92,23 @@ module VpsFree::Irc::Bot
           args << chan
         end
 
+        missing_arg = nil
+
         @args.each do |arg|
           break if parts.empty? && !arg.required
 
           if parts.empty?
-            m.reply("missing required argument '#{arg.name}'")
-            return
+            missing_arg = arg
+            break
           end
 
           args << parts.first
           parts.delete_at(0)
+        end
+
+        if missing_arg
+          m.reply("missing required argument '#{missing_arg.name}'")
+          return
         end
 
         args
@@ -110,18 +116,18 @@ module VpsFree::Irc::Bot
     end
 
     module ClassMethods
-      def command(name, &block)
+      def command(name, &)
         cmd = Cmd.new(name)
-        cmd.instance_exec(&block)
+        cmd.instance_exec(&)
 
         method = :"exec_#{cmd}"
         channel_method = :"check_channel_#{name}"
-        
+
         listen_to :channel, method: channel_method
 
         cmd.names.each do |n|
-          match /^!#{Regexp.escape(n)}(\s|$)/, react_on: :channel, use_prefix: false, method: method
-          match /^!?#{Regexp.escape(n)}(\s|$)/, react_on: :private, use_prefix: false, method: method
+          match(/^!#{Regexp.escape(n)}(\s|$)/, react_on: :channel, use_prefix: false, method: method)
+          match(/^!?#{Regexp.escape(n)}(\s|$)/, react_on: :private, use_prefix: false, method: method)
         end
 
         define_method(method) do |m|
@@ -131,7 +137,7 @@ module VpsFree::Irc::Bot
         define_method(channel_method) do |m|
           cmd.names.each do |n|
             if /^#{m.bot.nick}(:|,|\s)\s*(!?#{Regexp.escape(n)}(\s|$)[^$]*)/ =~ m.message
-              cmd.exec(self, m, $2)
+              cmd.exec(self, m, ::Regexp.last_match(2))
               next
             end
           end

@@ -10,7 +10,7 @@ module VpsFree::Irc::Bot
     include Command
     include Helpers
 
-    MAX_DURATION = 6*60*60
+    MAX_DURATION = 6 * 60 * 60
 
     command :mute do
       desc 'mute the bot'
@@ -22,16 +22,16 @@ module VpsFree::Irc::Bot
       desc 'unmute the bot'
     end
 
-    command :'muted?' do
+    command :muted? do
       desc 'query the mute status'
     end
 
-    def cmd_mute(m, channel, type = nil, value = nil)
+    def cmd_mute(m, _channel, type = nil, value = nil)
       mute_until = nil
       now = Time.now
 
       if type && value.nil?
-        reply(m, "Please specify both arguments: [<for/to> <duration/time>]")
+        reply(m, 'Please specify both arguments: [<for/to> <duration/time>]')
         return
       end
 
@@ -39,7 +39,6 @@ module VpsFree::Irc::Bot
       when 'to' # value is a date
         begin
           mute_until = DateTime.iso8601(value).to_time
-
         rescue ArgumentError => e
           reply(m, e.message)
           return
@@ -49,14 +48,14 @@ module VpsFree::Irc::Bot
         n = ChronicDuration.parse(value)
 
         unless n
-          reply(m, "Nope, I cannot parse that one. Try again?")
+          reply(m, 'Nope, I cannot parse that one. Try again?')
           return
         end
 
         mute_until = now + n
 
       when nil
-        mute_until = now + 5*60
+        mute_until = now + (5 * 60)
 
       else
         reply(m, "Invalid argument type: '#{type}'. Must be one of: for, to")
@@ -64,7 +63,7 @@ module VpsFree::Irc::Bot
       end
 
       if mute_until < now
-        reply(m, "Cannot mute into the past...")
+        reply(m, 'Cannot mute into the past...')
         return
 
       elsif (mute_until - now) > MAX_DURATION
@@ -75,12 +74,12 @@ module VpsFree::Irc::Bot
       reply_action(m, "is muted until #{mute_until.iso8601}")
     end
 
-    def cmd_unmute(m, channel)
+    def cmd_unmute(m, _channel)
       State.get.unmute
-      reply_action(m, "is free again!")
+      reply_action(m, 'is free again!')
     end
 
-    def cmd_muted?(m, channel)
+    def cmd_muted?(m, _channel)
       muted = State.get.muted_until
 
       reply_action(

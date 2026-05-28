@@ -14,9 +14,9 @@ module VpsFree::Irc::Bot
       desc 'show cluster status'
     end
 
-    def cmd_status(m, channel)
+    def cmd_status(m, _channel)
       unless api_setup?
-        return reply(m, "Status unknown, unable to reach vpsAdmin API")
+        return reply(m, 'Status unknown, unable to reach vpsAdmin API')
       end
 
       client do |api|
@@ -30,22 +30,24 @@ module VpsFree::Irc::Bot
         reply(m, "#{online} nodes online, #{maintenance} under maintenance, #{down} down")
 
         if maintenance > 0
+          maintenance_nodes = nodes.reject do |n|
+            n.maintenance_lock == 'no'
+          end.map(&:name).join(', ')
+
           reply(
             m,
-            "Under maintenance: "+
-            nodes.select { |n|
-              n.maintenance_lock != 'no'
-            }.map { |n| n.name }.join(', ')
+            "Under maintenance: #{maintenance_nodes}"
           )
         end
 
         if down > 0
+          down_nodes = nodes.select do |n|
+            !n.attributes[:status] && n.maintenance_lock == 'no'
+          end.map(&:name).join(', ')
+
           reply(
             m,
-            "Down: "+
-            nodes.select { |n|
-              !n.attributes[:status] && n.maintenance_lock == 'no'
-            }.map { |n| n.name }.join(', ')
+            "Down: #{down_nodes}"
           )
         end
       end

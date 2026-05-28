@@ -5,34 +5,34 @@ require 'vpsfree-irc-bot/helpers'
 
 module VpsFree::Irc::Bot
   class UrlMarker
-    class FetchError < StandardError ; end
+    class FetchError < StandardError; end
 
     include Cinch::Plugin
     include Helpers
-    
+
     listen_to :channel, method: :channel
 
     def channel(m)
-      return if /^\s*(http(s?):\/\/[^\s]+)\s*$/ !~ m.message
-    
+      return if %r{^\s*(http(s?)://[^\s]+)\s*$} !~ m.message
+
+      original_url = ::Regexp.last_match(1)
       response, url = fetch(
-        $1,
+        original_url,
         max_redirects: config[:max_redirects] || 5,
-        max_size: config[:max_size] || 10*1024*1024,
+        max_size: config[:max_size] || (10 * 1024 * 1024)
       )
       doc = Nokogiri::HTML(response)
-    
-      reply(m, "Page title: #{title(doc)}")
-      reply(m, "Redirected to: #{url}") if url.strip != $1.strip
 
+      reply(m, "Page title: #{title(doc)}")
+      reply(m, "Redirected to: #{url}") if url.strip != original_url.strip
     rescue FetchError => e
       reply(m, e.message)
-
-    rescue => e
+    rescue StandardError => e
       exception(e)
     end
-    
+
     protected
+
     # @param url [String]
     # @param opts [Hash]
     # @option opts [Integer] max_redirects
@@ -53,13 +53,11 @@ module VpsFree::Irc::Bot
           if size && size > opts[:max_size]
             raise FetchError, "Response is too large (#{unitize(size)})"
 
-          elsif type && !%w(text/html).include?(type)
-            if size
-              raise FetchError, "Content type '#{type}', size #{unitize(size)}"
+          elsif type && !%w[text/html].include?(type)
+            raise FetchError, "Content type '#{type}', size #{unitize(size)}" if size
 
-            else
-              fail "unsupported content type '#{type}'"
-            end
+            raise "unsupported content type '#{type}'"
+
           end
 
           ret = [read_body(res, opts[:max_size]), url]
@@ -67,15 +65,15 @@ module VpsFree::Irc::Bot
         when Net::HTTPRedirection
           opts[:max_redirects] -= 1
           ret = fetch(res['location'], opts)
-         
+
         when Net::HTTPNotFound
-          raise FetchError, "Link returns HTTP 404 - Not Found"
-        
+          raise FetchError, 'Link returns HTTP 404 - Not Found'
+
         when Net::HTTPServerError
-          raise FetchError, "Link returns HTTP 500 - Server Error"
+          raise FetchError, 'Link returns HTTP 500 - Server Error'
 
         else
-          fail "unexpected response #{res}"
+          raise "unexpected response #{res}"
         end
       end
 
@@ -87,9 +85,9 @@ module VpsFree::Irc::Bot
 
       res.read_body do |segment|
         body << segment
-        
-        if res.size > max_size
-          raise FetchError, "Response is too large (#{unitize(size)})"
+
+        if body.bytesize > max_size
+          raise FetchError, "Response is too large (#{unitize(body.bytesize)})"
         end
       end
 
@@ -98,7 +96,7 @@ module VpsFree::Irc::Bot
 
     def unitize(n)
       bits = 39
-      units = %i(TiB GiB MiB KiB)
+      units = %i[TiB GiB MiB KiB]
 
       units.each do |u|
         threshold = 2 << bits

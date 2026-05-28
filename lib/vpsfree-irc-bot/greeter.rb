@@ -31,14 +31,14 @@ module VpsFree::Irc::Bot
       end
 
       log_send(
-          channel,
-          <<END
-#{user.nick}: Hi, welcome to #{channel}.
-This channel is for members of vpsFree.cz, a non-profit organization that provides VPS for its members.
-The membership fee is 12 EUR / 300 CZK per month, for which you get access to the VPS and other perks.
-In short, the VPS has 8 CPUs, 4 GB RAM, 120 GB disk, 300 Mbps link and is backed-up daily.
-For more information, please see https://vpsfree.cz. Since I'm a bot, however intelligent, don't ask me any questions :)
-END
+        channel,
+        <<~END
+          #{user.nick}: Hi, welcome to #{channel}.
+          This channel is for members of vpsFree.cz, a non-profit organization that provides VPS for its members.
+          The membership fee is 12 EUR / 300 CZK per month, for which you get access to the VPS and other perks.
+          In short, the VPS has 8 CPUs, 4 GB RAM, 120 GB disk, 300 Mbps link and is backed-up daily.
+          For more information, please see https://vpsfree.cz. Since I'm a bot, however intelligent, don't ask me any questions :)
+        END
       )
     end
   end

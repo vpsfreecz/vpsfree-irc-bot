@@ -3,14 +3,14 @@ require 'require_all'
 
 module VpsFree
   module Irc
-    module Bot ; end
+    module Bot; end
   end
 end
 
 require_rel 'vpsfree-irc-bot/*.rb'
 
 module VpsFree::Irc::Bot
-  NAME = 'vpsfbot'
+  NAME = 'vpsfbot'.freeze
 
   # @param label [String] server label
   # @param host [String] actual address/hostname to connect to
@@ -52,45 +52,45 @@ module VpsFree::Irc::Bot
           Forecast,
           EasterEggs,
           DiscourseWebHook::Announcer,
-          GitHubWebHook::Announcer,
+          GitHubWebHook::Announcer
         ]
 
         c.plugins.options = {
           Cluster => {
-            api_url: opts[:api_url],
+            api_url: opts[:api_url]
           },
           WebEventLog => {
             api_url: opts[:api_url],
-            channels: opts[:web_event_log][:channels],
+            channels: opts[:web_event_log][:channels]
           },
           ChannelLog => {
             server_label: label,
             archive_url: opts[:archive_url],
-            archive_dst: opts[:archive_dst],
+            archive_dst: opts[:archive_dst]
           },
           Base => {
-            nickserv: opts[:nickserv],
+            nickserv: opts[:nickserv]
           },
           UrlMarker => opts[:url_marker],
           DokuWiki => {
-            wikis: opts[:dokuwiki],
+            wikis: opts[:dokuwiki]
           },
           BlogFeed => opts[:blog],
           KeepNick => {
-            nick: c.nick,
+            nick: c.nick
           },
           KeepChannels => {
-            channels: channels,
+            channels: channels
           },
           OutageReports => {
             server_label: label,
             api_url: opts[:api_url],
             channels: opts[:outage_reports][:channels],
-            state_dir: opts[:state_dir],
+            state_dir: opts[:state_dir]
           },
           Forecast => opts[:forecast],
           EasterEggs => {
-            api_url: opts[:api_url],
+            api_url: opts[:api_url]
           },
           DiscourseWebHook::Announcer => {
             channels: opts[:discourse_webhook][:channels]
@@ -98,17 +98,17 @@ module VpsFree::Irc::Bot
           GitHubWebHook::Announcer => {
             channels: GitHubWebHook::Announcer.normalize_channels(
               opts[:github_webhook][:channels]
-            ),
-          },
+            )
+          }
         }
       end
     end
   end
 
-  def self.start(*args)
-    bot = new(*args)
+  def self.start(*)
+    bot = new(*)
 
-    do_exit = Proc.new do
+    do_exit = proc do
       # bot.quit must be executed in a new thread, as it cannot synchronize
       # mutexes in a trap context.
       Thread.new { bot.quit('So long, and thanks for all the fish') }
