@@ -49,6 +49,13 @@
               export GEM_PATH="$GEM_HOME:$PWD/lib"
               export PATH="$GEM_HOME/bin:$PATH"
 
+              if [ -n "''${PS1:-}" ]; then
+                case "$PS1" in
+                  "(vpsfree-irc-bot) "*) ;;
+                  *) export PS1="(vpsfree-irc-bot) $PS1" ;;
+                esac
+              fi
+
               BUNDLE="$GEM_HOME/bin/bundle"
               [ ! -x "$BUNDLE" ] && ${ruby}/bin/gem install --no-document bundler
 
