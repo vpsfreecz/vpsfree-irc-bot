@@ -40,6 +40,17 @@
     };
     version = "4.1.2";
   };
+  childprocess = {
+    dependencies = ["logger"];
+    groups = ["default" "development"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "1v5nalaarxnfdm6rxb7q6fmc6nx097jd630ax6h9ch7xw95li3cs";
+      type = "gem";
+    };
+    version = "5.1.0";
+  };
   chronic_duration = {
     dependencies = ["numerizer"];
     groups = ["default"];
@@ -175,6 +186,16 @@
     };
     version = "1.14.8";
   };
+  iniparse = {
+    groups = ["default" "development"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "1wb1qy4i2xrrd92dc34pi7q7ibrjpapzk9y465v0n9caiplnb89n";
+      type = "gem";
+    };
+    version = "1.5.0";
+  };
   io-console = {
     groups = ["default"];
     platforms = [];
@@ -307,6 +328,17 @@
       type = "gem";
     };
     version = "0.1.1";
+  };
+  overcommit = {
+    dependencies = ["childprocess" "iniparse" "rexml"];
+    groups = ["development"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "15w69xzvbzjadcl5lppmjf7jjw3p5cz9859y19wcn17bb0jh828m";
+      type = "gem";
+    };
+    version = "0.69.0";
   };
   parallel = {
     groups = ["default" "development"];

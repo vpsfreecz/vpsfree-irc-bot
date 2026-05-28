@@ -4,6 +4,7 @@ $: << File.expand_path('lib', __dir__)
 
 group :development do
   gem 'bundler'
+  gem 'overcommit'
   gem 'rake'
   gem 'rubocop'
   gem 'rubocop-rake'
