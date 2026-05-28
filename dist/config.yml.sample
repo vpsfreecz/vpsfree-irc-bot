@@ -11,14 +11,6 @@ channels:
 # URL to web archive
 archive_url: http://irc.example.com
 
-# Configuration of plugin MailingLists
-# mailing_lists:
-#     server: pop3.example.com
-#     port: 995
-#     username:
-#     password:
-#     enable_ssl: true
-
 # Outage reports
 # outage_reports:
 #     channels: '#channel1'

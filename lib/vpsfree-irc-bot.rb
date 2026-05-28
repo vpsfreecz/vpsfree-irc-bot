@@ -42,7 +42,6 @@ module VpsFree::Irc::Bot
           Rank,
           UrlMarker,
           WebEventLog,
-          MailingLists,
           Greeter,
           DokuWiki,
           BlogFeed,
@@ -73,7 +72,6 @@ module VpsFree::Irc::Bot
             nickserv: opts[:nickserv],
           },
           UrlMarker => opts[:url_marker],
-          MailingLists => opts[:mailing_lists],
           DokuWiki => {
             wikis: opts[:dokuwiki],
           },
