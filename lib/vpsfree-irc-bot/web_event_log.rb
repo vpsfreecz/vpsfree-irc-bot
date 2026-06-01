@@ -12,7 +12,7 @@ module VpsFree::Irc::Bot
     include Helpers
     include Api
 
-    timer 60, method: :check, threaded: false
+    timer ENV.fetch('VPSFREE_IRC_BOT_WEB_EVENT_LOG_INTERVAL', 60).to_i, method: :check, threaded: false
     set required_options: %i[channels]
 
     def check

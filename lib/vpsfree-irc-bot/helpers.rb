@@ -6,6 +6,8 @@ module VpsFree::Irc::Bot
     # @param msg [String]
     # @param type [Symbol]
     def log_send(channel, msg, type = :msg, *args)
+      lines = msg.to_s.split("\n")
+
       logger = if is_a?(ChannelLog)
                  self
                else
@@ -13,15 +15,15 @@ module VpsFree::Irc::Bot
                end
 
       if type == :me
-        channel.action(msg)
+        lines.each { |line| channel.action(line) }
       else
         # matterbridge does not pass IRC notices, so until that is changed,
         # send normal messages.
-        channel.send(msg)
+        lines.each { |line| channel.send(line) }
       end
 
       t = Time.now
-      msg.split("\n").each do |line|
+      lines.each do |line|
         logger.log(
           type,
           MessageStub.new(t, channel, bot, line),

@@ -37,8 +37,8 @@ module VpsFree::Irc::Bot
 
     set required_options: %i[server_label api_url channels state_dir]
 
-    timer 60, method: :check, threaded: false
-    timer 30, method: :remind, threaded: false
+    timer ENV.fetch('VPSFREE_IRC_BOT_OUTAGE_CHECK_INTERVAL', 60).to_i, method: :check, threaded: false
+    timer ENV.fetch('VPSFREE_IRC_BOT_OUTAGE_REMIND_INTERVAL', 30).to_i, method: :remind, threaded: false
 
     command :outage do
       desc 'show current/selected outage'
@@ -228,6 +228,8 @@ module VpsFree::Irc::Bot
     end
 
     def outage_url(id)
+      raise 'vpsAdmin WebUI base URL is not configured' if @webui.nil? || @webui.empty?
+
       File.join(@webui, "?page=outage&action=show&id=#{id}")
     end
 
