@@ -66,11 +66,15 @@ import ../make-test.nix (
           outage_reports = {
             channels = [ "#vpsfree" ];
           };
+          security_advisories = {
+            channels = [ "#vpsfree" ];
+          };
         };
         environment = {
           VPSFREE_IRC_BOT_WEB_EVENT_LOG_INTERVAL = "2";
           VPSFREE_IRC_BOT_OUTAGE_CHECK_INTERVAL = "2";
           VPSFREE_IRC_BOT_OUTAGE_REMIND_INTERVAL = "2";
+          VPSFREE_IRC_BOT_SECURITY_ADVISORY_CHECK_INTERVAL = "2";
         };
       };
     };
@@ -88,6 +92,7 @@ import ../make-test.nix (
 
       client = nil
       outage_id = nil
+      security_advisory_id = nil
 
       def irc_port
         IrcBotHostfwdPorts.port('${hostForwardName}')
@@ -123,6 +128,10 @@ import ../make-test.nix (
 
       def outage_url(id)
         "#{WEBUI_BASE_URL}/?page=outage&action=show&id=#{id}"
+      end
+
+      def security_advisory_url(id)
+        "#{WEBUI_BASE_URL}/?page=security_advisory&action=show&id=#{id}"
       end
 
       def configure_vpsadmin_webui_base_url
@@ -187,6 +196,79 @@ import ../make-test.nix (
             language: lang,
             summary: summary,
             description: 'Updated by the IRC bot integration test'
+          )
+          puts JSON.dump(id: update.id, summary: summary)
+        RUBY
+      end
+
+      def create_security_advisory(summary)
+        services.api_ruby_json(code: <<~RUBY)
+          Dir[File.join(ENV.fetch('API_DIR'), 'models', 'security_advisory*.rb')]
+            .sort
+            .each { |path| require path }
+          summary = #{summary.inspect}
+          cve = "CVE-2026-#{rand(1000..9999)}"
+          name = "IRC Bot Kernel Bug #{rand(1000..9999)}"
+          lang = Language.find_by!(code: 'en')
+          admin = User.find(${toString adminUserId})
+          advisory = SecurityAdvisory.create!(
+            state: :draft,
+            name: name,
+            created_by: admin
+          )
+          advisory.update_cves!(cve)
+          advisory.update_translations!(
+            lang => {
+              summary: summary,
+              description: 'Created by the IRC bot integration test',
+              response: 'All affected nodes were mitigated'
+            }
+          )
+          SecurityAdvisory.advisory_nodes.each do |node|
+            SecurityAdvisoryNodeStatus.create!(
+              security_advisory: advisory,
+              node: node,
+              state: :mitigated,
+              vulnerable_until: Time.now - 3600,
+              mitigated_since: Time.now - 1800
+            )
+          end
+          advisory.publish!(published_by: admin)
+          puts JSON.dump(
+            id: advisory.id,
+            summary: summary,
+            cves: advisory.security_advisory_cves.order(:cve_id).map { |cve|
+              {
+                id: cve.id,
+                cve_id: cve.cve_id,
+                url: cve.url
+              }
+            },
+            name: name,
+            affected_node_count: advisory.affected_node_count
+          )
+        RUBY
+      end
+
+      def create_security_advisory_update(id, summary)
+        services.api_ruby_json(code: <<~RUBY)
+          Dir[File.join(ENV.fetch('API_DIR'), 'models', 'security_advisory*.rb')]
+            .sort
+            .each { |path| require path }
+          id = #{id}
+          summary = #{summary.inspect}
+          lang = Language.find_by!(code: 'en')
+          admin = User.find(${toString adminUserId})
+          advisory = SecurityAdvisory.find(id)
+          update = advisory.security_advisory_updates.create!(
+            reported_by: admin,
+            created_at: Time.now,
+            updated_at: Time.now
+          )
+          update.security_advisory_translations.create!(
+            language: lang,
+            summary: summary,
+            message: 'Updated by the IRC bot integration test'
           )
           puts JSON.dump(id: update.id, summary: summary)
         RUBY
@@ -280,6 +362,41 @@ import ../make-test.nix (
           client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: 'Duration: 45 minutes')
           client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "Summary: #{summary}")
           client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: outage_url(outage_id))
+        end
+
+        it 'announces new security advisories' do
+          summary = unique_label('IRC Bot Security Advisory')
+          advisory = create_security_advisory(summary)
+          security_advisory_id = advisory.fetch('id')
+          cve_ids = advisory.fetch('cves').map { |cve| cve.fetch('cve_id') }.join(', ')
+
+          client.wait_for_privmsg(
+            from: BOT_NICK,
+            target: CHANNEL,
+            text: "New security advisory ##{security_advisory_id}",
+            timeout: 90
+          )
+          client.wait_for_privmsg(
+            from: BOT_NICK,
+            target: CHANNEL,
+            text: "CVE: #{cve_ids} (#{advisory.fetch('name')})"
+          )
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "Summary: #{summary}")
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: security_advisory_url(security_advisory_id))
+        end
+
+        it 'announces security advisory updates' do
+          summary = unique_label('IRC Bot Security Advisory Update')
+          create_security_advisory_update(security_advisory_id, summary)
+
+          client.wait_for_privmsg(
+            from: BOT_NICK,
+            target: CHANNEL,
+            text: "Update of security advisory ##{security_advisory_id}",
+            timeout: 90
+          )
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "Summary: #{summary}")
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: security_advisory_url(security_advisory_id))
         end
       end
     '';

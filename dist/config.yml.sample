@@ -15,6 +15,10 @@ archive_url: http://irc.example.com
 # outage_reports:
 #     channels: '#channel1'
 
+# Security advisories
+# security_advisories:
+#     channels: '#channel1'
+
 # DokuWiki
 # dokuwiki:
 #     - url: https://kb.vpsfree.cz

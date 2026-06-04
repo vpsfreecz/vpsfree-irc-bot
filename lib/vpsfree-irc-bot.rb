@@ -85,6 +85,7 @@ module VpsFree::Irc::Bot
       plugins << Cluster
       plugins << WebEventLog if configured_hash?(opts[:web_event_log])
       plugins << OutageReports if configured_hash?(opts[:outage_reports])
+      plugins << SecurityAdvisories if configured_hash?(opts[:security_advisories])
       plugins << EasterEggs if easter_eggs_enabled?(opts)
     end
 
@@ -120,6 +121,13 @@ module VpsFree::Irc::Bot
       ret[WebEventLog] = opts[:web_event_log].merge(api_url: opts[:api_url]) if configured_hash?(opts[:web_event_log])
       if configured_hash?(opts[:outage_reports])
         ret[OutageReports] = opts[:outage_reports].merge(
+          server_label: label,
+          api_url: opts[:api_url],
+          state_dir: opts[:state_dir]
+        )
+      end
+      if configured_hash?(opts[:security_advisories])
+        ret[SecurityAdvisories] = opts[:security_advisories].merge(
           server_label: label,
           api_url: opts[:api_url],
           state_dir: opts[:state_dir]
