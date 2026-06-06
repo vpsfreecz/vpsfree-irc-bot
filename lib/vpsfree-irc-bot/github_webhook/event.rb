@@ -179,17 +179,12 @@ module VpsFree::Irc::Bot::GitHubWebHook
       ret = ''
       ret << "[#{repository.name}] #{sender.login} "
 
-      if fast_forward?
-        ret << "fast-forwarded #{branch} to #{after[0..8]}"
+      if forced || fast_forward?
+        ret << ref_update_message(forced ? 'force-pushed' : 'fast-forwarded')
         return ret
       end
 
-      ret << if forced
-               'force-pushed '
-             else
-               'pushed '
-             end
-
+      ret << 'pushed '
       ret << "#{commits.length} #{noun(commits.length, 'commit', 'commits')} "
       ret << "to #{branch}\n"
 
@@ -230,6 +225,43 @@ module VpsFree::Irc::Bot::GitHubWebHook
     end
 
     protected
+
+    def ref_update_message(action)
+      ret = "#{action} #{branch} #{ref_update_range}"
+      url = ref_update_url
+      ret << "\n#{url}" if url
+      ret
+    end
+
+    def ref_update_range
+      if usable_sha?(before)
+        "from #{short_sha(before)} to #{short_sha(after)}"
+      else
+        "to #{short_sha(after)}"
+      end
+    end
+
+    def ref_update_url
+      return compare if present?(compare)
+
+      if usable_sha?(before) && usable_sha?(after)
+        return "#{repository.html_url}/compare/#{before}...#{after}"
+      end
+
+      "#{repository.html_url}/commit/#{after}" if usable_sha?(after)
+    end
+
+    def short_sha(sha)
+      sha.to_s[0..8]
+    end
+
+    def usable_sha?(sha)
+      present?(sha) && !sha.match?(/\A0+\z/)
+    end
+
+    def present?(value)
+      !value.nil? && !value.empty?
+    end
 
     def branch_from_ref
       if ref.start_with?('refs/heads/')
