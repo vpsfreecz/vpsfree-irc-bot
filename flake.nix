@@ -60,13 +60,10 @@
           '';
         };
 
-      suiteArgsFor =
-        system:
-        {
-          vpsadminosPath = vpsadminos.outPath;
-          vpsadminPath = vpsadmin.outPath;
-          botPackage = self.packages.${system}.vpsfree-irc-bot;
-        };
+      suiteArgsFor = system: {
+        vpsadminPath = vpsadmin.outPath;
+        botPackage = self.packages.${system}.vpsfree-irc-bot;
+      };
     in
     {
       packages = forAllSystems (system: {
