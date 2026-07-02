@@ -5,6 +5,65 @@ require 'spec_helper'
 RSpec.describe VpsFree::Irc::Bot::DokuWiki::Wiki do
   let(:bot) { instance_double(Cinch::Bot) }
 
+  it 'announces every page when no page filters are configured' do
+    wiki = described_class.new(bot, url: 'https://kb.example/')
+
+    expect(wiki.page_announced?('drafts:new-feature')).to be(true)
+    expect(wiki.page_announced?('kb:start')).to be(true)
+  end
+
+  it 'does not announce excluded pages' do
+    wiki = described_class.new(
+      bot,
+      url: 'https://kb.example/',
+      exclude_pages: ['drafts:*']
+    )
+
+    expect(wiki.page_announced?('drafts:new-feature')).to be(false)
+    expect(wiki.page_announced?('kb:start')).to be(true)
+  end
+
+  it 'announces only included pages when includes are configured' do
+    wiki = described_class.new(
+      bot,
+      url: 'https://kb.example/',
+      include_pages: ['kb:*']
+    )
+
+    expect(wiki.page_announced?('kb:start')).to be(true)
+    expect(wiki.page_announced?('user:alice')).to be(false)
+  end
+
+  it 'lets exclude patterns override include patterns' do
+    wiki = described_class.new(
+      bot,
+      url: 'https://kb.example/',
+      include_pages: ['kb:*'],
+      exclude_pages: ['kb:drafts:*']
+    )
+
+    expect(wiki.page_announced?('kb:drafts:new-feature')).to be(false)
+    expect(wiki.page_announced?('kb:start')).to be(true)
+  end
+
+  it 'does not fetch page versions for excluded changes' do
+    wiki = described_class.new(
+      bot,
+      url: 'https://kb.example/',
+      exclude_pages: ['drafts:*']
+    )
+    server = instance_spy(XMLRPC::Client)
+    wiki.instance_variable_set(:@server, server)
+
+    wiki.handle_change(
+      'name' => 'drafts:new-feature',
+      'version' => 1,
+      'author' => 'Alice'
+    )
+
+    expect(server).not_to have_received(:call)
+  end
+
   it 'builds page URLs for configured rewrite modes' do
     wiki = described_class.new(bot, url: 'https://kb.example/', rewrite: 0)
     rewritten = described_class.new(bot, url: 'https://kb.example/', rewrite: 2, namespace_slash: true)

@@ -25,10 +25,16 @@ archive_url: http://irc.example.com
 #       namespace_slash: true
 #       rewrite: 1
 #       prefix: '[KB]'
+#       exclude_pages:
+#         - 'drafts:*'
 #     - url: https://kb.vpsfree.org
 #       namespace_slash: true
 #       rewrite: 1
 #       prefix: '[KB]'
+#       include_pages:
+#         - 'public:*'
+#       exclude_pages:
+#         - 'public:drafts:*'
 
 # Blog feed
 # blog:

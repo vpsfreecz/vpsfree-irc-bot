@@ -52,6 +52,8 @@ module VpsFree::Irc::Bot
       end
 
       def handle_change(change)
+        return unless page_announced?(change['name'])
+
         revs = @server.call('wiki.getPageVersions', change['name'])
         cur_i = revs.index { |rev| rev['version'] == change['version'] }
 
@@ -103,6 +105,14 @@ module VpsFree::Irc::Bot
           "Page #{change['name']} changed by #{change['author']} " \
           "(#{page_url(change['name'])})"
         )
+      end
+
+      def page_announced?(page)
+        return false if pattern_match?(config[:exclude_pages], page)
+
+        include_pages = patterns(config[:include_pages])
+
+        include_pages.empty? || pattern_match?(include_pages, page)
       end
 
       def page_url(page)
@@ -192,6 +202,16 @@ module VpsFree::Irc::Bot
             "#{config[:prefix] || '[DokuWiki]'} #{msg}",
             :notice
           )
+        end
+      end
+
+      def patterns(value)
+        Array(value).compact.map(&:to_s)
+      end
+
+      def pattern_match?(page_patterns, page)
+        patterns(page_patterns).any? do |pattern|
+          File.fnmatch?(pattern, page.to_s)
         end
       end
     end
