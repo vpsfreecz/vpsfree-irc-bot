@@ -176,6 +176,47 @@ import ../make-test.nix (
         RUBY
       end
 
+      def create_staged_outage(summary)
+        services.api_ruby_json(code: <<~RUBY)
+          summary = #{summary.inspect}
+          lang = Language.find_by!(code: 'en')
+          admin = User.find(${toString adminUserId})
+          outage = Outage.create!(
+            begins_at: Time.now - 60,
+            duration: 30,
+            state: :staged,
+            outage_type: :planned_outage,
+            impact_type: :network
+          )
+          OutageTranslation.create!(
+            outage: outage,
+            language: lang,
+            summary: summary,
+            description: 'Created by the IRC bot integration test'
+          )
+          OutageEntity.create!(outage: outage, name: 'Cluster')
+          OutageHandler.create!(outage: outage, user: admin)
+          puts JSON.dump(id: outage.id, summary: summary)
+        RUBY
+      end
+
+      def announce_staged_outage(id)
+        services.api_ruby_json(code: <<~RUBY)
+          id = #{id}
+          admin = User.find(${toString adminUserId})
+          outage = Outage.find(id)
+          outage.update!(state: :announced, updated_at: Time.now)
+          update = OutageUpdate.create!(
+            outage: outage,
+            reported_by: admin,
+            state: :announced,
+            created_at: Time.now,
+            updated_at: Time.now
+          )
+          puts JSON.dump(id: update.id, outage_id: outage.id)
+        RUBY
+      end
+
       def create_outage_update(id, summary)
         services.api_ruby_json(code: <<~RUBY)
           id = #{id}
@@ -347,6 +388,36 @@ import ../make-test.nix (
           )
           client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "Reason: #{summary}")
           client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: outage_url(outage_id))
+        end
+
+        it 'announces staged outages after another outage advances the cursor' do
+          first_summary = unique_label('IRC Bot First Staged Outage')
+          first_outage = create_staged_outage(first_summary)
+          first_outage_id = first_outage.fetch('id')
+          second_summary = unique_label('IRC Bot Second Staged Outage')
+          second_outage = create_staged_outage(second_summary)
+          second_outage_id = second_outage.fetch('id')
+
+          announce_staged_outage(first_outage_id)
+
+          client.wait_for_privmsg(
+            from: BOT_NICK,
+            target: CHANNEL,
+            text: "New planned outage ##{first_outage_id}",
+            timeout: 90
+          )
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "Reason: #{first_summary}")
+
+          announce_staged_outage(second_outage_id)
+
+          client.wait_for_privmsg(
+            from: BOT_NICK,
+            target: CHANNEL,
+            text: "New planned outage ##{second_outage_id}",
+            timeout: 90
+          )
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "Reason: #{second_summary}")
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: outage_url(second_outage_id))
         end
 
         it 'announces outage updates' do

@@ -173,7 +173,13 @@ module VpsFree::Irc::Bot
     end
 
     def report_update(update)
-      return if update.state == 'announced'
+      if update.state == 'announced'
+        return if @store[update.outage_id]
+
+        @store[update.outage_id] = outage_to_hash(update.outage)
+        report_outage(update.outage)
+        return
+      end
 
       attrs = %i[begins_at finished_at state impact duration]
       changes = []
