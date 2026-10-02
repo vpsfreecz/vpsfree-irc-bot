@@ -7,6 +7,7 @@ Run the suite with:
 ```sh
 ./test-runner.sh ls
 ./test-runner.sh test irc-basic
+./test-runner.sh test irc-github-webhook
 ./test-runner.sh test vpsadmin-events
 ```
 
@@ -16,3 +17,9 @@ services.
 
 `vpsadmin-events` additionally boots the vpsAdmin services VM and verifies the
 bot can poll vpsAdmin and announce news/outage events on IRC.
+
+`irc-github-webhook` boots the same small IRC environment and posts signed GitHub
+webhook fixtures to the bot. It checks per-channel commit filtering, message and
+archive contents, force-push details, sender filtering, and invalid signatures.
+All webhook requests run inside the test VM; IRC clients connect only to its
+forwarded test port.

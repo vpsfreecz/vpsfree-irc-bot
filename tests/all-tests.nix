@@ -32,5 +32,6 @@ let
 in
 testLib.makeTests [
   "irc-basic"
+  "irc-github-webhook"
   "vpsadmin-events"
 ]

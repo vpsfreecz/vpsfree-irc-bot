@@ -105,7 +105,15 @@ module VpsFree::Irc::Bot::GitHubWebHook
   end
 
   class Commit
-    Author = Struct.new(:name, :email)
+    Author = Struct.new(:name, :email, :username) do
+      def login
+        return username if username.is_a?(String) && !username.empty?
+        return nil unless username.nil? || username == ''
+        return nil unless email.is_a?(String)
+
+        email.match(/\A(?:\d+\+)?([^+@\s]+)@users\.noreply\.github\.com\z/)&.[](1)
+      end
+    end
 
     include Helpers
 
@@ -113,7 +121,9 @@ module VpsFree::Irc::Bot::GitHubWebHook
 
     def initialize(data)
       extract(data, *%i[id message distinct])
-      @author = Author.new(data['author']['name'], data['author']['email'])
+      @author = Author.new(
+        data['author']['name'], data['author']['email'], data['author']['username']
+      )
     end
   end
 
@@ -207,6 +217,37 @@ module VpsFree::Irc::Bot::GitHubWebHook
 
     def fast_forward?
       commits.all? { |c| !c.distinct }
+    end
+
+    def filtered_to_s(retained_commits, ignored_count:)
+      ref_update = forced || fast_forward?
+      count = retained_commits.length
+      summary = "#{count} #{noun(count, 'commit', 'commits')}"
+      if ignored_count > 0
+        summary = "#{count} announced #{noun(count, 'commit', 'commits')} (#{ignored_count} ignored)"
+      end
+
+      ret = "[#{repository.name}] #{sender.login} "
+      if ref_update
+        action = forced ? 'force-pushed' : 'fast-forwarded'
+        ret << "#{action} #{branch} #{ref_update_range}\n"
+        ret << "[#{repository.name}] #{summary}\n"
+      else
+        ret << "pushed #{summary} to #{branch}\n"
+      end
+
+      retained_commits.first(COUNT).each do |commit|
+        ret << "#{repository.name}/#{branch} #{commit.id[0..8]} "
+        ret << "#{commit.author.name}: #{commit.message.split("\n").first}\n"
+      end
+
+      if count > COUNT
+        ret << "#{repository.name}/#{branch} ...and #{count - COUNT} more commits\n"
+      end
+
+      url = ref_update ? ref_update_url : compare
+      ret << url if url
+      ret
     end
 
     def announce?
