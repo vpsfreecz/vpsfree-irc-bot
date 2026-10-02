@@ -178,7 +178,7 @@ import ../make-test.nix (
         rescue StandardError, RSpec::Expectations::ExpectationNotMetError => error
           clients.each { |channel, client| warn "#{channel}: #{client.lines.last(30).inspect}" }
           begin
-            _, output = irc.succeeds('journalctl -u vpsfree-irc-bot -n 80 --no-pager', timeout: 15)
+            _, output = irc.succeeds('journalctl -b -u vpsfree-irc-bot --no-pager', timeout: 15)
             warn output
           rescue StandardError => diagnostic_error
             warn "Unable to read bot service log: #{diagnostic_error.message}"

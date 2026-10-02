@@ -18,6 +18,8 @@ module VpsFree::Irc::Bot
   end
 
   class HtmlLogger < TemplateLogger
+    ASSET_INSTALL_MUTEX = Mutex.new
+
     def initialize(*args)
       super
       copy_assets
@@ -34,13 +36,15 @@ module VpsFree::Irc::Bot
       assets = File.join(template_dir, 'assets')
       return unless Dir.exist?(assets)
 
-      FileUtils.mkdir_p(File.join(@dst, 'assets'))
-      FileUtils.cp_r(assets, @dst)
+      # Channel joins copy the same read-only assets. Keep copying and making
+      # them writable in one critical section.
+      ASSET_INSTALL_MUTEX.synchronize do
+        FileUtils.mkdir_p(File.join(@dst, 'assets'))
+        FileUtils.cp_r(assets, @dst)
 
-      # On NixOS, the copied files are not user-writable, which prevents us
-      # from overwriting the assets in case they're updated.
-      Dir.glob(File.join(@dst, 'assets', '*')).each do |f|
-        File.chmod(0o644, f)
+        Dir.glob(File.join(@dst, 'assets', '*')).each do |f|
+          File.chmod(0o644, f)
+        end
       end
     end
 
