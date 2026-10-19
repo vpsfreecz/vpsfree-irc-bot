@@ -23,6 +23,40 @@ It installs bundled gems into `.gems`. Run checks from the shell with:
      bundle exec rspec
      bundle exec rubocop
 
+## Security advisory notifications
+
+Configure `security_advisories.channels` to enable advisory polling from vpsAdmin.
+The optional `mode` setting accepts:
+
+- `individual` (default): announce each new published advisory and each update
+  with its details and advisory link.
+- `summary`: collect distinct new and updated advisory IDs across polls and send
+  one line per configured channel, linking to the WebUI advisory list. For example:
+  `12 new security advisories, 3 updated in vpsAdmin: <list URL>`.
+- `off`: keep polling and updating the advisory store without announcements or
+  pending summaries.
+
+In YAML, quote the off value as `mode: 'off'`; an unquoted `off` is parsed as a boolean.
+
+The bot polls every minute. In summary mode, `summary_interval` sets the minimum
+time between summaries in seconds. It must be a positive integer and defaults to
+`3600` (one hour). Arrivals do not move the deadline or trigger early output.
+Empty intervals produce no message. An advisory newly published within a summary
+window counts only as new, even if it receives updates in later polls; repeated
+updates to an older advisory count once.
+
+Startup silently loads the preceding 30 days of advisories, then waits a full
+summary interval before the first possible summary. Pending counts are held only
+in memory: a restart discards them and starts a fresh interval. Configure modes
+through a normal restart; enabling notifications does not replay events consumed
+while off. Muted or failed output is discarded under the bot's existing best-effort
+delivery policy.
+
+See the [sample configuration](dist/config.yml.sample). The advisory store format
+is unchanged. Older bot versions can read it, but ignore these settings and send
+individual notices, so select a compatible bot package when enabling summary or
+off mode. Rolling back the bot can restore individual notification volume.
+
 ## GitHub notifications
 
 Configure GitHub webhook routing under `github_webhook.channels`. Each channel

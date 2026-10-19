@@ -15,11 +15,83 @@ module VpsFree::Irc::Bot
     set required_options: %i[server_label api_url channels state_dir]
 
     timer ENV.fetch('VPSFREE_IRC_BOT_SECURITY_ADVISORY_CHECK_INTERVAL', 60).to_i, method: :check, threaded: false
+    timer 1, method: :flush_summary, threaded: false
+
+    def initialize(*)
+      super
+
+      @mode = config.fetch(:mode, 'individual')
+      @summary_interval = config.fetch(:summary_interval, 3600)
+      unless %w[individual summary off].include?(@mode)
+        raise ArgumentError, 'security_advisories.mode must be individual, summary or off'
+      end
+      unless @summary_interval.is_a?(Integer) && @summary_interval > 0
+        raise ArgumentError, 'security_advisories.summary_interval must be a positive integer in seconds'
+      end
+
+      @advisory_mutex = Mutex.new
+      @pending_new = Set.new
+      @pending_updated = Set.new
+    end
 
     def post_api_setup
+      @advisory_mutex.synchronize do
+        @advisories_initialized = false
+        @summary_deadline = nil
+        @store = FileStorage.new(config[:state_dir], config[:server_label], :security_advisories)
+        @since = Time.now
+        initialize_advisories
+      end
+    end
+
+    def check
+      @advisory_mutex.synchronize do
+        unless api_setup?
+          warn 'Skipping security advisory check, API not set up'
+          return
+        end
+
+        unless @advisories_initialized
+          # Retry incomplete bootstrap without polling or announcing its history.
+          initialize_advisories if @store
+          return
+        end
+
+        client do |api|
+          if @mode == 'individual'
+            check_individual(api)
+          else
+            check_silent(api)
+          end
+        end
+      end
+    rescue StandardError => e
+      exception(e)
+    end
+
+    def flush_summary
+      return unless @mode == 'summary'
+
+      @advisory_mutex.synchronize do
+        return unless @summary_deadline && monotonic_time >= @summary_deadline
+
+        begin
+          report_summary unless @pending_new.empty? && @pending_updated.empty?
+        ensure
+          @pending_new.clear
+          @pending_updated.clear
+          # Start a full interval after handling, including delayed or failed sends.
+          @summary_deadline = monotonic_time + @summary_interval
+        end
+      end
+    rescue StandardError => e
+      exception(e)
+    end
+
+    protected
+
+    def initialize_advisories
       @webui = client { |api| api.system_config.show('webui', 'base_url').value }
-      @store = FileStorage.new(config[:state_dir], config[:server_label], :security_advisories)
-      @since = Time.now
 
       client do |api|
         advisories = api.security_advisory.list(
@@ -29,39 +101,83 @@ module VpsFree::Irc::Bot
           @store[advisory.id] = advisory_to_hash(advisory, advisory_cves(api, advisory.id))
         end
       end
+      @summary_deadline = monotonic_time + @summary_interval
+      @advisories_initialized = true
     end
 
-    def check
-      unless api_setup?
-        warn 'Skipping security advisory check, API not set up'
-        return
+    def check_individual(api)
+      advisories = api.security_advisory.list(recent_since: @since.iso8601)
+      advisories.each do |advisory|
+        next if @store[advisory.id]
+
+        cves = advisory_cves(api, advisory.id)
+        @store[advisory.id] = advisory_to_hash(advisory, cves)
+        report_advisory(advisory, cves) if advisory.state == 'published'
       end
 
-      client do |api|
-        advisories = api.security_advisory.list(recent_since: @since.iso8601)
-        advisories.each do |advisory|
-          next if @store[advisory.id]
-
-          cves = advisory_cves(api, advisory.id)
-          @store[advisory.id] = advisory_to_hash(advisory, cves)
-          report_advisory(advisory, cves) if advisory.state == 'published'
-        end
-
-        updates = api.security_advisory_update.list(
-          since: @since.iso8601,
-          meta: { includes: 'security_advisory' }
-        )
-        updates.each do |update|
-          report_update(api, update)
-        end
-
-        @since = Time.now if !advisories.empty? || !updates.empty?
+      updates = api.security_advisory_update.list(
+        since: @since.iso8601,
+        meta: { includes: 'security_advisory' }
+      )
+      updates.each do |update|
+        report_update(api, update)
       end
-    rescue StandardError => e
-      exception(e)
+
+      @since = Time.now if !advisories.empty? || !updates.empty?
     end
 
-    protected
+    def check_silent(api)
+      snapshots = {}
+      new_ids = Set.new
+      updated_ids = Set.new
+      advisories = api.security_advisory.list(recent_since: @since.iso8601)
+      advisories.each do |advisory|
+        next if @store[advisory.id] || snapshots.has_key?(advisory.id)
+
+        snapshots[advisory.id] = advisory_to_hash(advisory, advisory_cves(api, advisory.id))
+        new_ids.add(advisory.id) if advisory.state == 'published'
+      end
+
+      updates = api.security_advisory_update.list(
+        since: @since.iso8601,
+        meta: { includes: 'security_advisory' }
+      )
+      updates.each do |update|
+        advisory = update.security_advisory
+        next unless advisory
+
+        snapshots[advisory.id] = advisory_to_hash(advisory, advisory_cves(api, advisory.id))
+        updated_ids.add(advisory.id)
+      end
+
+      # Commit counts only after both queries and all snapshot reads succeed.
+      snapshots.each { |id, snapshot| @store[id] = snapshot }
+      if @mode == 'summary'
+        @pending_new.merge(new_ids)
+        @pending_updated.merge(updated_ids).subtract(@pending_new)
+      end
+      @since = Time.now if !advisories.empty? || !updates.empty?
+    end
+
+    def report_summary
+      categories = []
+      unless @pending_new.empty?
+        count = @pending_new.size
+        categories << "#{count} new security #{count == 1 ? 'advisory' : 'advisories'}"
+      end
+      unless @pending_updated.empty?
+        count = @pending_updated.size
+        noun = count == 1 ? 'advisory' : 'advisories'
+        label = @pending_new.empty? ? "security #{noun} " : ''
+        categories << "#{count} #{label}updated"
+      end
+
+      send_channels("#{categories.join(', ')} in vpsAdmin: #{security_advisory_list_url}")
+    end
+
+    def monotonic_time
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    end
 
     def report_advisory(advisory, cves)
       send_channels(<<~END
@@ -114,6 +230,12 @@ module VpsFree::Irc::Bot
       raise 'vpsAdmin WebUI base URL is not configured' if @webui.nil? || @webui.empty?
 
       File.join(@webui, "?page=security_advisory&action=show&id=#{id}")
+    end
+
+    def security_advisory_list_url
+      raise 'vpsAdmin WebUI base URL is not configured' if @webui.nil? || @webui.empty?
+
+      File.join(@webui, '?page=security_advisory')
     end
 
     def send_channels(msg)

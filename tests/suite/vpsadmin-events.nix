@@ -11,6 +11,27 @@ import ../make-test.nix (
     ircAddress = "192.168.10.20";
     seed = import (vpsadminPath + "/api/db/seeds/test.nix");
     adminUserId = seed.adminUser.id;
+    summaryInterval = 60;
+    summaryConfig = pkgs.writeText "vpsfree-irc-bot-summary.json" (
+      builtins.toJSON {
+        server = {
+          label = "irc-summary.test";
+          host = "127.0.0.1";
+        };
+        channels = [ "#vpsfree" ];
+        nick = "digbot";
+        api_url = "http://api.vpsadmin.test";
+        archive_url = "http://archive.test";
+        archive_dst = "/var/lib/vpsfree-irc-bot/archive";
+        state_dir = "/var/lib/vpsfree-irc-bot/state";
+        easter_eggs = false;
+        security_advisories = {
+          channels = [ "#vpsfree" ];
+          mode = "summary";
+          summary_interval = summaryInterval;
+        };
+      }
+    );
   in
   {
     name = "vpsadmin-events";
@@ -75,6 +96,22 @@ import ../make-test.nix (
           VPSFREE_IRC_BOT_OUTAGE_CHECK_INTERVAL = "2";
           VPSFREE_IRC_BOT_OUTAGE_REMIND_INTERVAL = "2";
           VPSFREE_IRC_BOT_SECURITY_ADVISORY_CHECK_INTERVAL = "2";
+        };
+        extraConfig.systemd.services.vpsfree-irc-bot-summary = {
+          after = [ "ngircd.service" ];
+          environment = {
+            LANG = "C.UTF-8";
+            RACK_ENV = "production";
+            VPSFREE_IRC_BOT_EASTER_EGGS = "0";
+            VPSFREE_IRC_BOT_SECURITY_ADVISORY_CHECK_INTERVAL = "2";
+          };
+          serviceConfig = {
+            Type = "simple";
+            User = "vpsfbot";
+            Group = "vpsfbot";
+            WorkingDirectory = "/var/lib/vpsfree-irc-bot";
+            ExecStart = "${botPackage}/bin/bundle exec ${botPackage}/vpsfree-irc-bot/bin/vpsfree-irc-bot --config ${summaryConfig}";
+          };
         };
       };
     };
@@ -351,8 +388,23 @@ import ../make-test.nix (
 
       describe 'vpsAdmin API commands' do
         it 'reports public node status' do
-          client.command('!status')
-          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, pattern: /\d+ nodes online/)
+          deadline = Time.now + 120
+
+          loop do
+            remaining = deadline - Time.now
+            raise OsVm::TimeoutError, 'Timed out waiting for cluster plugin API setup' if remaining <= 0
+
+            client.command('!status')
+            line = client.wait_for_privmsg(
+              from: BOT_NICK,
+              target: CHANNEL,
+              pattern: /Status unknown, unable to reach vpsAdmin API|\d+ nodes online/,
+              timeout: [15, remaining].min
+            )
+            break if line.match?(/\d+ nodes online/)
+
+            sleep 2
+          end
         end
       end
 
@@ -471,6 +523,47 @@ import ../make-test.nix (
           )
           client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "Summary: #{summary}")
           client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: security_advisory_url(security_advisory_id))
+        end
+
+        it 'summarizes gradual advisory arrivals across polls while retaining individual notices' do
+          started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          irc.succeeds('systemctl start vpsfree-irc-bot-summary')
+          irc.wait_for_service('vpsfree-irc-bot-summary')
+          client.wait_for_names_include('digbot')
+          # The first persisted snapshot proves silent bootstrap has finished.
+          irc.wait_until_succeeds(
+            'test -f /var/lib/vpsfree-irc-bot/state/irc-summary.test/security_advisories.yml',
+            timeout: 90
+          )
+          first = create_security_advisory(unique_label('First Digest Advisory'))
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "New security advisory ##{first.fetch('id')}")
+          # Keep the arrivals in different two-second polling cycles.
+          sleep 4
+          second = create_security_advisory(unique_label('Second Digest Advisory'))
+          client.wait_for_privmsg(from: BOT_NICK, target: CHANNEL, text: "New security advisory ##{second.fetch('id')}")
+          create_security_advisory_update(first.fetch('id'), unique_label('New Advisory Update'))
+          create_security_advisory_update(security_advisory_id, unique_label('Existing Advisory Update'))
+
+          expected = "2 new security advisories, 1 updated in vpsAdmin: #{WEBUI_BASE_URL}/?page=security_advisory"
+          client.wait_for_privmsg(from: 'digbot', target: CHANNEL, text: expected, timeout: 90)
+          elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
+          expect(elapsed).to be >= ${toString summaryInterval}
+
+          client.drain(quiet: 3)
+          bot_lines = client.lines.grep(/\A:digbot![^ ]+ PRIVMSG /)
+          summary_lines = bot_lines.select { |line| line.include?(' in vpsAdmin: ') }
+          expect(summary_lines.size).to eq(1)
+          expect(summary_lines.first).to end_with(expected)
+          expect(bot_lines.join).not_to include('New security advisory #', 'Update of security advisory #')
+        rescue StandardError, RSpec::Expectations::ExpectationNotMetError
+          warn "Recent IRC lines: #{client.lines.last(30).inspect}"
+          begin
+            _, output = irc.succeeds('journalctl -u vpsfree-irc-bot-summary -n 120 --no-pager')
+            warn output
+          rescue StandardError => diagnostic_error
+            warn "Unable to read summary bot service log: #{diagnostic_error.message}"
+          end
+          raise
         end
       end
     '';

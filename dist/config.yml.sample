@@ -18,6 +18,10 @@ archive_url: http://irc.example.com
 # Security advisories
 # security_advisories:
 #     channels: '#channel1'
+#     # individual (default), summary or off; quote off as mode: 'off'
+#     mode: 'summary'
+#     # Positive integer seconds between summaries; default: 3600
+#     summary_interval: 3600
 
 # DokuWiki
 # dokuwiki:
