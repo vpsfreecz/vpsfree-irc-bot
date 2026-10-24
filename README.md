@@ -94,3 +94,22 @@ Until [bundix#68](https://github.com/nix-community/bundix/pull/68) is resolved, 
 
 Our issue is with nokogiri, which uses platform-specific gems that bundler has
 problems with.
+
+## Automated flake updates
+
+The `nixpkgs-update.yml` workflow uses a separately pinned confctl CI package to
+require commit ancestry preservation across the full changed lock graph.
+Rejected candidates and unavailable evidence stop publication. The workflow
+checks the final lock against its saved baseline after hooks and checks, then
+uses an ordinary non-force push. If the target branch advances, rerun from its
+new baseline instead of rebasing the old lock update.
+
+For a local update, set `CONFCTL_FLAKE` to the immutable package reference in
+`.github/workflows/nixpkgs-update.yml`, then run
+`tools/update_nixpkgs_flake.sh` and review its generated commit.
+
+The workflow saves confctl's Git mirrors in `~/.cache/confctl` even when an
+update is rejected. Every update checks ancestry, whether the cache was
+restored or freshly cloned.
+
+See the [shared guard contract](https://github.com/vpsfreecz/confctl/blob/822c0e35dbe2549111912f539116b4225dfd3035/docs/flake-inputs.md#guarded-automated-updates) for supported sources and failure behavior.

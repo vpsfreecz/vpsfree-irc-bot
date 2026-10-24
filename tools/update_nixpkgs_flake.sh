@@ -12,6 +12,7 @@ Update the nixpkgs flake input and commit the isolated flake.lock change as:
 
 The script refuses to start with tracked changes present and refuses to commit
 if the update modifies anything other than flake.lock.
+Set CONFCTL_FLAKE to the immutable CI package reference in the update workflow.
 EOF
 }
 
@@ -25,7 +26,10 @@ require_cmd() {
 }
 
 nixpkgs_rev() {
-	nix flake metadata --json . | jq -er '.locks.nodes.nixpkgs.locked.rev'
+	nix shell "$CONFCTL_FLAKE" -c confctl inputs ls --json nixpkgs | jq -er '
+    map(select(.input == "nixpkgs"))
+    | if length == 1 then .[0].rev | select(type == "string" and length > 0) else empty end
+  '
 }
 
 short_rev() {
@@ -66,11 +70,13 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 	die "tracked worktree changes are present; commit or stash them first"
 fi
 
+: "${CONFCTL_FLAKE:?Set CONFCTL_FLAKE to the pinned confctl CI package}"
+
 old_rev="$(nixpkgs_rev)"
 old_short="$(short_rev "$old_rev")"
 
 printf 'Current nixpkgs revision: %s\n' "$old_rev"
-nix flake update nixpkgs
+nix shell "$CONFCTL_FLAKE" -c confctl inputs update --forward-only nixpkgs
 
 mapfile -t changed < <(changed_files)
 
