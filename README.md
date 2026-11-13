@@ -83,17 +83,26 @@ each channel. An absent or empty list preserves the existing announcement
 format and routing behavior.
 
 ## Bundix
-Until [bundix#68](https://github.com/nix-community/bundix/pull/68) is resolved, use:
 
-     nix develop -c bash -lc '
-       bundle config set --local force_ruby_platform true
-       rm -f gemset.nix Gemfile.lock
-       bundle lock --add-platform ruby
-       BUNDLE_FORCE_RUBY_PLATFORM=true bundix -l
-     '
+Until [bundix#68](https://github.com/nix-community/bundix/pull/68) is resolved,
+generate Nokogiri's source-gem dependencies with:
 
-Our issue is with nokogiri, which uses platform-specific gems that bundler has
-problems with.
+```bash
+nix develop -c bash -euo pipefail <<'BASH'
+  unset RUBYOPT
+  bundle config set --local force_ruby_platform true
+  rm -f gemset.nix Gemfile.lock
+  bundle lock --add-platform ruby
+  BUNDLE_FORCE_RUBY_PLATFORM=true bundix -l
+  NIX_ENFORCE_PURITY=0 bundle install
+BASH
+```
+
+The development shell preloads `bundler/setup` through `RUBYOPT`. Clear it while
+replacing the lock and running Bundix, which uses its own Ruby bundle. Forcing
+the Ruby platform avoids Nokogiri's platform-specific gem resolution problem.
+Install the refreshed bundle with the bot's Ruby before running checks or
+committing; native dependencies need `NIX_ENFORCE_PURITY=0`.
 
 ## Automated flake updates
 

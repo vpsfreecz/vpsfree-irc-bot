@@ -2,6 +2,7 @@ name: Daily update
 on:
   schedule:
     - cron: '30 4 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -10,7 +11,7 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -22,23 +23,34 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Update package dependencies
+        id: update
         run: |
           # Until [bundix#68](https://github.com/nix-community/bundix/pull/68) is resolved
-          nix develop -c bash -lc '
+          nix develop -c bash -euo pipefail <<'BASH'
+            # Avoid activating the old bundle while replacing its lock or running Bundix's Ruby.
+            unset RUBYOPT
             bundle config set --local force_ruby_platform true
             rm -f gemset.nix Gemfile.lock
             bundle lock --add-platform ruby
             BUNDLE_FORCE_RUBY_PLATFORM=true bundix -l
-          '
+            NIX_ENFORCE_PURITY=0 bundle install
+            bundle exec overcommit --install
+            bundle exec overcommit --sign
 
-          git add gemset.nix Gemfile.lock
-          git diff --cached --quiet && exit 0
+            git add gemset.nix Gemfile.lock
+            if git diff --cached --quiet; then
+              echo "committed=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
 
-          msg="$(mktemp)"
-          trap 'rm -f "$msg"' EXIT
-          printf 'Update dependencies\n' > "$msg"
-          git commit -F "$msg"
+            msg="$(mktemp)"
+            trap 'rm -f "$msg"' EXIT
+            printf 'Update dependencies\n' > "$msg"
+            bundle exec git commit -F "$msg"
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+          BASH
 
       - name: Push updates
+        if: steps.update.outputs.committed == 'true'
         run: |
           git push origin HEAD:master
