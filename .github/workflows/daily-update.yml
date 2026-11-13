@@ -53,4 +53,4 @@ jobs:
       - name: Push updates
         if: steps.update.outputs.committed == 'true'
         run: |
-          git push origin HEAD:master
+          nix develop -c bundle exec git push origin HEAD:master
