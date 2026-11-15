@@ -387,10 +387,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1wx52ksxj7zk2d82lc2ahmz7z0gsrrh3xnakwjr9b51xph5sd0v3";
+      sha256 = "0p2m65inmzqpza2x8ls6l5zdfa7n8rlinc2ns0cwqkh6rxc0g014";
       type = "gem";
     };
-    version = "8.0.3";
+    version = "8.1.1";
   };
   racc = {
     groups = ["default" "development"];
@@ -513,10 +513,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1bxqlpwnixn8x4bnna958w6m6qkdkbnd23b9j6ib3nrrrs9bp3l1";
+      sha256 = "1948p6kfc93w6jqrxdd5ypp5fg93s7cikr31cqywm44af3rnkibz";
       type = "gem";
     };
-    version = "3.0.2";
+    version = "3.1.0";
   };
   rexml = {
     groups = ["default" "development"];
