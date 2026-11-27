@@ -626,15 +626,15 @@
     version = "0.7.1";
   };
   rubocop-rspec = {
-    dependencies = ["lint_roller" "regexp_parser" "rubocop"];
+    dependencies = ["lint_roller" "rubocop"];
     groups = ["development"];
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1qk5bx4vg7n17i9475h6dqkhay9m3s6vanq9y35hxl9cb762wghb";
+      sha256 = "14f0cxrdc5syginbn81iwc2g1ni42kbiwjg0ad74yqrh0g7pxqrv";
       type = "gem";
     };
-    version = "3.10.2";
+    version = "3.11.0";
   };
   ruby-progressbar = {
     groups = ["default" "development"];
